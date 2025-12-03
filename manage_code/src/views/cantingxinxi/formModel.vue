@@ -108,8 +108,8 @@
         canzhuoweizhi : false,
         kezuorenshu : false,
         canzhuozhuangtai : false,
-        shangjiazhanghao : false,
-        shangjiamingcheng : false,
+        yuangongzhanghao : false,
+        yuangongmingcheng : false,
         storeupNumber : false,
         discussNumber : false,
 	})
@@ -131,9 +131,9 @@
 		],
 		canzhuozhuangtai: [
 		],
-		shangjiazhanghao: [
+		yuangongzhanghao: [
 		],
-		shangjiamingcheng: [
+		yuangongmingcheng: [
 		],
 		storeupNumber: [
 			{ validator: context.$toolUtil.validator.intNumber, trigger: 'blur' },
@@ -167,8 +167,8 @@
 			canzhuoweizhi: '',
 			kezuorenshu: '',
 			canzhuozhuangtai: '未预约',
-			shangjiazhanghao: '',
-			shangjiamingcheng: '',
+			yuangongzhanghao: '',
+			yuangongmingcheng: '',
 		}
 	}
 	//获取info
@@ -242,14 +242,14 @@
 					disabledForm.value.canzhuozhuangtai = true;
 					continue;
 				}
-				if(x=='shangjiazhanghao'){
-					form.value.shangjiazhanghao = row[x];
-					disabledForm.value.shangjiazhanghao = true;
+				if(x=='yuangongzhanghao'){
+					form.value.yuangongzhanghao = row[x];
+					disabledForm.value.yuangongzhanghao = true;
 					continue;
 				}
-				if(x=='shangjiamingcheng'){
-					form.value.shangjiamingcheng = row[x];
-					disabledForm.value.shangjiamingcheng = true;
+				if(x=='yuangongmingcheng'){
+					form.value.yuangongmingcheng = row[x];
+					disabledForm.value.yuangongmingcheng = true;
 					continue;
 				}
 				if(x=='storeupNumber'){

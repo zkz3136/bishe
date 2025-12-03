@@ -62,8 +62,8 @@ public class OrdersController {
     public R page(@RequestParam Map<String, Object> params,OrdersEntity orders,
                                                                                                                                                                                                                                                                                                         HttpServletRequest request){
                     String tableName = request.getSession().getAttribute("tableName").toString();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            if(tableName.equals("shangjia")) {
-                    orders.setShangjiazhanghao((String)request.getSession().getAttribute("username"));
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            if(tableName.equals("yuangong")) {
+                    orders.setYuangongzhanghao((String)request.getSession().getAttribute("username"));
                                             if(orders.getUserid()!=null) {
                             orders.setUserid(null);
                         }
@@ -366,8 +366,8 @@ public class OrdersController {
     @RequestMapping("/count")
     public R count(@RequestParam Map<String, Object> params,OrdersEntity orders, HttpServletRequest request){
         String tableName = request.getSession().getAttribute("tableName").toString();
-        if(tableName.equals("shangjia")) {
-            orders.setShangjiazhanghao((String)request.getSession().getAttribute("username"));
+        if(tableName.equals("yuangong")) {
+            orders.setYuangongzhanghao((String)request.getSession().getAttribute("username"));
         }
         EntityWrapper<OrdersEntity> ew = new EntityWrapper<OrdersEntity>();
         int count = ordersService.selectCount(MPUtil.sort(MPUtil.between(MPUtil.likeOrEq(ew, orders), params), params));

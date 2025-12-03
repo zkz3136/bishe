@@ -17,8 +17,8 @@
         <result property="price" column="price"/>
         <result property="storeupNumber" column="storeup_number"/>
         <result property="discussNumber" column="discuss_number"/>
-        <result property="shangjiazhanghao" column="shangjiazhanghao"/>
-        <result property="shangjiamingcheng" column="shangjiamingcheng"/>
+        <result property="yuangongzhanghao" column="yuangongzhanghao"/>
+        <result property="yuangongmingcheng" column="yuangongmingcheng"/>
     </resultMap>
 
     <select id="selectListView"

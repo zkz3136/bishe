@@ -25,7 +25,7 @@
         <result property="role" column="role"/>
         <result property="addtime" column="addtime"/>
         <result property="userid" column="userid"/>
-        <result property="shangjiazhanghao" column="shangjiazhanghao"/>
+        <result property="yuangongzhanghao" column="yuangongzhanghao"/>
         <result property="goodtype" column="goodtype"/>
     </resultMap>
 

@@ -70,8 +70,8 @@ public class MeishixinxiController {
     public R page(@RequestParam Map<String, Object> params,MeishixinxiEntity meishixinxi,
                                                                                                                                                                                                                             HttpServletRequest request){
                     String tableName = request.getSession().getAttribute("tableName").toString();
-                                                                                                                                                                                                                                                                                                                                                                                            if(tableName.equals("shangjia")) {
-                    meishixinxi.setShangjiazhanghao((String)request.getSession().getAttribute("username"));
+                                                                                                                                                                                                                                                                                                                                                                                            if(tableName.equals("yuangong")) {
+                    meishixinxi.setYuangongzhanghao((String)request.getSession().getAttribute("username"));
                                     }
                                                                                             EntityWrapper<MeishixinxiEntity> ew = new EntityWrapper<MeishixinxiEntity>();
                                                                                                                                                                                                                                                                                                                                                         
@@ -292,8 +292,8 @@ public class MeishixinxiController {
         params.put("yColumn", MPUtil.camelToSnake(yColumnName));
         EntityWrapper<MeishixinxiEntity> ew = new EntityWrapper<MeishixinxiEntity>();
 		String tableName = request.getSession().getAttribute("tableName").toString();
-		if(tableName.equals("shangjia")) {
-            ew.eq("shangjiazhanghao", (String)request.getSession().getAttribute("username"));
+		if(tableName.equals("yuangong")) {
+            ew.eq("yuangongzhanghao", (String)request.getSession().getAttribute("username"));
 		}
         List<Map<String, Object>> result = MPUtil.snakeListToCamel(meishixinxiService.selectValue(params, ew));
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -339,8 +339,8 @@ public class MeishixinxiController {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         EntityWrapper<MeishixinxiEntity> ew = new EntityWrapper<MeishixinxiEntity>();
         String tableName = request.getSession().getAttribute("tableName").toString();
-        if(tableName.equals("shangjia")) {
-            ew.eq("shangjiazhanghao", (String)request.getSession().getAttribute("username"));
+        if(tableName.equals("yuangong")) {
+            ew.eq("yuangongzhanghao", (String)request.getSession().getAttribute("username"));
         }
         for(int i=0;i<yColumnNames.length;i++) {
             params.put("yColumn", yColumnNames[i]);
@@ -368,8 +368,8 @@ public class MeishixinxiController {
         params.put("timeStatType", timeStatType);
         EntityWrapper<MeishixinxiEntity> ew = new EntityWrapper<MeishixinxiEntity>();
         String tableName = request.getSession().getAttribute("tableName").toString();
-        if(tableName.equals("shangjia")) {
-            ew.eq("shangjiazhanghao", (String)request.getSession().getAttribute("username"));
+        if(tableName.equals("yuangong")) {
+            ew.eq("yuangongzhanghao", (String)request.getSession().getAttribute("username"));
         }
         List<Map<String, Object>> result = MPUtil.snakeListToCamel(meishixinxiService.selectTimeStatValue(params, ew));
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -396,8 +396,8 @@ public class MeishixinxiController {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         EntityWrapper<MeishixinxiEntity> ew = new EntityWrapper<MeishixinxiEntity>();
         String tableName = request.getSession().getAttribute("tableName").toString();
-        if(tableName.equals("shangjia")) {
-            ew.eq("shangjiazhanghao", (String)request.getSession().getAttribute("username"));
+        if(tableName.equals("yuangong")) {
+            ew.eq("yuangongzhanghao", (String)request.getSession().getAttribute("username"));
         }
         for(int i=0;i<yColumnNames.length;i++) {
             params.put("yColumn", yColumnNames[i]);
@@ -423,8 +423,8 @@ public class MeishixinxiController {
         params.put("column", MPUtil.camelToSnake(columnName));
         EntityWrapper<MeishixinxiEntity> ew = new EntityWrapper<MeishixinxiEntity>();
         String tableName = request.getSession().getAttribute("tableName").toString();
-        if(tableName.equals("shangjia")) {
-            ew.eq("shangjiazhanghao", (String)request.getSession().getAttribute("username"));
+        if(tableName.equals("yuangong")) {
+            ew.eq("yuangongzhanghao", (String)request.getSession().getAttribute("username"));
         }
         List<Map<String, Object>> result = MPUtil.snakeListToCamel(meishixinxiService.selectGroup(params, ew));
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

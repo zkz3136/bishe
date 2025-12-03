@@ -155,8 +155,8 @@
 		kouwei: '不辣',
 		tuijianzhishu: '',
 		clicktime: '',
-		shangjiazhanghao: '',
-		shangjiamingcheng: '',
+		yuangongzhanghao: '',
+		yuangongmingcheng: '',
 	})
 	const formRef = ref(null)
 	const id = ref(0)
@@ -174,8 +174,8 @@
 		price : false,
 		storeupNumber : false,
 		discussNumber : false,
-		shangjiazhanghao : false,
-		shangjiamingcheng : false,
+		yuangongzhanghao : false,
+		yuangongmingcheng : false,
 	})
 	const isAdd = ref(false)
 	//表单验证
@@ -212,9 +212,9 @@
 		discussNumber: [
 			{ validator: context.$toolUtil.validator.intNumber, trigger: 'blur' },
 		],
-		shangjiazhanghao: [
+		yuangongzhanghao: [
 		],
-		shangjiamingcheng: [
+		yuangongmingcheng: [
 		],
 	})
 	//菜品图片上传回调
@@ -325,14 +325,14 @@
 					disabledForm.value.discussNumber = true;
 					continue;
 				}
-				if(x=='shangjiazhanghao'){
-					form.value.shangjiazhanghao = row[x];
-					disabledForm.value.shangjiazhanghao = true;
+				if(x=='yuangongzhanghao'){
+					form.value.yuangongzhanghao = row[x];
+					disabledForm.value.yuangongzhanghao = true;
 					continue;
 				}
-				if(x=='shangjiamingcheng'){
-					form.value.shangjiamingcheng = row[x];
-					disabledForm.value.shangjiamingcheng = true;
+				if(x=='yuangongmingcheng'){
+					form.value.yuangongmingcheng = row[x];
+					disabledForm.value.yuangongmingcheng = true;
 					continue;
 				}
 			}
@@ -358,13 +358,13 @@
 			method: 'get'
 		}).then(res => {
 			var json = res.data.data
-			if(json.hasOwnProperty('shangjiazhanghao') && context?.$toolUtil.storageGet("frontRole")!="管理员"){
-				form.value.shangjiazhanghao = json.shangjiazhanghao
-				disabledForm.value.shangjiazhanghao = true;
+			if(json.hasOwnProperty('yuangongzhanghao') && context?.$toolUtil.storageGet("frontRole")!="管理员"){
+				form.value.yuangongzhanghao = json.yuangongzhanghao
+				disabledForm.value.yuangongzhanghao = true;
 			}
-			if(json.hasOwnProperty('shangjiamingcheng') && context?.$toolUtil.storageGet("frontRole")!="管理员"){
-				form.value.shangjiamingcheng = json.shangjiamingcheng
-				disabledForm.value.shangjiamingcheng = true;
+			if(json.hasOwnProperty('yuangongmingcheng') && context?.$toolUtil.storageGet("frontRole")!="管理员"){
+				form.value.yuangongmingcheng = json.yuangongmingcheng
+				disabledForm.value.yuangongmingcheng = true;
 			}
             if (localStorage.getItem('autoSave')) {
                 localStorage.removeItem('autoSave')

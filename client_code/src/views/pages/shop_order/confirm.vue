@@ -119,6 +119,11 @@
             let res = await context.$http.get(`${item.tablename}/info/${item.goodid}`)
             let data = res.data.data
             let orderid = createOrder()
+            
+            // 调试信息
+            console.log('商品数据:', data)
+            console.log('购物车项目:', item)
+            
             orders.push({
                 orderid: orderid,
                 tablename: item.tablename,
@@ -126,7 +131,7 @@
                 role: context.$toolUtil.storageGet('frontSessionTable'),
                 goodid: item.goodid,
                 goodname: item.goodname,
-                shangjiazhanghao: item.shangjiazhanghao,
+                yuangongzhanghao: data.yuangongzhanghao || item.yuangongzhanghao || '',
                 goodtype: item.goodtype,
                 picture: item.picture,
                 buynumber: item.buynumber,

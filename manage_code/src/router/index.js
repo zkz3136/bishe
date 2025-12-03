@@ -12,6 +12,7 @@ import cheweixinxi from '@/views/cheweixinxi/list'
 import discusscantingxinxi from '@/views/discusscantingxinxi/list'
 import cantingxinxi from '@/views/cantingxinxi/list'
 import yonghu from '@/views/yonghu/list'
+import yuangong from '@/views/yuangong/list'
 import systemNotice from '@/views/systemNotice/list'
 import cantingyuyue from '@/views/cantingyuyue/list'
 import meishixinxi from '@/views/meishixinxi/list'
@@ -95,6 +96,11 @@ export const routes = [{
 			path: '/yonghu',
 			name: '用户',
 			component: yonghu
+		}
+		,{
+			path: '/yuangong',
+			name: '员工',
+			component: yuangong
 		}
 		,{
 			path: '/systemNotice',
