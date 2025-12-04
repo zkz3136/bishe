@@ -933,8 +933,6 @@ init()
 <style lang="scss" scoped>
 /* 头部 */
 .index_top {
-  .index_top_title {
-  }
   .index_top_right {
     line-height: 1;
     .weather_time_view {
@@ -951,8 +949,6 @@ init()
         .city {
           padding: 0;
           margin: 0 10px 0 0;
-        }
-        .wea {
         }
       }
       .time {
@@ -1001,8 +997,6 @@ init()
   }
 }
 // 轮播盒子
-.rotation_view {
-}
 // 底部
 .bottom_view {
   // 图片
@@ -1046,54 +1040,13 @@ init()
 .el-sub-menu__hide-arrow{
   display: block !important;
 }
-.menu_scrollbar {
-}
 // 总盒子
-.menu_view {
-  // 一级菜单
-  :deep(.first-item) {
-
-    // 图标
-
-    // 标题
-    .el-sub-menu__title,
-    span {
-    }
-
-    //箭头
-    .el-sub-menu__icon-arrow {
-    }
-  }
-  // 选中
-  :deep(.is-active) {
-  }
-
-  // 悬浮
-  :deep(.first-item:hover) {
-  }
-}
 </style>
 <style lang="scss">
 // 二级
 .menu_popper {
   border:none !important;
   background: none !important;
-
-  // 二级总盒子
-  .el-menu--popup {
-  }
-
-  // 二级菜单
-  .second-item {
-  }
-
-  // 选中
-  .is-active {
-  }
-
-  // 悬浮
-  .second-item:hover {
-  }
 }
 </style>
 
@@ -1505,8 +1458,6 @@ init()
   height: 450px;
   border:0px solid #fff;
   border-radius:10px;
-}
-.rotation_view .swiper .swiper-slide{
 }
 .rotation_view .swiper .swiper-slide img{
   width: 100%;
