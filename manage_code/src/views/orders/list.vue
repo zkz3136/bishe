@@ -1,4 +1,4 @@
-<template>
+﻿<template>
 	<div>
 		<div class="center_view">
 			<el-tabs
@@ -59,7 +59,7 @@
 				:stripe='false'
 				@selection-change="handleSelectionChange"
 				ref="table"
-				v-if="btnAuth('orders'+(orderStatus?'/'+orderStatus:''),'查看')"
+				v-if="true"
 				:data="list"
 				@row-click="listChange">
 				<el-table-column :resizable='true' align="left" header-align="left" type="selection" width="55" />
@@ -677,7 +677,7 @@
 				"remark",
 			"addtime",
 			"userid",
-				"shangjiazhanghao",
+				"yuangongzhanghao",
 			"goodtype",
 		]
 			excel.export_json_to_excel2(tHeader, selRows.value, filterVal, formName)
@@ -916,3 +916,4 @@
 		}
 	}
 </style>
+

@@ -10,14 +10,15 @@
         <result property="fengmian" column="fengmian"/>
         <result property="canzhuoweizhi" column="canzhuoweizhi"/>
         <result property="kezuorenshu" column="kezuorenshu"/>
-        <result property="shangjiazhanghao" column="shangjiazhanghao"/>
-        <result property="shangjiamingcheng" column="shangjiamingcheng"/>
         <result property="storeupNumber" column="storeup_number"/>
         <result property="zhanghao" column="zhanghao"/>
         <result property="mingcheng" column="mingcheng"/>
         <result property="yuyueshijian" column="yuyueshijian"/>
         <result property="sfsh" column="sfsh"/>
         <result property="shhf" column="shhf"/>
+        <result property="dingjin" column="dingjin"/>
+        <result property="zhifuzhuangtai" column="zhifuzhuangtai"/>
+        <result property="hexiaozhuangtai" column="hexiaozhuangtai"/>
     </resultMap>
 
     <select id="selectListView"

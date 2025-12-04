@@ -1,4 +1,4 @@
-<template>
+﻿<template>
 	<div>
 		<el-dialog modal-class="edit_form_modal" class="edit_form" v-model="formVisible" :title="formTitle" width="50%" destroy-on-close :fullscreen='false'>
 			<el-form class="formModel_form" ref="formRef" :model="form" :rules="rules">
@@ -149,8 +149,8 @@
         price : false,
         storeupNumber : false,
         discussNumber : false,
-        shangjiazhanghao : false,
-        shangjiamingcheng : false,
+        yuangongzhanghao : false,
+        yuangongmingcheng : false,
 	})
 	const formVisible = ref(false)
 	const isAdd = ref(false)
@@ -189,9 +189,9 @@
 		discussNumber: [
 			{ validator: context.$toolUtil.validator.intNumber, trigger: 'blur' },
 		],
-		shangjiazhanghao: [
+		yuangongzhanghao: [
 		],
-		shangjiamingcheng: [
+		yuangongmingcheng: [
 		],
 	})
 	//表单验证
@@ -224,8 +224,8 @@
 			kouwei: '不辣',
 			tuijianzhishu: '',
 			clicktime: '',
-			shangjiazhanghao: '',
-			shangjiamingcheng: '',
+			yuangongzhanghao: '',
+			yuangongmingcheng: '',
 		}
 	}
 	//获取info
@@ -330,14 +330,14 @@
 					disabledForm.value.discussNumber = true;
 					continue;
 				}
-				if(x=='shangjiazhanghao'){
-					form.value.shangjiazhanghao = row[x];
-					disabledForm.value.shangjiazhanghao = true;
+				if(x=='yuangongzhanghao'){
+					form.value.yuangongzhanghao = row[x];
+					disabledForm.value.yuangongzhanghao = true;
 					continue;
 				}
-				if(x=='shangjiamingcheng'){
-					form.value.shangjiamingcheng = row[x];
-					disabledForm.value.shangjiamingcheng = true;
+				if(x=='yuangongmingcheng'){
+					form.value.yuangongmingcheng = row[x];
+					disabledForm.value.yuangongmingcheng = true;
 					continue;
 				}
 			}
@@ -531,3 +531,4 @@
 		}
 	}
 </style>
+

@@ -100,12 +100,6 @@ public class CartEntity<T> implements Serializable {
 	private Long userid;
 	
 	/**
-	 * 商户名称
-	 */
-					
-	private String shangjiazhanghao;
-	
-	/**
 	 * 商品类型
 	 */
 					
@@ -226,18 +220,6 @@ public class CartEntity<T> implements Serializable {
 		return userid;
 	}
 	/**
-	 * 设置：商户名称
-	 */
-	public void setShangjiazhanghao(String shangjiazhanghao) {
-		this.shangjiazhanghao = shangjiazhanghao;
-	}
-	/**
-	 * 获取：商户名称
-	 */
-	public String getShangjiazhanghao() {
-		return shangjiazhanghao;
-	}
-	/**
 	 * 设置：商品类型
 	 */
 	public void setGoodtype(String goodtype) {
@@ -251,3 +233,4 @@ public class CartEntity<T> implements Serializable {
 	}
 
 }
+

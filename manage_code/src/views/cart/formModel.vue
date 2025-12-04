@@ -1,4 +1,4 @@
-<template>
+﻿<template>
 	<div>
 		<el-dialog modal-class="edit_form_modal" class="edit_form" v-model="formVisible" :title="formTitle" width="50%" destroy-on-close :fullscreen='false'>
 			<el-form class="formModel_form" ref="formRef" :model="form" :rules="rules">
@@ -66,10 +66,10 @@
 					</el-col>
 
 					<el-col :span="24">
-						<el-form-item label="商户名称" prop="shangjiazhanghao">
-							<el-input class="list_inp" v-model="form.shangjiazhanghao" placeholder="商户名称"
+						<el-form-item label="商户名称" prop="yuangongzhanghao">
+							<el-input class="list_inp" v-model="form.yuangongzhanghao" placeholder="商户名称"
                                 type="text"
-								:readonly="!isAdd||disabledForm.shangjiazhanghao?true:false" />
+								:readonly="!isAdd||disabledForm.yuangongzhanghao?true:false" />
 						</el-form-item>
 					</el-col>
 
@@ -126,7 +126,7 @@
         price : false,
         discountprice : false,
         userid : false,
-        shangjiazhanghao : false,
+        yuangongzhanghao : false,
         goodtype : false,
 	})
 	const formVisible = ref(false)
@@ -156,7 +156,7 @@
 		userid: [
 			{required: true,message: '请输入',trigger: 'blur'}, 
 		],
-		shangjiazhanghao: [
+		yuangongzhanghao: [
 		],
 		goodtype: [
 		],
@@ -185,7 +185,7 @@
 			price: '',
 			discountprice: '',
 			userid: '',
-			shangjiazhanghao: '',
+			yuangongzhanghao: '',
 			goodtype: '',
 		}
 	}
@@ -270,9 +270,9 @@
 					disabledForm.value.userid = true;
 					continue;
 				}
-				if(x=='shangjiazhanghao'){
-					form.value.shangjiazhanghao = row[x];
-					disabledForm.value.shangjiazhanghao = true;
+				if(x=='yuangongzhanghao'){
+					form.value.yuangongzhanghao = row[x];
+					disabledForm.value.yuangongzhanghao = true;
 					continue;
 				}
 				if(x=='goodtype'){
@@ -441,3 +441,4 @@
 		}
 	}
 </style>
+

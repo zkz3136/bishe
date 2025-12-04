@@ -81,17 +81,6 @@ public class CantingyuyueEntity<T> implements Serializable {
 					
 	private Integer kezuorenshu;
 	
-	/**
-	 * 商家账号
-	 */
-					
-	private String shangjiazhanghao;
-	
-	/**
-	 * 商家名称
-	 */
-					
-	private String shangjiamingcheng;
 	
 	/**
 	 * 收藏数
@@ -223,30 +212,6 @@ public class CantingyuyueEntity<T> implements Serializable {
 	 */
 	public Integer getKezuorenshu() {
 		return kezuorenshu;
-	}
-	/**
-	 * 设置：商家账号
-	 */
-	public void setShangjiazhanghao(String shangjiazhanghao) {
-		this.shangjiazhanghao = shangjiazhanghao;
-	}
-	/**
-	 * 获取：商家账号
-	 */
-	public String getShangjiazhanghao() {
-		return shangjiazhanghao;
-	}
-	/**
-	 * 设置：商家名称
-	 */
-	public void setShangjiamingcheng(String shangjiamingcheng) {
-		this.shangjiamingcheng = shangjiamingcheng;
-	}
-	/**
-	 * 获取：商家名称
-	 */
-	public String getShangjiamingcheng() {
-		return shangjiamingcheng;
 	}
 	/**
 	 * 设置：收藏数

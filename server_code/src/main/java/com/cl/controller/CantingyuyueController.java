@@ -71,9 +71,6 @@ public class CantingyuyueController {
     public R page(@RequestParam Map<String, Object> params,CantingyuyueEntity cantingyuyue,
                                                                                                                                                                                                                 HttpServletRequest request){
                     String tableName = request.getSession().getAttribute("tableName").toString();
-                                                                                                                                                                                        if(tableName.equals("shangjia")) {
-                    cantingyuyue.setShangjiazhanghao((String)request.getSession().getAttribute("username"));
-                                    }
                                                                                                                                         if(tableName.equals("yonghu")) {
                     cantingyuyue.setZhanghao((String)request.getSession().getAttribute("username"));
                                     }
@@ -189,11 +186,6 @@ public class CantingyuyueController {
             wrapper.eq("hexiaozhuangtai", "未核销"); // 只检查未核销的预约
             
             int count = cantingyuyueService.selectCount(wrapper);
-            System.out.println("========== 预约冲突检测 ==========");
-            System.out.println("餐桌名称: " + cantingyuyue.getCanzhuomingcheng());
-            System.out.println("预约时间: " + cantingyuyue.getYuyueshijian());
-            System.out.println("已有预约数量: " + count);
-            System.out.println("================================");
             
             if(count > 0) {
                 return R.error("该餐桌在此时间段已被预约，请选择其他时间段");

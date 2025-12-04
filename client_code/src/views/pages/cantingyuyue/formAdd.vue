@@ -221,11 +221,7 @@
 		fengmian: '',
 		canzhuoweizhi: '',
 		kezuorenshu: 0,
-		yuangongzhanghao: '',
-		yuangongmingcheng: '',
 		storeupNumber: 0,
-		zhanghao: '',
-		mingcheng: '',
 		yuyueshijian: '',
 		shhf: '',
 	})
@@ -238,11 +234,7 @@
 		fengmian : false,
 		canzhuoweizhi : false,
 		kezuorenshu : false,
-		yuangongzhanghao : false,
-		yuangongmingcheng : false,
 		storeupNumber : false,
-		zhanghao : false,
-		mingcheng : false,
 		yuyueshijian : false,
 		sfsh : false,
 		shhf : false,
@@ -289,16 +281,8 @@
 		kezuorenshu: [
 			{ validator: context.$toolUtil.validator.intNumber, trigger: 'blur' },
 		],
-		yuangongzhanghao: [
-		],
-		yuangongmingcheng: [
-		],
 		storeupNumber: [
 			{ validator: context.$toolUtil.validator.intNumber, trigger: 'blur' },
-		],
-		zhanghao: [
-		],
-		mingcheng: [
 		],
 		yuyueshijian: [
 		],
@@ -385,29 +369,9 @@
 					disabledForm.value.kezuorenshu = true;
 					continue;
 				}
-				if(x=='yuangongzhanghao'){
-					form.value.yuangongzhanghao = row[x];
-					disabledForm.value.yuangongzhanghao = true;
-					continue;
-				}
-				if(x=='yuangongmingcheng'){
-					form.value.yuangongmingcheng = row[x];
-					disabledForm.value.yuangongmingcheng = true;
-					continue;
-				}
 				if(x=='storeupNumber'){
 					form.value.storeupNumber = row[x];
 					disabledForm.value.storeupNumber = true;
-					continue;
-				}
-				if(x=='zhanghao'){
-					form.value.zhanghao = row[x];
-					disabledForm.value.zhanghao = true;
-					continue;
-				}
-				if(x=='mingcheng'){
-					form.value.mingcheng = row[x];
-					disabledForm.value.mingcheng = true;
 					continue;
 				}
 				if(x=='yuyueshijian'){

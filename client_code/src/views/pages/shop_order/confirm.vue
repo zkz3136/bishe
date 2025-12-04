@@ -131,7 +131,6 @@
                 role: context.$toolUtil.storageGet('frontSessionTable'),
                 goodid: item.goodid,
                 goodname: item.goodname,
-                yuangongzhanghao: data.yuangongzhanghao || item.yuangongzhanghao || '',
                 goodtype: item.goodtype,
                 picture: item.picture,
                 buynumber: item.buynumber,

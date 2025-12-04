@@ -125,17 +125,6 @@ public class MeishixinxiEntity<T> implements Serializable {
 					
 	private Integer discussNumber;
 	
-	/**
-	 * 员工账号
-	 */
-					
-	private String yuangongzhanghao;
-	
-	/**
-	 * 员工姓名
-	 */
-					
-	private String yuangongmingcheng;
 	
 
 	@JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
@@ -298,30 +287,6 @@ public class MeishixinxiEntity<T> implements Serializable {
 	 */
 	public Integer getDiscussNumber() {
 		return discussNumber;
-	}
-	/**
-	 * 设置：员工账号
-	 */
-	public void setYuangongzhanghao(String yuangongzhanghao) {
-		this.yuangongzhanghao = yuangongzhanghao;
-	}
-	/**
-	 * 获取：员工账号
-	 */
-	public String getYuangongzhanghao() {
-		return yuangongzhanghao;
-	}
-	/**
-	 * 设置：员工姓名
-	 */
-	public void setYuangongmingcheng(String yuangongmingcheng) {
-		this.yuangongmingcheng = yuangongmingcheng;
-	}
-	/**
-	 * 获取：员工姓名
-	 */
-	public String getYuangongmingcheng() {
-		return yuangongmingcheng;
 	}
 
 }

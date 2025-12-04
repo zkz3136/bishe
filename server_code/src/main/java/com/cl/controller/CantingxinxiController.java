@@ -66,9 +66,7 @@ public class CantingxinxiController {
     public R page(@RequestParam Map<String, Object> params,CantingxinxiEntity cantingxinxi,
                                                                                                                                                                             HttpServletRequest request){
                     String tableName = request.getSession().getAttribute("tableName").toString();
-                                                                                                                                                                                                                    if(tableName.equals("shangjia")) {
-                    cantingxinxi.setShangjiazhanghao((String)request.getSession().getAttribute("username"));
-                                    }
+                                                                                                                                                                                                                    // 删除员工字段后，无需权限过滤
                                                                                                                                                     EntityWrapper<CantingxinxiEntity> ew = new EntityWrapper<CantingxinxiEntity>();
                                                                                                                                                                                                                                                                         
         

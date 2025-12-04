@@ -1,4 +1,4 @@
-import toolUtil from '@/utils/toolUtil.js'
+﻿import toolUtil from '@/utils/toolUtil.js'
 import config from '@/utils/config.js'
 import http from '@/utils/http.js'
 import default_avatar from "@/assets/img/avatar.png"
@@ -25,7 +25,7 @@ export default {
             if(toolUtil.storageGet('sessionTable') == 'users'){
                 key = 'tupian'
             }
-            if(toolUtil.storageGet('sessionTable') == 'shangjia'){
+            if(toolUtil.storageGet('sessionTable') == 'Yuangong'){
                 key = 'touxiang'
             }
             let avatar = state.session[key]

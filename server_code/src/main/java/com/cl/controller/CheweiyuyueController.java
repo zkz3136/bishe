@@ -170,11 +170,6 @@ public class CheweiyuyueController {
             wrapper.eq("hexiaozhuangtai", "未核销"); // 只检查未核销的预约
             
             int count = cheweiyuyueService.selectCount(wrapper);
-            System.out.println("========== 车位预约冲突检测 ==========");
-            System.out.println("车位编号: " + cheweiyuyue.getCheweibianhao());
-            System.out.println("预约时间: " + cheweiyuyue.getYuyueshijian());
-            System.out.println("已有预约数量: " + count);
-            System.out.println("================================");
             
             if(count > 0) {
                 return R.error("该车位在此时间段已被预约，请选择其他时间段");

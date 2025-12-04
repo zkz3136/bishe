@@ -1,4 +1,4 @@
-<template>
+﻿<template>
 	<div class="detail-page" :style='{}'>
         <div class="breadcrumb-wrapper" style="width: 100%;">
             <div class="bread_view">
@@ -498,7 +498,6 @@
 		cartForm.value.goodname = title.value
 		cartForm.value.tablename = tableName
 		cartForm.value.picture = bannerList.value[0]
-		cartForm.value.shangjiazhanghao = detail.value.shangjiazhanghao
 		cartForm.value.goodtype = detail.value.caipinleixing
         cartForm.value.price = detail.value.price
 		context?.$http({
@@ -535,7 +534,6 @@
 			buynumber: buyNumber.value,
 			userid: context?.$toolUtil.storageGet('userid'),
 			discountprice: detail.value.vipprice,
-			shangjiazhanghao: detail.value.shangjiazhanghao,
 			goodtype: detail.value.caipinleixing,
 			picture: bannerList.value[0],
 			price: detail.value.price

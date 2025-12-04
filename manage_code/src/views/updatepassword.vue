@@ -1,4 +1,4 @@
-<template>
+﻿<template>
 	<div>
 		<div class="center_view edit_form">
 			<el-form class="password_form" ref="passwordFormRef" :model="form" label-width="120px" :rules="rules">
@@ -58,7 +58,7 @@
 					}
 					user.value.password = form.value.mima
 				}else{
-					if(sessionTable.value == 'shangjia'){
+					if(sessionTable.value == 'Yuangong'){
 						if(form.value.mima1 != user.value.mima){
 							context?.$toolUtil.message('原密码不正确', 'error')
 							return false
@@ -69,7 +69,7 @@
 					context?.$toolUtil.message('两次密码输入不一致','error')
 					return false
 				}
-				if(sessionTable.value == 'shangjia'){
+				if(sessionTable.value == 'Yuangong'){
 					user.value.mima = form.value.mima
 				}
 				context?.$http({
@@ -118,3 +118,4 @@
 		}
 	}
 </style>
+

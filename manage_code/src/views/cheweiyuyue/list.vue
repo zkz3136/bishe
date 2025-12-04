@@ -71,7 +71,7 @@
 				v-if="btnAuth('cheweiyuyue','查看')"
 				:data="list"
 				@row-click="listChange">
-				<el-table-column :resizable='true' align="left" header-align="left" type="selection" width="55" />
+				<el-table-column :resizable='true' align="left" header-align="left" type="selection" width="55" :selectable="checkSelectable" />
 				<el-table-column label="序号" width="70" :resizable='true' align="left" header-align="left">
 					<template #default="scope">{{ (listQuery.page-1)*listQuery.limit+scope.$index + 1}}</template>
 				</el-table-column>
@@ -359,6 +359,10 @@
 	//多选
 	const handleSelectionChange = (e) => {
 		selRows.value = e
+	}
+	//检查行是否可选择（只有已支付且未核销的记录才能被选择进行核销）
+	const checkSelectable = (row, index) => {
+		return row.zhifuzhuangtai === '已支付' && row.hexiaozhuangtai === '未核销'
 	}
 	//列表数据
 	//分页

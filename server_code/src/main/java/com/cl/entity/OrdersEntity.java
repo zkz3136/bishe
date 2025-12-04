@@ -166,12 +166,6 @@ public class OrdersEntity<T> implements Serializable {
 	private Long userid;
 	
 	/**
-	 * 员工账号
-	 */
-					
-	private String yuangongzhanghao;
-	
-	/**
 	 * 商品类型
 	 */
 					
@@ -428,18 +422,6 @@ public class OrdersEntity<T> implements Serializable {
 	 */
 	public Long getUserid() {
 		return userid;
-	}
-	/**
-	 * 设置：员工账号
-	 */
-	public void setYuangongzhanghao(String yuangongzhanghao) {
-		this.yuangongzhanghao = yuangongzhanghao;
-	}
-	/**
-	 * 获取：员工账号
-	 */
-	public String getYuangongzhanghao() {
-		return yuangongzhanghao;
 	}
 	/**
 	 * 设置：商品类型

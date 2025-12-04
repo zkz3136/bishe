@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="home">
     <div class="index_top">
       <div class="index_top_title"><span>餐厅智能服务与预订系统</span></div>
@@ -886,10 +886,10 @@ const getSession = () =>{
     if(context?.$toolUtil.storageGet('frontSessionTable') == 'users'){
       context?.$toolUtil.storageSet('headportrait',res.data.data.tupian)
     }
-    if(context?.$toolUtil.storageGet('frontSessionTable') == 'shangjia'){
-      context?.$toolUtil.storageSet("frontName", res.data.data.shangjiazhanghao)
+    if(context?.$toolUtil.storageGet('frontSessionTable') == 'Yuangong'){
+      context?.$toolUtil.storageSet("frontName", res.data.data.yuangongzhanghao)
     }
-    if(context?.$toolUtil.storageGet('frontSessionTable') == 'shangjia'){
+    if(context?.$toolUtil.storageGet('frontSessionTable') == 'Yuangong'){
       context?.$toolUtil.storageSet('headportrait',res.data.data.touxiang)
     }
   })
@@ -1366,7 +1366,7 @@ init()
 
 .user-dropDown li.loginOut{
   background: none !important;
-  border-color: none !important;
+  border: none !important;
   color: #666 !important;
 }
 .user-dropDown li.loginOut:hover{

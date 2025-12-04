@@ -70,9 +70,7 @@ public class MeishixinxiController {
     public R page(@RequestParam Map<String, Object> params,MeishixinxiEntity meishixinxi,
                                                                                                                                                                                                                             HttpServletRequest request){
                     String tableName = request.getSession().getAttribute("tableName").toString();
-                                                                                                                                                                                                                                                                                                                                                                                            if(tableName.equals("yuangong")) {
-                    meishixinxi.setYuangongzhanghao((String)request.getSession().getAttribute("username"));
-                                    }
+                                                                                                                                                                                                                                                                                                                                                                                            // 删除员工字段后，无需权限过滤
                                                                                             EntityWrapper<MeishixinxiEntity> ew = new EntityWrapper<MeishixinxiEntity>();
                                                                                                                                                                                                                                                                                                                                                         
         

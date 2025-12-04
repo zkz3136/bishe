@@ -11,8 +11,6 @@
         <result property="canzhuoweizhi" column="canzhuoweizhi"/>
         <result property="kezuorenshu" column="kezuorenshu"/>
         <result property="canzhuozhuangtai" column="canzhuozhuangtai"/>
-        <result property="shangjiazhanghao" column="shangjiazhanghao"/>
-        <result property="shangjiamingcheng" column="shangjiamingcheng"/>
         <result property="storeupNumber" column="storeup_number"/>
         <result property="discussNumber" column="discuss_number"/>
     </resultMap>

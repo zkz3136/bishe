@@ -62,20 +62,11 @@ public class OrdersController {
     public R page(@RequestParam Map<String, Object> params,OrdersEntity orders,
                                                                                                                                                                                                                                                                                                         HttpServletRequest request){
                     String tableName = request.getSession().getAttribute("tableName").toString();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            if(tableName.equals("yuangong")) {
-                    orders.setYuangongzhanghao((String)request.getSession().getAttribute("username"));
-                                            if(orders.getUserid()!=null) {
-                            orders.setUserid(null);
-                        }
-                                    }
-                                        else {
-                        if(!request.getSession().getAttribute("role").toString().equals("管理员")) {
+                                        if(!tableName.equals("yuangong") && !request.getSession().getAttribute("role").toString().equals("管理员")) {
                             orders.setUserid((Long)request.getSession().getAttribute("userId"));
                         }
-                    }
                                                                                             EntityWrapper<OrdersEntity> ew = new EntityWrapper<OrdersEntity>();
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
-        
         
         PageUtils page = ordersService.queryPage(params, MPUtil.sort(MPUtil.between(MPUtil.likeOrEq(ew, orders), params), params));
         return R.ok().put("data", page);
@@ -208,9 +199,7 @@ public class OrdersController {
         params.put("yColumn", MPUtil.camelToSnake(yColumnName));
         EntityWrapper<OrdersEntity> ew = new EntityWrapper<OrdersEntity>();
 		String tableName = request.getSession().getAttribute("tableName").toString();
-		if(tableName.equals("shangjia")) {
-            ew.eq("shangjiazhanghao", (String)request.getSession().getAttribute("username"));
-		}
+		// 员工功能已移除，不再按员工账号过滤
             ew.in("status", new String[]{"已支付","已发货","已完成"}).ne("type",2);
         List<Map<String, Object>> result = MPUtil.snakeListToCamel(ordersService.selectValue(params, ew));
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -256,8 +245,8 @@ public class OrdersController {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         EntityWrapper<OrdersEntity> ew = new EntityWrapper<OrdersEntity>();
         String tableName = request.getSession().getAttribute("tableName").toString();
-        if(tableName.equals("shangjia")) {
-            ew.eq("shangjiazhanghao", (String)request.getSession().getAttribute("username"));
+        if(tableName.equals("yuangong")) {
+            // 员工功能已移除，不再按员工账号过滤
         }
         for(int i=0;i<yColumnNames.length;i++) {
             params.put("yColumn", yColumnNames[i]);
@@ -285,8 +274,8 @@ public class OrdersController {
         params.put("timeStatType", timeStatType);
         EntityWrapper<OrdersEntity> ew = new EntityWrapper<OrdersEntity>();
         String tableName = request.getSession().getAttribute("tableName").toString();
-        if(tableName.equals("shangjia")) {
-            ew.eq("shangjiazhanghao", (String)request.getSession().getAttribute("username"));
+        if(tableName.equals("yuangong")) {
+            // 员工功能已移除，不再按员工账号过滤
         }
             ew.in("status", new String[]{"已支付","已发货","已完成"}).ne("type",2);
         List<Map<String, Object>> result = MPUtil.snakeListToCamel(ordersService.selectTimeStatValue(params, ew));
@@ -314,8 +303,8 @@ public class OrdersController {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         EntityWrapper<OrdersEntity> ew = new EntityWrapper<OrdersEntity>();
         String tableName = request.getSession().getAttribute("tableName").toString();
-        if(tableName.equals("shangjia")) {
-            ew.eq("shangjiazhanghao", (String)request.getSession().getAttribute("username"));
+        if(tableName.equals("yuangong")) {
+            // 员工功能已移除，不再按员工账号过滤
         }
         for(int i=0;i<yColumnNames.length;i++) {
             params.put("yColumn", yColumnNames[i]);
@@ -341,8 +330,8 @@ public class OrdersController {
         params.put("column", MPUtil.camelToSnake(columnName));
         EntityWrapper<OrdersEntity> ew = new EntityWrapper<OrdersEntity>();
         String tableName = request.getSession().getAttribute("tableName").toString();
-        if(tableName.equals("shangjia")) {
-            ew.eq("shangjiazhanghao", (String)request.getSession().getAttribute("username"));
+        if(tableName.equals("yuangong")) {
+            // 员工功能已移除，不再按员工账号过滤
         }
             ew.in("status", new String[]{"已支付","已发货","已完成"}).ne("type",2);
         List<Map<String, Object>> result = MPUtil.snakeListToCamel(ordersService.selectGroup(params, ew));
@@ -367,13 +356,42 @@ public class OrdersController {
     public R count(@RequestParam Map<String, Object> params,OrdersEntity orders, HttpServletRequest request){
         String tableName = request.getSession().getAttribute("tableName").toString();
         if(tableName.equals("yuangong")) {
-            orders.setYuangongzhanghao((String)request.getSession().getAttribute("username"));
+            // 员工端显示所有订单，创建新的空对象避免字段干扰
+            orders = new OrdersEntity();
         }
         EntityWrapper<OrdersEntity> ew = new EntityWrapper<OrdersEntity>();
         int count = ordersService.selectCount(MPUtil.sort(MPUtil.between(MPUtil.likeOrEq(ew, orders), params), params));
         return R.ok().put("data", count);
     }
 
+    /**
+     * 测试接口 - 直接返回所有订单
+     */
+    @RequestMapping("/test")
+    public R test(){
+        EntityWrapper<OrdersEntity> ew = new EntityWrapper<OrdersEntity>();
+        PageUtils page = ordersService.queryPage(new HashMap<>(), ew);
+        return R.ok().put("data", page);
+    }
+
+    /**
+     * 调试接口 - 模拟员工端查询
+     */
+    @RequestMapping("/debug")
+    public R debug(){
+        OrdersEntity orders = new OrdersEntity();
+        EntityWrapper<OrdersEntity> ew = new EntityWrapper<OrdersEntity>();
+        Map<String, Object> params = new HashMap<>();
+        params.put("page", "1");
+        params.put("limit", "10");
+        params.put("sort", "id");
+        params.put("order", "desc");
+        
+        PageUtils page = ordersService.queryPage(params, MPUtil.sort(MPUtil.between(MPUtil.likeOrEq(ew, orders), params), params));
+        return R.ok().put("data", page);
+    }
+
 
 
 }
+

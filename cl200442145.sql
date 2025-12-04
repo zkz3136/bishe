@@ -11,7 +11,7 @@
  Target Server Version : 80043
  File Encoding         : 65001
 
- Date: 07/11/2025 23:00:38
+ Date: 04/12/2025 11:24:24
 */
 
 SET NAMES utf8mb4;
@@ -26,7 +26,7 @@ CREATE TABLE `caipinleixing`  (
   `addtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `caipinleixing` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '菜品类型',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜品类型' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜品类型' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of caipinleixing
@@ -57,26 +57,24 @@ CREATE TABLE `cantingxinxi`  (
   `canzhuoweizhi` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '餐桌位置',
   `kezuorenshu` int NULL DEFAULT NULL COMMENT '可坐人数',
   `canzhuozhuangtai` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '餐桌状态',
-  `shangjiazhanghao` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '商家账号',
-  `shangjiamingcheng` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '商家名称',
   `storeup_number` int NULL DEFAULT 0 COMMENT '收藏数',
   `discuss_number` int NULL DEFAULT 0 COMMENT '评论数',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '餐厅信息' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '餐厅信息' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of cantingxinxi
 -- ----------------------------
-INSERT INTO `cantingxinxi` VALUES (1, '2025-10-25 17:01:10', '餐厅名称1', '餐桌名称1', 'file/cantingxinxiFengmian1.jpg,file/cantingxinxiFengmian2.jpg,file/cantingxinxiFengmian3.jpg', '餐桌位置1', 10, '已预约', '商家账号1', '商家名称1', 1, 1);
-INSERT INTO `cantingxinxi` VALUES (2, '2025-10-25 17:01:10', '餐厅名称2', '餐桌名称2', 'file/cantingxinxiFengmian2.jpg,file/cantingxinxiFengmian3.jpg,file/cantingxinxiFengmian4.jpg', '餐桌位置2', 2, '已预约', '商家账号2', '商家名称2', 3, 3);
-INSERT INTO `cantingxinxi` VALUES (3, '2025-10-25 17:01:10', '餐厅名称3', '餐桌名称3', 'file/cantingxinxiFengmian3.jpg,file/cantingxinxiFengmian4.jpg,file/cantingxinxiFengmian5.jpg', '餐桌位置3', 3, '已预约', '商家账号3', '商家名称3', 3, 3);
-INSERT INTO `cantingxinxi` VALUES (4, '2025-10-25 17:01:10', '餐厅名称4', '餐桌名称4', 'file/cantingxinxiFengmian4.jpg,file/cantingxinxiFengmian5.jpg,file/cantingxinxiFengmian6.jpg', '餐桌位置4', 4, '已预约', '商家账号4', '商家名称4', 4, 4);
-INSERT INTO `cantingxinxi` VALUES (5, '2025-10-25 17:01:10', '餐厅名称5', '餐桌名称5', 'file/cantingxinxiFengmian5.jpg,file/cantingxinxiFengmian6.jpg,file/cantingxinxiFengmian7.jpg', '餐桌位置5', 5, '已预约', '商家账号5', '商家名称5', 5, 5);
-INSERT INTO `cantingxinxi` VALUES (6, '2025-10-25 17:01:10', '餐厅名称6', '餐桌名称6', 'file/cantingxinxiFengmian6.jpg,file/cantingxinxiFengmian7.jpg,file/cantingxinxiFengmian8.jpg', '餐桌位置6', 6, '已预约', '商家账号6', '商家名称6', 6, 6);
-INSERT INTO `cantingxinxi` VALUES (7, '2025-10-25 17:01:10', '餐厅名称7', '餐桌名称7', 'file/cantingxinxiFengmian7.jpg,file/cantingxinxiFengmian8.jpg,file/cantingxinxiFengmian9.jpg', '餐桌位置7', 7, '已预约', '商家账号7', '商家名称7', 7, 7);
-INSERT INTO `cantingxinxi` VALUES (8, '2025-10-25 17:01:10', '餐厅名称8', '餐桌名称8', 'file/cantingxinxiFengmian8.jpg,file/cantingxinxiFengmian9.jpg,file/cantingxinxiFengmian10.jpg', '餐桌位置8', 8, '已预约', '商家账号8', '商家名称8', 8, 8);
-INSERT INTO `cantingxinxi` VALUES (9, '2025-10-25 17:01:10', '餐厅名称9', '餐桌名称9', 'file/cantingxinxiFengmian9.jpg,file/cantingxinxiFengmian10.jpg,file/cantingxinxiFengmian11.jpg', '餐桌位置9', 9, '已预约', '商家账号9', '商家名称9', 9, 9);
-INSERT INTO `cantingxinxi` VALUES (10, '2025-10-25 17:01:10', '餐厅名称10', '餐桌名称10', 'file/cantingxinxiFengmian10.jpg,file/cantingxinxiFengmian11.jpg,file/cantingxinxiFengmian12.jpg', '餐桌位置10', 10, '已预约', '商家账号10', '商家名称10', 10, 11);
+INSERT INTO `cantingxinxi` VALUES (1, '2025-10-25 17:01:10', '一楼餐厅', '餐桌名称1', 'file/cantingxinxiFengmian1.jpg', '餐桌位置1', 10, '已预约', 1, 1);
+INSERT INTO `cantingxinxi` VALUES (2, '2025-10-25 17:01:10', '一楼餐厅', '餐桌名称2', 'file/cantingxinxiFengmian2.jpg,file/cantingxinxiFengmian3.jpg,file/cantingxinxiFengmian4.jpg', '餐桌位置2', 2, '已预约', 3, 3);
+INSERT INTO `cantingxinxi` VALUES (3, '2025-10-25 17:01:10', '二楼餐厅', '餐桌名称3', 'file/cantingxinxiFengmian3.jpg,file/cantingxinxiFengmian4.jpg,file/cantingxinxiFengmian5.jpg', '餐桌位置3', 3, '已预约', 3, 3);
+INSERT INTO `cantingxinxi` VALUES (4, '2025-10-25 17:01:10', '二楼餐厅', '餐桌名称4', 'file/cantingxinxiFengmian4.jpg,file/cantingxinxiFengmian5.jpg,file/cantingxinxiFengmian6.jpg', '餐桌位置4', 4, '已预约', 4, 4);
+INSERT INTO `cantingxinxi` VALUES (5, '2025-10-25 17:01:10', '二楼餐厅', '餐桌名称5', 'file/cantingxinxiFengmian5.jpg,file/cantingxinxiFengmian6.jpg,file/cantingxinxiFengmian7.jpg', '餐桌位置5', 5, '已预约', 5, 5);
+INSERT INTO `cantingxinxi` VALUES (6, '2025-10-25 17:01:10', '二楼餐厅', '餐桌名称6', 'file/cantingxinxiFengmian6.jpg,file/cantingxinxiFengmian7.jpg,file/cantingxinxiFengmian8.jpg', '餐桌位置6', 6, '已预约', 6, 6);
+INSERT INTO `cantingxinxi` VALUES (7, '2025-10-25 17:01:10', '二楼餐厅', '餐桌名称7', 'file/cantingxinxiFengmian7.jpg,file/cantingxinxiFengmian8.jpg,file/cantingxinxiFengmian9.jpg', '餐桌位置7', 7, '已预约', 7, 7);
+INSERT INTO `cantingxinxi` VALUES (8, '2025-10-25 17:01:10', '二楼餐厅', '餐桌名称8', 'file/cantingxinxiFengmian8.jpg,file/cantingxinxiFengmian9.jpg,file/cantingxinxiFengmian10.jpg', '餐桌位置8', 8, '已预约', 8, 8);
+INSERT INTO `cantingxinxi` VALUES (9, '2025-10-25 17:01:10', '二楼餐厅', '餐桌名称9', 'file/cantingxinxiFengmian9.jpg,file/cantingxinxiFengmian10.jpg,file/cantingxinxiFengmian11.jpg', '餐桌位置9', 9, '已预约', 9, 9);
+INSERT INTO `cantingxinxi` VALUES (10, '2025-10-25 17:01:10', '二楼餐厅', '餐桌名称10', 'file/cantingxinxiFengmian10.jpg,file/cantingxinxiFengmian11.jpg,file/cantingxinxiFengmian12.jpg', '餐桌位置10', 10, '已预约', 10, 11);
 
 -- ----------------------------
 -- Table structure for cantingyuyue
@@ -90,8 +88,6 @@ CREATE TABLE `cantingyuyue`  (
   `fengmian` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '封面',
   `canzhuoweizhi` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '餐桌位置',
   `kezuorenshu` int NULL DEFAULT NULL COMMENT '可坐人数',
-  `shangjiazhanghao` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '商家账号',
-  `shangjiamingcheng` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '商家名称',
   `storeup_number` int NULL DEFAULT NULL COMMENT '收藏数',
   `zhanghao` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '账号',
   `mingcheng` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '名称',
@@ -102,28 +98,28 @@ CREATE TABLE `cantingyuyue`  (
   `zhifuzhuangtai` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '未支付' COMMENT '支付状态',
   `hexiaozhuangtai` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '未核销' COMMENT '核销状态',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '餐厅预约' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '餐厅预约' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of cantingyuyue
 -- ----------------------------
-INSERT INTO `cantingyuyue` VALUES (1, '2025-03-25 17:01:11', '餐厅名称1', '餐桌名称1', 'file/cantingyuyueFengmian1.jpg,file/cantingyuyueFengmian2.jpg,file/cantingyuyueFengmian3.jpg', '餐桌位置1', 1, '商家账号1', '商家名称1', 1, '账号1', '名称1', '2025-10-25 17:01:11', '是', '', 50, '未支付', '未核销');
-INSERT INTO `cantingyuyue` VALUES (2, '2025-03-25 17:01:11', '餐厅名称2', '餐桌名称2', 'file/cantingyuyueFengmian2.jpg,file/cantingyuyueFengmian3.jpg,file/cantingyuyueFengmian4.jpg', '餐桌位置2', 2, '商家账号2', '商家名称2', 2, '账号2', '名称2', '2025-10-25 17:01:11', '是', '', 50, '未支付', '未核销');
-INSERT INTO `cantingyuyue` VALUES (3, '2025-03-25 17:01:11', '餐厅名称3', '餐桌名称3', 'file/cantingyuyueFengmian3.jpg,file/cantingyuyueFengmian4.jpg,file/cantingyuyueFengmian5.jpg', '餐桌位置3', 3, '商家账号3', '商家名称3', 3, '账号3', '名称3', '2025-10-25 17:01:11', '是', '', 50, '未支付', '未核销');
-INSERT INTO `cantingyuyue` VALUES (4, '2025-03-25 17:01:11', '餐厅名称4', '餐桌名称4', 'file/cantingyuyueFengmian4.jpg,file/cantingyuyueFengmian5.jpg,file/cantingyuyueFengmian6.jpg', '餐桌位置4', 4, '商家账号4', '商家名称4', 4, '账号4', '名称4', '2025-10-25 17:01:11', '是', '', 50, '未支付', '未核销');
-INSERT INTO `cantingyuyue` VALUES (5, '2025-03-25 17:01:11', '餐厅名称5', '餐桌名称5', 'file/cantingyuyueFengmian5.jpg,file/cantingyuyueFengmian6.jpg,file/cantingyuyueFengmian7.jpg', '餐桌位置5', 5, '商家账号5', '商家名称5', 5, '账号5', '名称5', '2025-10-25 17:01:11', '是', '', 50, '未支付', '未核销');
-INSERT INTO `cantingyuyue` VALUES (6, '2025-03-25 17:01:11', '餐厅名称6', '餐桌名称6', 'file/cantingyuyueFengmian6.jpg,file/cantingyuyueFengmian7.jpg,file/cantingyuyueFengmian8.jpg', '餐桌位置6', 6, '商家账号6', '商家名称6', 6, '账号6', '名称6', '2025-10-25 17:01:11', '是', '', 50, '未支付', '未核销');
-INSERT INTO `cantingyuyue` VALUES (7, '2025-03-25 17:01:11', '餐厅名称7', '餐桌名称7', 'file/cantingyuyueFengmian7.jpg,file/cantingyuyueFengmian8.jpg,file/cantingyuyueFengmian9.jpg', '餐桌位置7', 7, '商家账号7', '商家名称7', 7, '账号7', '名称7', '2025-10-25 17:01:11', '是', '', 50, '未支付', '未核销');
-INSERT INTO `cantingyuyue` VALUES (8, '2025-03-25 17:01:11', '餐厅名称8', '餐桌名称8', 'file/cantingyuyueFengmian8.jpg,file/cantingyuyueFengmian9.jpg,file/cantingyuyueFengmian10.jpg', '餐桌位置8', 8, '商家账号8', '商家名称8', 8, '账号8', '名称8', '2025-10-25 17:01:11', '是', '', 50, '未支付', '未核销');
-INSERT INTO `cantingyuyue` VALUES (9, '2025-03-25 17:01:11', '餐厅名称9', '餐桌名称9', 'file/cantingyuyueFengmian9.jpg,file/cantingyuyueFengmian10.jpg,file/cantingyuyueFengmian11.jpg', '餐桌位置9', 9, '商家账号9', '商家名称9', 9, '账号9', '名称9', '2025-10-25 17:01:11', '是', '', 50, '未支付', '未核销');
-INSERT INTO `cantingyuyue` VALUES (10, '2025-03-25 17:01:11', '餐厅名称10', '餐桌名称10', 'file/cantingyuyueFengmian10.jpg,file/cantingyuyueFengmian11.jpg,file/cantingyuyueFengmian12.jpg', '餐桌位置10', 10, '商家账号10', '商家名称10', 10, '账号10', '名称10', '2025-10-25 17:01:11', '是', '', 50, '未支付', '未核销');
-INSERT INTO `cantingyuyue` VALUES (11, '2025-03-25 17:08:18', '餐厅名称10', '餐桌名称10', 'file/cantingxinxiFengmian10.jpg,file/cantingxinxiFengmian11.jpg,file/cantingxinxiFengmian12.jpg', '餐桌位置10', 10, '商家账号10', '商家名称10', 10, '账号1', '名称1', '2025-10-26 00:00:00', '是', '好的', 50, '未支付', '未核销');
-INSERT INTO `cantingyuyue` VALUES (12, '2025-03-25 17:14:10', '餐厅名称1', '餐桌名称1', 'file/cantingxinxiFengmian1.jpg,file/cantingxinxiFengmian2.jpg,file/cantingxinxiFengmian3.jpg', '餐桌位置1', 1, '商家账号1', '商家名称1', 1, '账号1', '名称1', '2025-10-26 00:00:00', '待审核', '', 50, '未支付', '未核销');
-INSERT INTO `cantingyuyue` VALUES (13, '2025-11-02 18:16:30', '餐厅名称10', '餐桌名称10', 'file/cantingxinxiFengmian10.jpg,file/cantingxinxiFengmian11.jpg,file/cantingxinxiFengmian12.jpg', '餐桌位置10', 10, '商家账号10', '商家名称10', 10, '账号1', '名称1', '2025-11-19 00:00:00', '待审核', '', 50, '未支付', '未核销');
-INSERT INTO `cantingyuyue` VALUES (14, '2025-11-03 15:49:47', '餐厅名称1', '餐桌名称1', 'file/cantingxinxiFengmian1.jpg,file/cantingxinxiFengmian2.jpg,file/cantingxinxiFengmian3.jpg', '餐桌位置1', 1, '商家账号1', '商家名称1', 1, '账号1', '名称1', '2025-11-03 10:00:00', '是', '预约成功，已扣除定金50元', 50, '已支付', '未核销');
-INSERT INTO `cantingyuyue` VALUES (15, '2025-11-03 15:50:11', '', '', '', '', 0, '', '', 0, '账号1', '名称1', '2025-11-03 10:00:00', '是', '预约成功，已扣除定金50元', 50, '已支付', '未核销');
-INSERT INTO `cantingyuyue` VALUES (16, '2025-11-03 15:50:27', '餐厅名称1', '餐桌名称1', 'file/cantingxinxiFengmian1.jpg,file/cantingxinxiFengmian2.jpg,file/cantingxinxiFengmian3.jpg', '餐桌位置1', 1, '商家账号1', '商家名称1', 1, '账号1', '名称1', '2025-11-03 11:00:00', '是', '预约成功，已扣除定金50元', 50, '已支付', '未核销');
-INSERT INTO `cantingyuyue` VALUES (17, '2025-11-07 22:38:05', '餐厅名称1', '餐桌名称1', 'file/cantingxinxiFengmian1.jpg,file/cantingxinxiFengmian2.jpg,file/cantingxinxiFengmian3.jpg', '餐桌位置1', 10, '商家账号1', '商家名称1', 1, '账号1', '名称1', '2025-11-07 11:00:00', '是', '预约成功，已扣除定金50元', 50, '已支付', '未核销');
+INSERT INTO `cantingyuyue` VALUES (1, '2025-03-25 17:01:11', '餐厅名称1', '餐桌名称1', 'file/cantingyuyueFengmian1.jpg', '餐桌位置1', 1, 1, '账号1', '名称1', '2025-10-25 17:01:11', '是', '', 50, '未支付', '未核销');
+INSERT INTO `cantingyuyue` VALUES (2, '2025-03-25 17:01:11', '餐厅名称2', '餐桌名称2', 'file/cantingyuyueFengmian2.jpg', '餐桌位置2', 2, 2, '账号2', '名称2', '2025-10-25 17:01:11', '是', '', 50, '未支付', '未核销');
+INSERT INTO `cantingyuyue` VALUES (3, '2025-03-25 17:01:11', '餐厅名称3', '餐桌名称3', 'file/cantingyuyueFengmian3.jpg,file/cantingyuyueFengmian4.jpg,file/cantingyuyueFengmian5.jpg', '餐桌位置3', 3, 3, '账号3', '名称3', '2025-10-25 17:01:11', '是', '', 50, '未支付', '未核销');
+INSERT INTO `cantingyuyue` VALUES (4, '2025-03-25 17:01:11', '餐厅名称4', '餐桌名称4', 'file/cantingyuyueFengmian4.jpg,file/cantingyuyueFengmian5.jpg,file/cantingyuyueFengmian6.jpg', '餐桌位置4', 4, 4, '账号4', '名称4', '2025-10-25 17:01:11', '是', '', 50, '未支付', '未核销');
+INSERT INTO `cantingyuyue` VALUES (5, '2025-03-25 17:01:11', '餐厅名称5', '餐桌名称5', 'file/cantingyuyueFengmian5.jpg,file/cantingyuyueFengmian6.jpg,file/cantingyuyueFengmian7.jpg', '餐桌位置5', 5, 5, '账号5', '名称5', '2025-10-25 17:01:11', '是', '', 50, '未支付', '未核销');
+INSERT INTO `cantingyuyue` VALUES (6, '2025-03-25 17:01:11', '餐厅名称6', '餐桌名称6', 'file/cantingyuyueFengmian6.jpg,file/cantingyuyueFengmian7.jpg,file/cantingyuyueFengmian8.jpg', '餐桌位置6', 6, 6, '账号6', '名称6', '2025-10-25 17:01:11', '是', '', 50, '未支付', '未核销');
+INSERT INTO `cantingyuyue` VALUES (7, '2025-03-25 17:01:11', '餐厅名称7', '餐桌名称7', 'file/cantingyuyueFengmian7.jpg,file/cantingyuyueFengmian8.jpg,file/cantingyuyueFengmian9.jpg', '餐桌位置7', 7, 7, '账号7', '名称7', '2025-10-25 17:01:11', '是', '', 50, '未支付', '未核销');
+INSERT INTO `cantingyuyue` VALUES (8, '2025-03-25 17:01:11', '餐厅名称8', '餐桌名称8', 'file/cantingyuyueFengmian8.jpg,file/cantingyuyueFengmian9.jpg,file/cantingyuyueFengmian10.jpg', '餐桌位置8', 8, 8, '账号8', '名称8', '2025-10-25 17:01:11', '是', '', 50, '未支付', '未核销');
+INSERT INTO `cantingyuyue` VALUES (9, '2025-03-25 17:01:11', '餐厅名称9', '餐桌名称9', 'file/cantingyuyueFengmian9.jpg,file/cantingyuyueFengmian10.jpg,file/cantingyuyueFengmian11.jpg', '餐桌位置9', 9, 9, '账号9', '名称9', '2025-10-25 17:01:11', '是', '', 50, '未支付', '未核销');
+INSERT INTO `cantingyuyue` VALUES (10, '2025-03-25 17:01:11', '餐厅名称10', '餐桌名称10', 'file/cantingyuyueFengmian10.jpg,file/cantingyuyueFengmian11.jpg,file/cantingyuyueFengmian12.jpg', '餐桌位置10', 10, 10, '账号10', '名称10', '2025-10-25 17:01:11', '是', '', 50, '未支付', '未核销');
+INSERT INTO `cantingyuyue` VALUES (11, '2025-03-25 17:08:18', '餐厅名称10', '餐桌名称10', 'file/cantingxinxiFengmian10.jpg,file/cantingxinxiFengmian11.jpg,file/cantingxinxiFengmian12.jpg', '餐桌位置10', 10, 10, '账号1', '名称1', '2025-10-26 00:00:00', '是', '好的', 50, '未支付', '未核销');
+INSERT INTO `cantingyuyue` VALUES (13, '2025-11-02 18:16:30', '餐厅名称10', '餐桌名称10', 'file/cantingxinxiFengmian10.jpg,file/cantingxinxiFengmian11.jpg,file/cantingxinxiFengmian12.jpg', '餐桌位置10', 10, 10, '账号1', '名称1', '2025-11-19 00:00:00', '待审核', '', 50, '未支付', '未核销');
+INSERT INTO `cantingyuyue` VALUES (19, '2025-11-09 22:40:40', '餐厅名称1', '餐桌名称1', 'file/1762698773734.jpg', '餐桌位置1', 10, 1, '账号1', '名称1', '2025-11-09 10:00:00', '是', '预约成功，已扣除定金50元', 50, '已支付', '未核销');
+INSERT INTO `cantingyuyue` VALUES (20, '2025-11-09 22:48:06', '餐厅名称2', '餐桌名称2', 'file/cantingxinxiFengmian2.jpg,file/cantingxinxiFengmian3.jpg,file/cantingxinxiFengmian4.jpg', '餐桌位置2', 2, 3, '账号1', '名称1', '2025-11-09 10:00:00', '是', '预约成功，已扣除定金50元', 50, '已支付', '未核销');
+INSERT INTO `cantingyuyue` VALUES (21, '2025-12-03 19:57:19', '一楼餐厅', '餐桌名称1', 'file/cantingxinxiFengmian1.jpg', '餐桌位置1', 10, 1, '账号1', '名称1', '2025-12-03 10:00:00', '是', '预约成功，已扣除定金50元', 50, '已支付', '未核销');
+INSERT INTO `cantingyuyue` VALUES (22, '2025-12-03 21:01:14', '一楼餐厅', '餐桌名称1', 'file/cantingxinxiFengmian1.jpg', '餐桌位置1', 10, 1, '账号1', '名称1', '2025-12-04 10:00:00', '是', '已到店核销，定金50元已退还到账户', 50, '已退款', '已核销');
+INSERT INTO `cantingyuyue` VALUES (23, '2025-12-03 21:04:59', '一楼餐厅', '餐桌名称1', 'file/cantingxinxiFengmian1.jpg', '餐桌位置1', 10, 1, '账号1', '名称1', '2025-12-04 11:00:00', '是', '预约成功，已扣除定金50元', 50, '已支付', '未核销');
 
 -- ----------------------------
 -- Table structure for cart
@@ -140,16 +136,16 @@ CREATE TABLE `cart`  (
   `price` double NULL DEFAULT NULL COMMENT '单价',
   `discountprice` double NULL DEFAULT NULL COMMENT '折扣价',
   `userid` bigint NOT NULL COMMENT '用户id',
-  `shangjiazhanghao` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '商户名称',
   `goodtype` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '商品类型',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `goodid`(`goodid` ASC, `price` ASC) USING BTREE,
   CONSTRAINT `cart_ibfk_1` FOREIGN KEY (`goodid`, `price`) REFERENCES `meishixinxi` (`id`, `price`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '购物车' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '购物车' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of cart
 -- ----------------------------
+INSERT INTO `cart` VALUES (5, '2025-12-03 17:27:09', 'meishixinxi', 1, '生腌虾', 'file/meishixinxiCaipintupian1.jpg', 1, 99.9, NULL, 11, '潮汕特色菜');
 
 -- ----------------------------
 -- Table structure for cheweixinxi
@@ -166,7 +162,7 @@ CREATE TABLE `cheweixinxi`  (
   `cheweizhuangtai` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '车位状态',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `cheweibianhao`(`cheweibianhao` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '车位信息' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '车位信息' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of cheweixinxi
@@ -199,24 +195,41 @@ CREATE TABLE `cheweiyuyue`  (
   `mingcheng` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '名称',
   `chepaihao` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '车牌号',
   `ispay` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '未支付' COMMENT '是否支付',
+  `dingjin` double NULL DEFAULT 50 COMMENT '定金金额',
+  `zhifuzhuangtai` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '未支付' COMMENT '支付状态',
+  `hexiaozhuangtai` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '未核销' COMMENT '核销状态',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '车位预约' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 28 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '车位预约' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of cheweiyuyue
 -- ----------------------------
-INSERT INTO `cheweiyuyue` VALUES (1, '2025-10-25 17:01:11', '车位编号1', '车位位置1', '2025-10-25 17:01:11', 1, '已入场', '账号1', '名称1', '车牌号1', '未支付');
-INSERT INTO `cheweiyuyue` VALUES (2, '2025-10-25 17:01:11', '车位编号2', '车位位置2', '2025-10-25 17:01:11', 2, '已入场', '账号2', '名称2', '车牌号2', '未支付');
-INSERT INTO `cheweiyuyue` VALUES (3, '2025-10-25 17:01:11', '车位编号3', '车位位置3', '2025-10-25 17:01:11', 3, '已入场', '账号3', '名称3', '车牌号3', '未支付');
-INSERT INTO `cheweiyuyue` VALUES (4, '2025-10-25 17:01:11', '车位编号4', '车位位置4', '2025-10-25 17:01:11', 4, '已入场', '账号4', '名称4', '车牌号4', '未支付');
-INSERT INTO `cheweiyuyue` VALUES (5, '2025-10-25 17:01:11', '车位编号5', '车位位置5', '2025-10-25 17:01:11', 5, '已入场', '账号5', '名称5', '车牌号5', '未支付');
-INSERT INTO `cheweiyuyue` VALUES (6, '2025-10-25 17:01:11', '车位编号6', '车位位置6', '2025-10-25 17:01:11', 6, '已入场', '账号6', '名称6', '车牌号6', '未支付');
-INSERT INTO `cheweiyuyue` VALUES (7, '2025-10-25 17:01:11', '车位编号7', '车位位置7', '2025-10-25 17:01:11', 7, '已入场', '账号7', '名称7', '车牌号7', '未支付');
-INSERT INTO `cheweiyuyue` VALUES (8, '2025-10-25 17:01:11', '车位编号8', '车位位置8', '2025-10-25 17:01:11', 8, '已入场', '账号8', '名称8', '车牌号8', '未支付');
-INSERT INTO `cheweiyuyue` VALUES (9, '2025-10-25 17:01:11', '车位编号9', '车位位置9', '2025-10-25 17:01:11', 9, '已入场', '账号9', '名称9', '车牌号9', '未支付');
-INSERT INTO `cheweiyuyue` VALUES (10, '2025-10-25 17:01:11', '车位编号10', '车位位置10', '2025-10-25 17:01:11', 10, '已入场', '账号10', '名称10', '车牌号10', '已支付');
-INSERT INTO `cheweiyuyue` VALUES (11, '2025-10-25 17:07:17', '车位编号10', '车位位置10', '2025-10-26 00:00:00', 10, '未入场', '账号1', '名称1', '车牌号1', '已支付');
-INSERT INTO `cheweiyuyue` VALUES (12, '2025-11-03 15:53:21', '车位编号10', '车位位置10', '2025-11-04 00:00:00', 10, '未入场', '账号1', '名称1', '车牌号1', '未支付');
+INSERT INTO `cheweiyuyue` VALUES (1, '2025-10-25 17:01:11', '车位编号1', '车位位置1', '2025-10-25 17:01:11', 1, '已入场', '账号1', '名称1', '车牌号1', '未支付', 50, '未支付', '未核销');
+INSERT INTO `cheweiyuyue` VALUES (2, '2025-10-25 17:01:11', '车位编号2', '车位位置2', '2025-10-25 17:01:11', 2, '已入场', '账号2', '名称2', '车牌号2', '未支付', 50, '未支付', '未核销');
+INSERT INTO `cheweiyuyue` VALUES (3, '2025-10-25 17:01:11', '车位编号3', '车位位置3', '2025-10-25 17:01:11', 3, '已入场', '账号3', '名称3', '车牌号3', '未支付', 50, '未支付', '未核销');
+INSERT INTO `cheweiyuyue` VALUES (4, '2025-10-25 17:01:11', '车位编号4', '车位位置4', '2025-10-25 17:01:11', 4, '已入场', '账号4', '名称4', '车牌号4', '未支付', 50, '未支付', '未核销');
+INSERT INTO `cheweiyuyue` VALUES (5, '2025-10-25 17:01:11', '车位编号5', '车位位置5', '2025-10-25 17:01:11', 5, '已入场', '账号5', '名称5', '车牌号5', '未支付', 50, '未支付', '未核销');
+INSERT INTO `cheweiyuyue` VALUES (6, '2025-10-25 17:01:11', '车位编号6', '车位位置6', '2025-10-25 17:01:11', 6, '已入场', '账号6', '名称6', '车牌号6', '未支付', 50, '未支付', '未核销');
+INSERT INTO `cheweiyuyue` VALUES (7, '2025-10-25 17:01:11', '车位编号7', '车位位置7', '2025-10-25 17:01:11', 7, '已入场', '账号7', '名称7', '车牌号7', '未支付', 50, '未支付', '未核销');
+INSERT INTO `cheweiyuyue` VALUES (8, '2025-10-25 17:01:11', '车位编号8', '车位位置8', '2025-10-25 17:01:11', 8, '已入场', '账号8', '名称8', '车牌号8', '未支付', 50, '未支付', '未核销');
+INSERT INTO `cheweiyuyue` VALUES (9, '2025-10-25 17:01:11', '车位编号9', '车位位置9', '2025-10-25 17:01:11', 9, '已入场', '账号9', '名称9', '车牌号9', '未支付', 50, '未支付', '未核销');
+INSERT INTO `cheweiyuyue` VALUES (10, '2025-10-25 17:01:11', '车位编号10', '车位位置10', '2025-10-25 17:01:11', 10, '已入场', '账号10', '名称10', '车牌号10', '已支付', 50, '已支付', '已核销');
+INSERT INTO `cheweiyuyue` VALUES (11, '2025-10-25 17:07:17', '车位编号10', '车位位置10', '2025-10-26 00:00:00', 10, '未入场', '账号1', '名称1', '车牌号1', '已支付', 50, '已支付', '已核销');
+INSERT INTO `cheweiyuyue` VALUES (12, '2025-11-03 15:53:21', '车位编号10', '车位位置10', '2025-11-04 00:00:00', 10, '未入场', '账号1', '名称1', '车牌号1', '未支付', 50, '未支付', '未核销');
+INSERT INTO `cheweiyuyue` VALUES (17, '2025-11-08 20:06:58', '车位编号1', '车位位置1', '2025-11-08 08:00:00', 10, '未入场', '账号1', '名称1', '车牌号1', '未支付', 50, '未支付', '未核销');
+INSERT INTO `cheweiyuyue` VALUES (18, '2025-11-08 20:07:16', '车位编号1', '车位位置1', '2025-11-08 08:00:00', 10, '未入场', '账号1', '名称1', '车牌号1', '未支付', 50, '未支付', '未核销');
+INSERT INTO `cheweiyuyue` VALUES (19, '2025-11-08 20:10:00', '车位编号1', '车位位置1', '2025-11-08 09:00:00', 10, '未入场', '账号1', '名称1', '车牌号1', '未支付', 50, '已退款', '已核销');
+INSERT INTO `cheweiyuyue` VALUES (20, '2025-11-08 20:20:26', '车位编号1', '车位位置1', '2025-11-08 08:00:00', 10, '未入场', '账号1', '名称1', '车牌号1', '未支付', 50, '已支付', '未核销');
+INSERT INTO `cheweiyuyue` VALUES (21, '2025-11-08 20:20:50', '车位编号1', '车位位置1', '2025-11-08 09:00:00', 10, '未入场', '账号1', '名称1', '车牌号1', '未支付', 50, '已退款', '已核销');
+INSERT INTO `cheweiyuyue` VALUES (23, '2025-11-08 21:19:35', '车位编号1', '车位位置1', '2025-11-08 09:00:00', 10, '未入场', '账号1', '名称1', '车牌号1', '未支付', 50, '已支付', '未核销');
+INSERT INTO `cheweiyuyue` VALUES (24, '2025-11-08 21:27:25', '车位编号1', '车位位置1', '2025-11-08 12:00:00', 10, '未入场', '账号1', '名称1', '车牌号1', '未支付', 50, '已支付', '未核销');
+INSERT INTO `cheweiyuyue` VALUES (25, '2025-11-08 21:30:54', '车位编号1', '车位位置1', '2025-11-08 10:00:00', 10, '未入场', '账号1', '名称1', '车牌号1', '未支付', 50, '已退款', '已核销');
+INSERT INTO `cheweiyuyue` VALUES (26, '2025-11-09 22:42:34', '车位编号1', '车位位置1', '2025-11-09 08:00:00', 10, '已入场', '账号1', '名称1', '车牌号1', '未支付', 50, '已退款', '已核销');
+INSERT INTO `cheweiyuyue` VALUES (27, '2025-11-09 23:11:39', '车位编号1', '车位位置1', '2025-11-09 08:00:00', 10, '未入场', '账号1', '名称1', '车牌号1', '未支付', 50, '已支付', '未核销');
+INSERT INTO `cheweiyuyue` VALUES (28, '2025-12-03 17:15:52', '车位编号1', '车位位置1', '2025-12-09 09:00:00', 10, '未入场', '账号1', '名称1', '车牌号1', '未支付', 50, '已支付', '未核销');
+INSERT INTO `cheweiyuyue` VALUES (29, '2025-12-03 21:01:33', '车位编号1', '车位位置1', '2025-12-04 08:00:00', 10, '未入场', '账号1', '名称1', '车牌号1', '未支付', 50, '已退款', '已核销');
+INSERT INTO `cheweiyuyue` VALUES (30, '2025-12-03 21:04:45', '车位编号1', '车位位置1', '2025-12-04 08:00:00', 10, '未入场', '账号1', '名称1', '车牌号1', '未支付', 50, '已支付', '未核销');
+INSERT INTO `cheweiyuyue` VALUES (31, '2025-12-03 21:05:12', '车位编号1', '车位位置1', '2025-12-04 09:00:00', 10, '未入场', '账号1', '名称1', '车牌号1', '未支付', 50, '已支付', '未核销');
 
 -- ----------------------------
 -- Table structure for config
@@ -229,7 +242,7 @@ CREATE TABLE `config`  (
   `value` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '值',
   `url` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '链接',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '轮播图' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '轮播图' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of config
@@ -258,7 +271,7 @@ CREATE TABLE `dianpuhuodong`  (
 -- ----------------------------
 -- Records of dianpuhuodong
 -- ----------------------------
-INSERT INTO `dianpuhuodong` VALUES (1, '2025-11-06 21:00:00', '活动名称1', 'file/dianpuhuodongHuodongtupian1.jpg,file/dianpuhuodongHuodongtupian2.jpg,file/dianpuhuodongHuodongtupian3.jpg', '2025-11-07 21:00:00', '活动地点1', '活动内容1', '2025-11-06 21:00:00', '2025-11-08 21:00:00');
+INSERT INTO `dianpuhuodong` VALUES (1, '2025-11-06 21:00:00', '活动名称1', 'file/dianpuhuodongHuodongtupian1.jpg,file/dianpuhuodongHuodongtupian2.jpg,file/dianpuhuodongHuodongtupian3.jpg', '2025-11-07 21:00:00', '活动地点1', '<p>活动内容1</p>', '2025-11-06 21:00:00', '2025-11-09 21:00:00');
 INSERT INTO `dianpuhuodong` VALUES (2, '2025-11-06 21:00:00', '活动名称2', 'file/dianpuhuodongHuodongtupian2.jpg,file/dianpuhuodongHuodongtupian3.jpg,file/dianpuhuodongHuodongtupian4.jpg', '2025-11-07 21:00:00', '活动地点2', '活动内容2', '2025-11-06 21:00:00', '2025-11-08 21:00:00');
 INSERT INTO `dianpuhuodong` VALUES (3, '2025-11-06 21:00:00', '活动名称3', 'file/dianpuhuodongHuodongtupian3.jpg,file/dianpuhuodongHuodongtupian4.jpg,file/dianpuhuodongHuodongtupian5.jpg', '2025-11-07 21:00:00', '活动地点3', '活动内容3', '2025-11-06 21:00:00', '2025-11-08 21:00:00');
 INSERT INTO `dianpuhuodong` VALUES (4, '2025-11-06 21:00:00', '活动名称4', 'file/dianpuhuodongHuodongtupian4.jpg,file/dianpuhuodongHuodongtupian5.jpg,file/dianpuhuodongHuodongtupian6.jpg', '2025-11-07 21:00:00', '活动地点4', '活动内容4', '2025-11-06 21:00:00', '2025-11-08 21:00:00');
@@ -284,7 +297,7 @@ CREATE TABLE `discusscantingxinxi`  (
   `content` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '评论内容',
   `reply` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '回复内容',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '餐厅信息评论表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '餐厅信息评论表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of discusscantingxinxi
@@ -306,46 +319,11 @@ CREATE TABLE `discussmeishixinxi`  (
   `content` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '评论内容',
   `reply` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '回复内容',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '美食信息评论表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '美食信息评论表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of discussmeishixinxi
 -- ----------------------------
-
--- ----------------------------
--- Table structure for huodongbaoming
--- ----------------------------
-DROP TABLE IF EXISTS `huodongbaoming`;
-CREATE TABLE `huodongbaoming`  (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `addtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `huodongmingcheng` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '活动名称',
-  `huodongtupian` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '活动图片',
-  `huodongdidian` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '活动地点',
-  `baomingshijian` datetime NULL DEFAULT NULL COMMENT '报名时间',
-  `zhanghao` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '账号',
-  `mingcheng` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '名称',
-  `sfsh` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '待审核' COMMENT '是否审核',
-  `shhf` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '回复内容',
-  `crossuserid` bigint NULL DEFAULT NULL COMMENT '跨表用户id',
-  `crossrefid` bigint NULL DEFAULT NULL COMMENT '跨表主键id',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '活动报名' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of huodongbaoming
--- ----------------------------
-INSERT INTO `huodongbaoming` VALUES (1, '2025-03-25 17:01:11', '活动名称1', 'file/huodongbaomingHuodongtupian1.jpg,file/huodongbaomingHuodongtupian2.jpg,file/huodongbaomingHuodongtupian3.jpg', '活动地点1', '2025-03-25 17:01:11', '账号1', '名称1', '是', '', 1, 1);
-INSERT INTO `huodongbaoming` VALUES (2, '2025-03-25 17:01:11', '活动名称2', 'file/huodongbaomingHuodongtupian2.jpg,file/huodongbaomingHuodongtupian3.jpg,file/huodongbaomingHuodongtupian4.jpg', '活动地点2', '2025-03-25 17:01:11', '账号2', '名称2', '是', '', 2, 2);
-INSERT INTO `huodongbaoming` VALUES (3, '2025-03-25 17:01:11', '活动名称3', 'file/huodongbaomingHuodongtupian3.jpg,file/huodongbaomingHuodongtupian4.jpg,file/huodongbaomingHuodongtupian5.jpg', '活动地点3', '2025-03-25 17:01:11', '账号3', '名称3', '是', '', 3, 3);
-INSERT INTO `huodongbaoming` VALUES (4, '2025-03-25 17:01:11', '活动名称4', 'file/huodongbaomingHuodongtupian4.jpg,file/huodongbaomingHuodongtupian5.jpg,file/huodongbaomingHuodongtupian6.jpg', '活动地点4', '2025-03-25 17:01:11', '账号4', '名称4', '是', '', 4, 4);
-INSERT INTO `huodongbaoming` VALUES (5, '2025-03-25 17:01:11', '活动名称5', 'file/huodongbaomingHuodongtupian5.jpg,file/huodongbaomingHuodongtupian6.jpg,file/huodongbaomingHuodongtupian7.jpg', '活动地点5', '2025-03-25 17:01:11', '账号5', '名称5', '是', '', 5, 5);
-INSERT INTO `huodongbaoming` VALUES (6, '2025-03-25 17:01:11', '活动名称6', 'file/huodongbaomingHuodongtupian6.jpg,file/huodongbaomingHuodongtupian7.jpg,file/huodongbaomingHuodongtupian8.jpg', '活动地点6', '2025-03-25 17:01:11', '账号6', '名称6', '是', '', 6, 6);
-INSERT INTO `huodongbaoming` VALUES (7, '2025-03-25 17:01:11', '活动名称7', 'file/huodongbaomingHuodongtupian7.jpg,file/huodongbaomingHuodongtupian8.jpg,file/huodongbaomingHuodongtupian9.jpg', '活动地点7', '2025-03-25 17:01:11', '账号7', '名称7', '是', '', 7, 7);
-INSERT INTO `huodongbaoming` VALUES (8, '2025-03-25 17:01:11', '活动名称8', 'file/huodongbaomingHuodongtupian8.jpg,file/huodongbaomingHuodongtupian9.jpg,file/huodongbaomingHuodongtupian10.jpg', '活动地点8', '2025-03-25 17:01:11', '账号8', '名称8', '是', '', 8, 8);
-INSERT INTO `huodongbaoming` VALUES (9, '2025-03-25 17:01:11', '活动名称9', 'file/huodongbaomingHuodongtupian9.jpg,file/huodongbaomingHuodongtupian10.jpg,file/huodongbaomingHuodongtupian11.jpg', '活动地点9', '2025-03-25 17:01:11', '账号9', '名称9', '是', '', 9, 9);
-INSERT INTO `huodongbaoming` VALUES (10, '2025-03-25 17:01:11', '活动名称10', 'file/huodongbaomingHuodongtupian10.jpg,file/huodongbaomingHuodongtupian11.jpg,file/huodongbaomingHuodongtupian12.jpg', '活动地点10', '2025-03-25 17:01:11', '账号10', '名称10', '是', '', 10, 10);
-INSERT INTO `huodongbaoming` VALUES (12, '2025-11-07 22:39:32', '活动名称1', 'file/dianpuhuodongHuodongtupian1.jpg,file/dianpuhuodongHuodongtupian2.jpg,file/dianpuhuodongHuodongtupian3.jpg', '活动地点1', '2025-11-07 22:39:30', '账号1', '名称1', '待审核', '', 11, 1);
 
 -- ----------------------------
 -- Table structure for meishixinxi
@@ -366,27 +344,25 @@ CREATE TABLE `meishixinxi`  (
   `price` double NULL DEFAULT 0 COMMENT '价格',
   `storeup_number` int NULL DEFAULT 0 COMMENT '收藏数',
   `discuss_number` int NULL DEFAULT 0 COMMENT '评论数',
-  `shangjiazhanghao` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '商家账号',
-  `shangjiamingcheng` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '商家名称',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `meishixinxi_price`(`id` ASC, `price` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '美食信息' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '美食信息' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of meishixinxi
 -- ----------------------------
-INSERT INTO `meishixinxi` VALUES (1, '2025-10-25 17:01:10', '生腌虾', 'file/meishixinxiCaipintupian1.jpg,file/meishixinxiCaipintupian2.jpg,file/meishixinxiCaipintupian3.jpg', '潮汕特色菜', '菜品详情1', '微辣', '★★', '2025-11-07 21:53:10', 1, 94, 99.9, 1, 1, '商家账号1', '商家名称1');
-INSERT INTO `meishixinxi` VALUES (2, '2025-10-25 17:01:10', '海鲜面', 'file/meishixinxiCaipintupian2.jpg,file/meishixinxiCaipintupian3.jpg,file/meishixinxiCaipintupian4.jpg', '面食', '菜品详情2', '微辣', '★★', '2025-11-03 15:52:13', 2, 97, 99.9, 2, 2, '商家账号2', '商家名称2');
-INSERT INTO `meishixinxi` VALUES (3, '2025-10-25 17:01:10', '梅菜扣肉', 'file/meishixinxiCaipintupian3.jpg,file/meishixinxiCaipintupian4.jpg,file/meishixinxiCaipintupian5.jpg', '粤菜', '菜品详情3', '微辣', '★★', '2025-11-02 17:40:31', 3, 99, 99.9, 3, 3, '商家账号3', '商家名称3');
-INSERT INTO `meishixinxi` VALUES (4, '2025-10-25 17:01:10', '山药卷', 'file/meishixinxiCaipintupian4.jpg,file/meishixinxiCaipintupian5.jpg,file/meishixinxiCaipintupian6.jpg', '小吃', '菜品详情4', '甜', '★★', '2025-11-02 13:23:50', 4, 98, 99.9, 4, 4, '商家账号4', '商家名称4');
-INSERT INTO `meishixinxi` VALUES (5, '2025-10-25 17:01:10', '卤味拼盘', 'file/meishixinxiCaipintupian5.jpg,file/meishixinxiCaipintupian6.jpg,file/meishixinxiCaipintupian7.jpg', '卤味', '菜品详情5', '微辣', '★★', '2025-11-03 17:01:10', 5, 99, 99.9, 5, 5, '商家账号5', '商家名称5');
-INSERT INTO `meishixinxi` VALUES (6, '2025-10-25 17:01:10', '日式鳗鱼饭', 'file/meishixinxiCaipintupian6.jpg,file/meishixinxiCaipintupian7.jpg,file/meishixinxiCaipintupian8.jpg', '日式料理', '菜品详情6', '微辣', '★★★', '2025-11-02 17:49:28', 6, 99, 99.9, 6, 6, '商家账号6', '商家名称6');
-INSERT INTO `meishixinxi` VALUES (7, '2025-10-25 17:01:10', '煎牛排', 'file/meishixinxiCaipintupian7.jpg,file/meishixinxiCaipintupian8.jpg,file/meishixinxiCaipintupian9.jpg', '西餐 ', '菜品详情7', '微辣', '★★', '2025-11-03 17:01:10', 7, 99, 99.9, 7, 7, '商家账号7', '商家名称7');
-INSERT INTO `meishixinxi` VALUES (8, '2025-10-25 17:01:10', '牛肉丸', 'file/meishixinxiCaipintupian8.jpg,file/meishixinxiCaipintupian9.jpg,file/meishixinxiCaipintupian10.jpg', '丸子类', '菜品详情8', '鲜', '★★', '2025-11-03 17:01:10', 8, 99, 99.9, 8, 8, '商家账号8', '商家名称8');
-INSERT INTO `meishixinxi` VALUES (9, '2025-10-25 17:01:10', '鱼卷', 'file/meishixinxiCaipintupian9.jpg,file/meishixinxiCaipintupian10.jpg,file/meishixinxiCaipintupian11.jpg', '闽菜', '菜品详情9', '微辣', '★★', '2025-11-03 17:01:10', 9, 99, 99.9, 9, 9, '商家账号9', '商家名称9');
-INSERT INTO `meishixinxi` VALUES (10, '2025-10-25 17:01:10', '香辣小河虾', 'file/meishixinxiCaipintupian10.jpg,file/meishixinxiCaipintupian11.jpg,file/meishixinxiCaipintupian12.jpg', '小炒类', '菜品详情10', '中辣', '★★', '2025-11-02 18:40:16', 10, 98, 99.9, 11, 10, '商家账号10', '商家名称10');
-INSERT INTO `meishixinxi` VALUES (11, '2025-10-25 17:01:10', '藤椒牛杂锅', 'file/meishixinxiCaipintupian11.jpg', '川菜', '菜品详情11', '超辣', '★★★★★', '2025-11-02 17:48:10', 20, 20, 20, 0, 0, '商家账号1', '商家名称1');
-INSERT INTO `meishixinxi` VALUES (12, '2025-10-25 17:01:10', '排骨冬瓜汤', 'file/meishixinxiCaipintupian12.jpg', '汤类', '<p>菜品详情12</p>', '清淡', '★★★★', '2025-11-07 22:56:08', 1, 44, 66, 0, 0, NULL, NULL);
+INSERT INTO `meishixinxi` VALUES (1, '2025-10-25 17:01:10', '生腌虾', 'file/meishixinxiCaipintupian1.jpg,file/meishixinxiCaipintupian2.jpg,file/meishixinxiCaipintupian3.jpg', '潮汕特色菜', '菜品详情1', '微辣', '★★', '2025-12-03 20:58:13', 1, 81, 99.9, 1, 1);
+INSERT INTO `meishixinxi` VALUES (2, '2025-10-25 17:01:10', '海鲜面', 'file/meishixinxiCaipintupian2.jpg,file/meishixinxiCaipintupian3.jpg,file/meishixinxiCaipintupian4.jpg', '面食', '菜品详情2', '微辣', '★★', '2025-12-03 17:27:13', 2, 95, 99.9, 2, 2);
+INSERT INTO `meishixinxi` VALUES (3, '2025-10-25 17:01:10', '梅菜扣肉', 'file/meishixinxiCaipintupian3.jpg,file/meishixinxiCaipintupian4.jpg,file/meishixinxiCaipintupian5.jpg', '粤菜', '菜品详情3', '微辣', '★★', '2025-11-09 21:46:30', 3, 95, 99.9, 4, 3);
+INSERT INTO `meishixinxi` VALUES (4, '2025-10-25 17:01:10', '山药卷', 'file/meishixinxiCaipintupian4.jpg,file/meishixinxiCaipintupian5.jpg,file/meishixinxiCaipintupian6.jpg', '小吃', '菜品详情4', '甜', '★★', '2025-12-03 21:02:24', 4, 96, 99.9, 5, 4);
+INSERT INTO `meishixinxi` VALUES (5, '2025-10-25 17:01:10', '卤味拼盘', 'file/meishixinxiCaipintupian5.jpg,file/meishixinxiCaipintupian6.jpg,file/meishixinxiCaipintupian7.jpg', '卤味', '菜品详情5', '微辣', '★★', '2025-11-03 17:01:10', 5, 99, 99.9, 5, 5);
+INSERT INTO `meishixinxi` VALUES (6, '2025-10-25 17:01:10', '日式鳗鱼饭', 'file/meishixinxiCaipintupian6.jpg,file/meishixinxiCaipintupian7.jpg,file/meishixinxiCaipintupian8.jpg', '日式料理', '菜品详情6', '微辣', '★★★', '2025-11-09 16:02:51', 6, 99, 99.9, 6, 6);
+INSERT INTO `meishixinxi` VALUES (7, '2025-10-25 17:01:10', '煎牛排', 'file/meishixinxiCaipintupian7.jpg,file/meishixinxiCaipintupian8.jpg,file/meishixinxiCaipintupian9.jpg', '西餐 ', '菜品详情7', '微辣', '★★', '2025-11-03 17:01:10', 7, 99, 99.9, 7, 7);
+INSERT INTO `meishixinxi` VALUES (8, '2025-10-25 17:01:10', '牛肉丸', 'file/meishixinxiCaipintupian8.jpg,file/meishixinxiCaipintupian9.jpg,file/meishixinxiCaipintupian10.jpg', '丸子类', '菜品详情8', '鲜', '★★', '2025-11-03 17:01:10', 8, 99, 99.9, 8, 8);
+INSERT INTO `meishixinxi` VALUES (9, '2025-10-25 17:01:10', '鱼卷', 'file/meishixinxiCaipintupian9.jpg,file/meishixinxiCaipintupian10.jpg,file/meishixinxiCaipintupian11.jpg', '闽菜', '菜品详情9', '微辣', '★★', '2025-11-03 17:01:10', 9, 99, 99.9, 9, 9);
+INSERT INTO `meishixinxi` VALUES (10, '2025-10-25 17:01:10', '香辣小河虾', 'file/meishixinxiCaipintupian10.jpg,file/meishixinxiCaipintupian11.jpg,file/meishixinxiCaipintupian12.jpg', '小炒类', '菜品详情10', '中辣', '★★', '2025-11-02 18:40:16', 10, 98, 99.9, 11, 10);
+INSERT INTO `meishixinxi` VALUES (11, '2025-10-25 17:01:10', '藤椒牛杂锅', 'file/meishixinxiCaipintupian11.jpg', '川菜', '菜品详情11', '超辣', '★★★★★', '2025-11-02 17:48:10', 20, 20, 20, 0, 0);
+INSERT INTO `meishixinxi` VALUES (12, '2025-10-25 17:01:10', '排骨冬瓜汤', 'file/meishixinxiCaipintupian12.jpg', '汤类', '菜品详情12', '清淡', '★★★★', '2025-12-04 09:13:22', 1, 44, 66, 0, 0);
 
 -- ----------------------------
 -- Table structure for menu
@@ -397,12 +373,12 @@ CREATE TABLE `menu`  (
   `addtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `menujson` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '菜单',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '菜单' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of menu
 -- ----------------------------
-INSERT INTO `menu` VALUES (1, '2025-03-25 17:01:11', '[{\"backMenu\":[{\"child\":[{\"allButtons\":[\"新增\",\"查看\",\"修改\",\"删除\",\"预约\"],\"appFrontIcon\":\"cuIcon-goods\",\"buttons\":[\"新增\",\"查看\",\"修改\",\"删除\"],\"classname\":\"cheweixinxi\",\"menu\":\"车位信息\",\"menuJump\":\"列表\",\"tableName\":\"cheweixinxi\"},{\"allButtons\":[\"新增\",\"查看\",\"修改\",\"删除\",\"支付\",\"首页总数\"],\"appFrontIcon\":\"cuIcon-time\",\"buttons\":[\"查看\",\"删除\",\"支付\",\"首页总数\"],\"classname\":\"cheweiyuyue\",\"menu\":\"车位预约\",\"menuJump\":\"列表\",\"tableName\":\"cheweiyuyue\"}],\"fontClass\":\"icon-common40\",\"menu\":\"车位信息管理\",\"unicode\":\"&#xeebb;\"},{\"child\":[{\"allButtons\":[\"新增\",\"查看\",\"修改\",\"删除\",\"查看评论\",\"预约\"],\"appFrontIcon\":\"cuIcon-present\",\"buttons\":[\"新增\",\"查看\",\"修改\",\"删除\",\"查看评论\"],\"classname\":\"cantingxinxi\",\"menu\":\"餐厅信息\",\"menuJump\":\"列表\",\"tableName\":\"cantingxinxi\"},{\"allButtons\":[\"新增\",\"查看\",\"修改\",\"删除\",\"审核\"],\"appFrontIcon\":\"cuIcon-time\",\"buttons\":[\"查看\",\"删除\",\"审核\"],\"classname\":\"cantingyuyue\",\"menu\":\"餐厅预约\",\"menuJump\":\"列表\",\"tableName\":\"cantingyuyue\"}],\"fontClass\":\"icon-common23\",\"menu\":\"餐厅信息管理\",\"unicode\":\"&#xee05;\"},{\"child\":[{\"allButtons\":[\"新增\",\"查看\",\"修改\",\"删除\"],\"appFrontIcon\":\"cuIcon-newshot\",\"buttons\":[\"新增\",\"查看\",\"修改\",\"删除\"],\"classname\":\"caipinleixing\",\"menu\":\"菜品类型\",\"menuJump\":\"列表\",\"tableName\":\"caipinleixing\"},{\"allButtons\":[\"新增\",\"查看\",\"修改\",\"删除\",\"菜品类型\",\"查看评论\",\"首页统计\"],\"appFrontIcon\":\"cuIcon-taxi\",\"buttons\":[\"新增\",\"查看\",\"修改\",\"删除\",\"菜品类型\",\"查看评论\",\"首页统计\"],\"classname\":\"meishixinxi\",\"menu\":\"美食信息\",\"menuJump\":\"列表\",\"tableName\":\"meishixinxi\"}],\"fontClass\":\"icon-common38\",\"menu\":\"菜品信息管理\",\"unicode\":\"&#xeeb2;\"},{\"child\":[{\"allButtons\":[\"新增\",\"查看\",\"修改\",\"删除\",\"月销额\",\"年销额\",\"品销量\",\"导出\",\"首页总数\",\"首页统计\"],\"appFrontIcon\":\"cuIcon-skin\",\"buttons\":[\"查看\",\"删除\",\"月销额\",\"年销额\",\"品销量\",\"导出\",\"首页总数\",\"首页统计\"],\"menu\":\"订单\",\"tableName\":\"orders\"},{\"allButtons\":[\"新增\",\"查看\",\"修改\",\"删除\",\"月销额\",\"年销额\",\"品销量\",\"导出\",\"首页总数\",\"首页统计\"],\"appFrontIcon\":\"cuIcon-skin\",\"buttons\":[\"查看\",\"删除\",\"月销额\",\"年销额\",\"品销量\",\"导出\",\"首页总数\",\"首页统计\"],\"menu\":\"未支付订单\",\"menuJump\":\"未支付\",\"tableName\":\"orders\"},{\"allButtons\":[\"新增\",\"查看\",\"修改\",\"删除\",\"月销额\",\"年销额\",\"品销量\",\"导出\",\"首页总数\",\"首页统计\",\"发货\",\"物流\",\"核销\"],\"appFrontIcon\":\"cuIcon-skin\",\"buttons\":[\"查看\",\"删除\",\"月销额\",\"年销额\",\"品销量\",\"导出\",\"首页总数\",\"首页统计\",\"核销\"],\"menu\":\"已支付订单\",\"menuJump\":\"已支付\",\"tableName\":\"orders\"},{\"allButtons\":[\"新增\",\"查看\",\"修改\",\"删除\",\"月销额\",\"年销额\",\"品销量\",\"导出\",\"首页总数\",\"首页统计\",\"物流\"],\"appFrontIcon\":\"cuIcon-skin\",\"buttons\":[\"查看\",\"删除\",\"月销额\",\"年销额\",\"品销量\",\"导出\",\"首页总数\",\"首页统计\"],\"menu\":\"已完成订单\",\"menuJump\":\"已完成\",\"tableName\":\"orders\"},{\"allButtons\":[\"新增\",\"查看\",\"修改\",\"删除\",\"月销额\",\"年销额\",\"品销量\",\"导出\",\"首页总数\",\"首页统计\"],\"appFrontIcon\":\"cuIcon-skin\",\"buttons\":[\"查看\",\"删除\",\"月销额\",\"年销额\",\"品销量\",\"导出\",\"首页总数\",\"首页统计\"],\"menu\":\"已取消订单\",\"menuJump\":\"已取消\",\"tableName\":\"orders\"},{\"allButtons\":[\"新增\",\"查看\",\"修改\",\"删除\",\"月销额\",\"年销额\",\"品销量\",\"导出\",\"首页总数\",\"首页统计\",\"物流\"],\"appFrontIcon\":\"cuIcon-skin\",\"buttons\":[\"查看\",\"删除\",\"月销额\",\"年销额\",\"品销量\",\"导出\",\"首页总数\",\"首页统计\"],\"menu\":\"已退款订单\",\"menuJump\":\"已退款\",\"tableName\":\"orders\"}],\"fontClass\":\"icon-common33\",\"menu\":\"订单管理\",\"unicode\":\"&#xee6a;\"},{\"child\":[{\"allButtons\":[\"新增\",\"查看\",\"修改\",\"删除\"],\"appFrontIcon\":\"cuIcon-addressbook\",\"buttons\":[\"新增\",\"查看\",\"修改\",\"删除\"],\"classname\":\"wodeyuyue\",\"menu\":\"我的预约\",\"menuJump\":\"列表\",\"tableName\":\"wodeyuyue\"}],\"fontClass\":\"icon-common41\",\"menu\":\"我的预约管理\",\"unicode\":\"&#xeede;\"},{\"child\":[{\"allButtons\":[\"新增\",\"查看\",\"修改\",\"删除\"],\"appFrontIcon\":\"cuIcon-newshot\",\"buttons\":[\"新增\",\"查看\",\"修改\",\"删除\"],\"classname\":\"users\",\"menu\":\"管理员\",\"menuJump\":\"列表\",\"tableName\":\"users\"},{\"allButtons\":[\"新增\",\"查看\",\"修改\",\"删除\"],\"appFrontIcon\":\"cuIcon-paint\",\"buttons\":[\"新增\",\"查看\",\"修改\",\"删除\"],\"classname\":\"yonghu\",\"menu\":\"用户\",\"menuJump\":\"列表\",\"tableName\":\"yonghu\"}],\"fontClass\":\"icon-user2\",\"menu\":\"用户管理\",\"unicode\":\"&#xef98;\"},{\"child\":[{\"allButtons\":[\"新增\",\"查看\",\"修改\",\"删除\"],\"appFrontIcon\":\"cuIcon-addressbook\",\"buttons\":[\"新增\",\"查看\",\"修改\",\"删除\"],\"classname\":\"config\",\"menu\":\"轮播图\",\"menuJump\":\"列表\",\"tableName\":\"config\"},{\"allButtons\":[\"新增\",\"查看\",\"修改\",\"删除\"],\"appFrontIcon\":\"cuIcon-pay\",\"buttons\":[\"新增\",\"查看\",\"修改\",\"删除\"],\"classname\":\"news\",\"menu\":\"新闻资讯\",\"menuJump\":\"列表\",\"tableName\":\"news\"},{\"allButtons\":[\"新增\",\"查看\",\"修改\",\"删除\"],\"appFrontIcon\":\"cuIcon-flashlightopen\",\"buttons\":[\"新增\",\"查看\",\"修改\",\"删除\"],\"classname\":\"systemNotice\",\"menu\":\"系统公告\",\"menuJump\":\"列表\",\"tableName\":\"system_notice\"}],\"fontClass\":\"icon-common12\",\"menu\":\"系统管理\",\"unicode\":\"&#xedf4;\"}],\"frontMenu\":[{\"child\":[{\"appFrontIcon\":\"cuIcon-send\",\"buttons\":[\"查看\",\"查看评论\"],\"classname\":\"meishixinxi\",\"menu\":\"美食信息\",\"menuJump\":\"列表\",\"tableName\":\"meishixinxi\"}],\"menu\":\"信息管理\"},{\"child\":[{\"appFrontIcon\":\"cuIcon-explore\",\"buttons\":[\"查看\"],\"classname\":\"dianpuhuodong\",\"menu\":\"店铺活动\",\"menuJump\":\"列表\",\"tableName\":\"dianpuhuodong\"}],\"menu\":\"店铺活动管理\"},{\"child\":[{\"appFrontIcon\":\"cuIcon-goods\",\"buttons\":[\"查看\"],\"classname\":\"cart\",\"menu\":\"购物车\",\"menuJump\":\"列表\",\"tableName\":\"cart\"}],\"menu\":\"购物车管理\"},{\"child\":[{\"appFrontIcon\":\"cuIcon-circle\",\"buttons\":[\"查看\",\"预约\"],\"classname\":\"cheweixinxi\",\"menu\":\"车位信息\",\"menuJump\":\"列表\",\"tableName\":\"cheweixinxi\"}],\"menu\":\"车位信息管理\"},{\"child\":[{\"appFrontIcon\":\"cuIcon-discover\",\"buttons\":[\"查看\",\"查看评论\",\"预约\"],\"classname\":\"cantingxinxi\",\"menu\":\"餐厅信息\",\"menuJump\":\"列表\",\"tableName\":\"cantingxinxi\"}],\"menu\":\"餐厅信息管理\"}],\"hasBackLogin\":\"是\",\"hasBackRegister\":\"否\",\"hasFrontLogin\":\"否\",\"hasFrontRegister\":\"否\",\"pathName\":\"users\",\"roleName\":\"管理员\",\"tableName\":\"users\"},{\"backMenu\":[{\"child\":[{\"allButtons\":[\"新增\",\"查看\",\"修改\",\"删除\",\"支付\",\"首页总数\"],\"appFrontIcon\":\"cuIcon-time\",\"buttons\":[\"查看\",\"支付\"],\"classname\":\"cheweiyuyue\",\"menu\":\"车位预约\",\"menuJump\":\"列表\",\"tableName\":\"cheweiyuyue\"}],\"fontClass\":\"icon-common40\",\"menu\":\"车位信息管理\",\"unicode\":\"&#xeebb;\"},{\"child\":[{\"allButtons\":[\"新增\",\"查看\",\"修改\",\"删除\",\"审核\"],\"appFrontIcon\":\"cuIcon-time\",\"buttons\":[\"查看\"],\"classname\":\"cantingyuyue\",\"menu\":\"餐厅预约\",\"menuJump\":\"列表\",\"tableName\":\"cantingyuyue\"}],\"fontClass\":\"icon-common23\",\"menu\":\"餐厅信息管理\",\"unicode\":\"&#xee05;\"},{\"child\":[{\"allButtons\":[\"新增\",\"查看\",\"修改\",\"删除\",\"月销额\",\"年销额\",\"品销量\",\"导出\",\"首页总数\",\"首页统计\",\"发货\",\"物流\",\"核销\"],\"appFrontIcon\":\"cuIcon-skin\",\"buttons\":[\"查看\"],\"menu\":\"已支付订单\",\"menuJump\":\"已支付\",\"tableName\":\"orders\"},{\"allButtons\":[\"新增\",\"查看\",\"修改\",\"删除\",\"月销额\",\"年销额\",\"品销量\",\"导出\",\"首页总数\",\"首页统计\",\"物流\"],\"appFrontIcon\":\"cuIcon-skin\",\"buttons\":[\"查看\"],\"menu\":\"已完成订单\",\"menuJump\":\"已完成\",\"tableName\":\"orders\"},{\"allButtons\":[\"新增\",\"查看\",\"修改\",\"删除\",\"月销额\",\"年销额\",\"品销量\",\"导出\",\"首页总数\",\"首页统计\",\"物流\"],\"appFrontIcon\":\"cuIcon-skin\",\"buttons\":[\"查看\"],\"menu\":\"已退款订单\",\"menuJump\":\"已退款\",\"tableName\":\"orders\"}],\"fontClass\":\"icon-common33\",\"menu\":\"订单管理\",\"unicode\":\"&#xee6a;\"},{\"child\":[{\"allButtons\":[\"新增\",\"查看\",\"修改\",\"删除\"],\"appFrontIcon\":\"cuIcon-addressbook\",\"buttons\":[\"查看\"],\"classname\":\"wodeyuyue\",\"menu\":\"我的预约\",\"menuJump\":\"列表\",\"tableName\":\"wodeyuyue\"}],\"fontClass\":\"icon-common41\",\"menu\":\"我的预约管理\",\"unicode\":\"&#xeede;\"},{\"child\":[{\"allButtons\":[\"新增\",\"查看\",\"修改\",\"删除\"],\"appFrontIcon\":\"cuIcon-cardboard\",\"buttons\":[\"查看\"],\"classname\":\"storeup\",\"menu\":\"我的收藏\",\"menuJump\":\"1\",\"tableName\":\"storeup\"}],\"fontClass\":\"icon-common2\",\"menu\":\"我的收藏管理\",\"unicode\":\"&#xeda4;\"}],\"frontMenu\":[{\"child\":[{\"appFrontIcon\":\"cuIcon-send\",\"buttons\":[\"查看\",\"查看评论\"],\"classname\":\"meishixinxi\",\"menu\":\"美食信息\",\"menuJump\":\"列表\",\"tableName\":\"meishixinxi\"}],\"menu\":\"信息管理\"},{\"child\":[{\"appFrontIcon\":\"cuIcon-explore\",\"buttons\":[\"查看\"],\"classname\":\"dianpuhuodong\",\"menu\":\"店铺活动\",\"menuJump\":\"列表\",\"tableName\":\"dianpuhuodong\"}],\"menu\":\"店铺活动管理\"},{\"child\":[{\"appFrontIcon\":\"cuIcon-goods\",\"buttons\":[\"查看\"],\"classname\":\"cart\",\"menu\":\"购物车\",\"menuJump\":\"列表\",\"tableName\":\"cart\"}],\"menu\":\"购物车管理\"},{\"child\":[{\"appFrontIcon\":\"cuIcon-circle\",\"buttons\":[\"查看\",\"预约\"],\"classname\":\"cheweixinxi\",\"menu\":\"车位信息\",\"menuJump\":\"列表\",\"tableName\":\"cheweixinxi\"}],\"menu\":\"车位信息管理\"},{\"child\":[{\"appFrontIcon\":\"cuIcon-discover\",\"buttons\":[\"查看\",\"查看评论\",\"预约\"],\"classname\":\"cantingxinxi\",\"menu\":\"餐厅信息\",\"menuJump\":\"列表\",\"tableName\":\"cantingxinxi\"}],\"menu\":\"餐厅信息管理\"}],\"hasBackLogin\":\"否\",\"hasBackRegister\":\"否\",\"hasFrontLogin\":\"是\",\"hasFrontRegister\":\"是\",\"pathName\":\"yonghu\",\"roleName\":\"用户\",\"tableName\":\"yonghu\"}]');
+INSERT INTO `menu` VALUES (1, '2025-03-25 17:01:11', '[{\"backMenu\": [{\"menu\": \"车位信息管理\", \"child\": [{\"menu\": \"车位信息\", \"buttons\": [\"新增\", \"查看\", \"修改\", \"删除\"], \"menuJump\": \"列表\", \"classname\": \"cheweixinxi\", \"tableName\": \"cheweixinxi\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\", \"预约\"], \"appFrontIcon\": \"cuIcon-goods\"}, {\"menu\": \"车位预约\", \"buttons\": [\"查看\", \"删除\", \"支付\", \"首页总数\"], \"menuJump\": \"列表\", \"classname\": \"cheweiyuyue\", \"tableName\": \"cheweiyuyue\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\", \"支付\", \"首页总数\"], \"appFrontIcon\": \"cuIcon-time\"}], \"unicode\": \"&#xeebb;\", \"fontClass\": \"icon-common40\"}, {\"menu\": \"餐厅信息管理\", \"child\": [{\"menu\": \"餐厅信息\", \"buttons\": [\"新增\", \"查看\", \"修改\", \"删除\", \"查看评论\"], \"menuJump\": \"列表\", \"classname\": \"cantingxinxi\", \"tableName\": \"cantingxinxi\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\", \"查看评论\", \"预约\"], \"appFrontIcon\": \"cuIcon-present\"}, {\"menu\": \"餐厅预约\", \"buttons\": [\"查看\", \"删除\", \"审核\"], \"menuJump\": \"列表\", \"classname\": \"cantingyuyue\", \"tableName\": \"cantingyuyue\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\", \"审核\"], \"appFrontIcon\": \"cuIcon-time\"}], \"unicode\": \"&#xee05;\", \"fontClass\": \"icon-common23\"}, {\"menu\": \"活动管理\", \"child\": [{\"menu\": \"餐厅活动\", \"buttons\": [\"新增\", \"查看\", \"修改\", \"删除\"], \"menuJump\": \"列表\", \"classname\": \"dianpuhuodong\", \"tableName\": \"dianpuhuodong\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\"], \"appFrontIcon\": \"cuIcon-medal\"}], \"unicode\": \"&#xee30;\", \"fontClass\": \"icon-common30\"}, {\"menu\": \"菜品信息管理\", \"child\": [{\"menu\": \"菜品类型\", \"buttons\": [\"新增\", \"查看\", \"修改\", \"删除\"], \"menuJump\": \"列表\", \"classname\": \"caipinleixing\", \"tableName\": \"caipinleixing\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\"], \"appFrontIcon\": \"cuIcon-newshot\"}, {\"menu\": \"美食信息\", \"buttons\": [\"新增\", \"查看\", \"修改\", \"删除\", \"菜品类型\", \"查看评论\", \"首页统计\"], \"menuJump\": \"列表\", \"classname\": \"meishixinxi\", \"tableName\": \"meishixinxi\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\", \"菜品类型\", \"查看评论\", \"首页统计\"], \"appFrontIcon\": \"cuIcon-taxi\"}], \"unicode\": \"&#xeeb2;\", \"fontClass\": \"icon-common38\"}, {\"menu\": \"订单管理\", \"child\": [{\"menu\": \"订单\", \"buttons\": [\"查看\", \"删除\", \"月销额\", \"年销额\", \"品销量\", \"导出\", \"首页总数\", \"首页统计\"], \"tableName\": \"orders\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\", \"月销额\", \"年销额\", \"品销量\", \"导出\", \"首页总数\", \"首页统计\"], \"appFrontIcon\": \"cuIcon-skin\"}, {\"menu\": \"未支付订单\", \"buttons\": [\"查看\", \"删除\", \"月销额\", \"年销额\", \"品销量\", \"导出\", \"首页总数\", \"首页统计\"], \"menuJump\": \"未支付\", \"tableName\": \"orders\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\", \"月销额\", \"年销额\", \"品销量\", \"导出\", \"首页总数\", \"首页统计\"], \"appFrontIcon\": \"cuIcon-skin\"}, {\"menu\": \"已支付订单\", \"buttons\": [\"查看\", \"删除\", \"月销额\", \"年销额\", \"品销量\", \"导出\", \"首页总数\", \"首页统计\", \"核销\"], \"menuJump\": \"已支付\", \"tableName\": \"orders\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\", \"月销额\", \"年销额\", \"品销量\", \"导出\", \"首页总数\", \"首页统计\", \"发货\", \"物流\", \"核销\"], \"appFrontIcon\": \"cuIcon-skin\"}, {\"menu\": \"已完成订单\", \"buttons\": [\"查看\", \"删除\", \"月销额\", \"年销额\", \"品销量\", \"导出\", \"首页总数\", \"首页统计\"], \"menuJump\": \"已完成\", \"tableName\": \"orders\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\", \"月销额\", \"年销额\", \"品销量\", \"导出\", \"首页总数\", \"首页统计\", \"物流\"], \"appFrontIcon\": \"cuIcon-skin\"}, {\"menu\": \"已取消订单\", \"buttons\": [\"查看\", \"删除\", \"月销额\", \"年销额\", \"品销量\", \"导出\", \"首页总数\", \"首页统计\"], \"menuJump\": \"已取消\", \"tableName\": \"orders\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\", \"月销额\", \"年销额\", \"品销量\", \"导出\", \"首页总数\", \"首页统计\"], \"appFrontIcon\": \"cuIcon-skin\"}, {\"menu\": \"已退款订单\", \"buttons\": [\"查看\", \"删除\", \"月销额\", \"年销额\", \"品销量\", \"导出\", \"首页总数\", \"首页统计\"], \"menuJump\": \"已退款\", \"tableName\": \"orders\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\", \"月销额\", \"年销额\", \"品销量\", \"导出\", \"首页总数\", \"首页统计\", \"物流\"], \"appFrontIcon\": \"cuIcon-skin\"}], \"unicode\": \"&#xee6a;\", \"fontClass\": \"icon-common33\"}, {\"menu\": \"用户管理\", \"child\": [{\"menu\": \"管理员\", \"buttons\": [\"新增\", \"查看\", \"修改\", \"删除\"], \"menuJump\": \"列表\", \"classname\": \"users\", \"tableName\": \"users\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\"], \"appFrontIcon\": \"cuIcon-newshot\"}, {\"menu\": \"用户\", \"buttons\": [\"新增\", \"查看\", \"修改\", \"删除\"], \"menuJump\": \"列表\", \"classname\": \"yonghu\", \"tableName\": \"yonghu\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\"], \"appFrontIcon\": \"cuIcon-paint\"}], \"unicode\": \"&#xef98;\", \"fontClass\": \"icon-user2\"}, {\"menu\": \"系统管理\", \"child\": [{\"menu\": \"轮播图\", \"buttons\": [\"新增\", \"查看\", \"修改\", \"删除\"], \"menuJump\": \"列表\", \"classname\": \"config\", \"tableName\": \"config\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\"], \"appFrontIcon\": \"cuIcon-addressbook\"}, {\"menu\": \"新闻资讯\", \"buttons\": [\"新增\", \"查看\", \"修改\", \"删除\"], \"menuJump\": \"列表\", \"classname\": \"news\", \"tableName\": \"news\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\"], \"appFrontIcon\": \"cuIcon-pay\"}, {\"menu\": \"系统公告\", \"buttons\": [\"新增\", \"查看\", \"修改\", \"删除\"], \"menuJump\": \"列表\", \"classname\": \"systemNotice\", \"tableName\": \"system_notice\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\"], \"appFrontIcon\": \"cuIcon-flashlightopen\"}], \"unicode\": \"&#xedf4;\", \"fontClass\": \"icon-common12\"}], \"pathName\": \"users\", \"roleName\": \"管理员\", \"frontMenu\": [{\"menu\": \"信息管理\", \"child\": [{\"menu\": \"美食信息\", \"buttons\": [\"查看\", \"查看评论\"], \"menuJump\": \"列表\", \"classname\": \"meishixinxi\", \"tableName\": \"meishixinxi\", \"appFrontIcon\": \"cuIcon-send\"}]}, {\"menu\": \"活动管理\", \"child\": [{\"menu\": \"餐厅活动\", \"buttons\": [\"查看\"], \"menuJump\": \"列表\", \"classname\": \"dianpuhuodong\", \"tableName\": \"dianpuhuodong\", \"appFrontIcon\": \"cuIcon-explore\"}]}, {\"menu\": \"购物车管理\", \"child\": [{\"menu\": \"购物车\", \"buttons\": [\"查看\"], \"menuJump\": \"列表\", \"classname\": \"cart\", \"tableName\": \"cart\", \"appFrontIcon\": \"cuIcon-goods\"}]}, {\"menu\": \"车位信息管理\", \"child\": [{\"menu\": \"车位信息\", \"buttons\": [\"查看\", \"预约\"], \"menuJump\": \"列表\", \"classname\": \"cheweixinxi\", \"tableName\": \"cheweixinxi\", \"appFrontIcon\": \"cuIcon-circle\"}]}, {\"menu\": \"餐厅信息管理\", \"child\": [{\"menu\": \"餐厅信息\", \"buttons\": [\"查看\", \"查看评论\", \"预约\"], \"menuJump\": \"列表\", \"classname\": \"cantingxinxi\", \"tableName\": \"cantingxinxi\", \"appFrontIcon\": \"cuIcon-discover\"}]}], \"tableName\": \"users\", \"hasBackLogin\": \"是\", \"hasFrontLogin\": \"否\", \"hasBackRegister\": \"否\", \"hasFrontRegister\": \"否\"}, {\"backMenu\": [{\"menu\": \"车位信息管理\", \"child\": [{\"menu\": \"车位预约\", \"buttons\": [\"查看\", \"支付\"], \"menuJump\": \"列表\", \"classname\": \"cheweiyuyue\", \"tableName\": \"cheweiyuyue\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\", \"支付\", \"首页总数\"], \"appFrontIcon\": \"cuIcon-time\"}], \"unicode\": \"&#xeebb;\", \"fontClass\": \"icon-common40\"}, {\"menu\": \"餐厅信息管理\", \"child\": [{\"menu\": \"餐厅预约\", \"buttons\": [\"查看\"], \"menuJump\": \"列表\", \"classname\": \"cantingyuyue\", \"tableName\": \"cantingyuyue\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\", \"审核\"], \"appFrontIcon\": \"cuIcon-time\"}], \"unicode\": \"&#xee05;\", \"fontClass\": \"icon-common23\"}, {\"menu\": \"订单管理\", \"child\": [{\"menu\": \"已支付订单\", \"buttons\": [\"查看\"], \"menuJump\": \"已支付\", \"tableName\": \"orders\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\", \"月销额\", \"年销额\", \"品销量\", \"导出\", \"首页总数\", \"首页统计\", \"发货\", \"物流\", \"核销\"], \"appFrontIcon\": \"cuIcon-skin\"}, {\"menu\": \"已完成订单\", \"buttons\": [\"查看\"], \"menuJump\": \"已完成\", \"tableName\": \"orders\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\", \"月销额\", \"年销额\", \"品销量\", \"导出\", \"首页总数\", \"首页统计\", \"物流\"], \"appFrontIcon\": \"cuIcon-skin\"}, {\"menu\": \"已退款订单\", \"buttons\": [\"查看\"], \"menuJump\": \"已退款\", \"tableName\": \"orders\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\", \"月销额\", \"年销额\", \"品销量\", \"导出\", \"首页总数\", \"首页统计\", \"物流\"], \"appFrontIcon\": \"cuIcon-skin\"}], \"unicode\": \"&#xee6a;\", \"fontClass\": \"icon-common33\"}, {\"menu\": \"我的收藏管理\", \"child\": [{\"menu\": \"我的收藏\", \"buttons\": [\"查看\"], \"menuJump\": \"1\", \"classname\": \"storeup\", \"tableName\": \"storeup\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\"], \"appFrontIcon\": \"cuIcon-cardboard\"}], \"unicode\": \"&#xeda4;\", \"fontClass\": \"icon-common2\"}], \"pathName\": \"yonghu\", \"roleName\": \"用户\", \"frontMenu\": [{\"menu\": \"信息管理\", \"child\": [{\"menu\": \"美食信息\", \"buttons\": [\"查看\", \"查看评论\"], \"menuJump\": \"列表\", \"classname\": \"meishixinxi\", \"tableName\": \"meishixinxi\", \"appFrontIcon\": \"cuIcon-send\"}]}, {\"menu\": \"活动管理\", \"child\": [{\"menu\": \"餐厅活动\", \"buttons\": [\"查看\"], \"menuJump\": \"列表\", \"classname\": \"dianpuhuodong\", \"tableName\": \"dianpuhuodong\", \"appFrontIcon\": \"cuIcon-explore\"}]}, {\"menu\": \"购物车管理\", \"child\": [{\"menu\": \"购物车\", \"buttons\": [\"查看\"], \"menuJump\": \"列表\", \"classname\": \"cart\", \"tableName\": \"cart\", \"appFrontIcon\": \"cuIcon-goods\"}]}, {\"menu\": \"车位信息管理\", \"child\": [{\"menu\": \"车位信息\", \"buttons\": [\"查看\", \"预约\"], \"menuJump\": \"列表\", \"classname\": \"cheweixinxi\", \"tableName\": \"cheweixinxi\", \"appFrontIcon\": \"cuIcon-circle\"}]}, {\"menu\": \"餐厅信息管理\", \"child\": [{\"menu\": \"餐厅信息\", \"buttons\": [\"查看\", \"查看评论\", \"预约\"], \"menuJump\": \"列表\", \"classname\": \"cantingxinxi\", \"tableName\": \"cantingxinxi\", \"appFrontIcon\": \"cuIcon-discover\"}]}], \"tableName\": \"yonghu\", \"hasBackLogin\": \"否\", \"hasFrontLogin\": \"是\", \"hasBackRegister\": \"否\", \"hasFrontRegister\": \"是\"}, {\"backMenu\": [{\"menu\": \"订单管理\", \"child\": [{\"menu\": \"订单管理\", \"buttons\": [\"查看\", \"修改\"], \"menuJump\": \"列表\", \"classname\": \"orders\", \"tableName\": \"orders\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\", \"导出\", \"月销额\", \"年销额\", \"品销量\"], \"appFrontIcon\": \"cuIcon-shop\"}], \"unicode\": \"&#xee05;\", \"fontClass\": \"icon-common23\"}, {\"menu\": \"预约管理\", \"child\": [{\"menu\": \"餐厅预约\", \"buttons\": [\"查看\", \"修改\", \"审核\"], \"menuJump\": \"列表\", \"classname\": \"cantingyuyue\", \"tableName\": \"cantingyuyue\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\", \"审核\"], \"appFrontIcon\": \"cuIcon-time\"}, {\"menu\": \"车位预约\", \"buttons\": [\"查看\", \"修改\", \"支付\"], \"menuJump\": \"列表\", \"classname\": \"cheweiyuyue\", \"tableName\": \"cheweiyuyue\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\", \"支付\"], \"appFrontIcon\": \"cuIcon-time\"}], \"unicode\": \"&#xeebb;\", \"fontClass\": \"icon-common40\"}, {\"menu\": \"信息查看\", \"child\": [{\"menu\": \"餐厅信息\", \"buttons\": [\"查看\"], \"menuJump\": \"列表\", \"classname\": \"cantingxinxi\", \"tableName\": \"cantingxinxi\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\", \"查看评论\"], \"appFrontIcon\": \"cuIcon-present\"}, {\"menu\": \"美食信息\", \"buttons\": [\"查看\"], \"menuJump\": \"列表\", \"classname\": \"meishixinxi\", \"tableName\": \"meishixinxi\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\", \"查看评论\"], \"appFrontIcon\": \"cuIcon-goods\"}], \"unicode\": \"&#xee14;\", \"fontClass\": \"icon-common14\"}, {\"menu\": \"活动公告\", \"child\": [{\"menu\": \"店铺活动\", \"buttons\": [\"查看\"], \"menuJump\": \"列表\", \"classname\": \"dianpuhuodong\", \"tableName\": \"dianpuhuodong\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\"], \"appFrontIcon\": \"cuIcon-medal\"}, {\"menu\": \"新闻资讯\", \"buttons\": [\"查看\"], \"menuJump\": \"列表\", \"classname\": \"news\", \"tableName\": \"news\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\"], \"appFrontIcon\": \"cuIcon-news\"}, {\"menu\": \"系统公告\", \"buttons\": [\"查看\"], \"menuJump\": \"列表\", \"classname\": \"systemNotice\", \"tableName\": \"systemNotice\", \"allButtons\": [\"新增\", \"查看\", \"修改\", \"删除\"], \"appFrontIcon\": \"cuIcon-notice\"}], \"unicode\": \"&#xee32;\", \"fontClass\": \"icon-common32\"}], \"pathName\": \"yuangong\", \"roleName\": \"员工\", \"tableName\": \"yuangong\", \"hasBackLogin\": \"是\"}]');
 
 -- ----------------------------
 -- Table structure for news
@@ -416,7 +392,7 @@ CREATE TABLE `news`  (
   `introduction` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '简介',
   `picture` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '图片',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '新闻资讯' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '新闻资讯' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of news
@@ -458,61 +434,48 @@ CREATE TABLE `orders`  (
   `logistics` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '物流',
   `role` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '用户角色',
   `userid` bigint NOT NULL COMMENT '用户id',
-  `shangjiazhanghao` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '商户名称',
   `goodtype` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '商品类型',
   `canzhuomingcheng` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '餐桌名称',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `orderid`(`orderid` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '订单' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 29 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '订单' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of orders
 -- ----------------------------
-INSERT INTO `orders` VALUES (1, '2025-03-25 17:06:12', '20250325170612297987', 'meishixinxi', 10, '菜品名称10', 'file/meishixinxiCaipintupian10.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已完成', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '商家账号10', '菜品类型10');
-INSERT INTO `orders` VALUES (2, '2025-11-02 03:08:14', '20251102030814535592', 'meishixinxi', 1, '菜品名称1', 'file/meishixinxiCaipintupian1.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '商家账号1', '菜品类型1');
-INSERT INTO `orders` VALUES (3, '2025-11-02 13:23:35', '20251102132335451607', 'meishixinxi', 4, '菜品名称4', 'file/meishixinxiCaipintupian4.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '商家账号4', '菜品类型4');
-INSERT INTO `orders` VALUES (4, '2025-11-02 13:23:49', '20251102132349820663', 'meishixinxi', 4, '菜品名称4', 'file/meishixinxiCaipintupian4.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '未支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '商家账号4', '菜品类型4');
-INSERT INTO `orders` VALUES (5, '2025-11-02 17:48:53', '20251102174853680425', 'meishixinxi', 2, '海鲜面', 'file/meishixinxiCaipintupian2.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '未支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '商家账号2', '面食');
-INSERT INTO `orders` VALUES (6, '2025-11-02 17:49:12', '20251102174912127554', 'meishixinxi', 1, '生腌虾', 'file/meishixinxiCaipintupian1.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '商家账号1', '潮汕特色菜');
-INSERT INTO `orders` VALUES (7, '2025-11-02 18:12:21', '20251102181221199879', 'meishixinxi', 2, '海鲜面', 'file/meishixinxiCaipintupian2.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '商家账号2', '面食');
-INSERT INTO `orders` VALUES (8, '2025-11-02 18:38:22', '20251102183822242515', 'meishixinxi', 1, '生腌虾', 'file/meishixinxiCaipintupian1.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '商家账号1', '潮汕特色菜');
-INSERT INTO `orders` VALUES (9, '2025-11-02 18:38:44', '20251102183844249292', 'meishixinxi', 1, '生腌虾', 'file/meishixinxiCaipintupian1.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '商家账号1', '潮汕特色菜');
-INSERT INTO `orders` VALUES (10, '2025-11-03 15:52:13', '20251103155213184209', 'meishixinxi', 2, '海鲜面', 'file/meishixinxiCaipintupian2.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '商家账号2', '面食');
-INSERT INTO `orders` VALUES (11, '2025-11-03 17:07:15', '20251103170715904821', 'meishixinxi', 1, '生腌虾', 'file/meishixinxiCaipintupian1.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '商家账号1', '潮汕特色菜');
-
--- ----------------------------
--- Table structure for shangjia
--- ----------------------------
-DROP TABLE IF EXISTS `shangjia`;
-CREATE TABLE `shangjia`  (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `addtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `shangjiazhanghao` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '商家账号',
-  `mima` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '密码',
-  `shangjiamingcheng` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '商家名称',
-  `touxiang` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '头像',
-  `fuzeren` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '负责人',
-  `dianhua` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '电话',
-  `shangjiadizhi` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '商家地址',
-  `sfsh` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '是否审核',
-  `shhf` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '回复内容',
-  PRIMARY KEY (`id`) USING BTREE,
-  UNIQUE INDEX `shangjiazhanghao`(`shangjiazhanghao` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 120 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商家' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of shangjia
--- ----------------------------
-INSERT INTO `shangjia` VALUES (111, '2025-03-25 17:01:10', '商家账号1', '123456', '商家名称1', 'file/shangjiaTouxiang1.jpg', '负责人1', '19819881111', '商家地址1', '是', '');
-INSERT INTO `shangjia` VALUES (112, '2025-03-25 17:01:10', '商家账号2', '123456', '商家名称2', 'file/shangjiaTouxiang2.jpg', '负责人2', '19819881112', '商家地址2', '是', '');
-INSERT INTO `shangjia` VALUES (113, '2025-03-25 17:01:10', '商家账号3', '123456', '商家名称3', 'file/shangjiaTouxiang3.jpg', '负责人3', '19819881113', '商家地址3', '是', '');
-INSERT INTO `shangjia` VALUES (114, '2025-03-25 17:01:10', '商家账号4', '123456', '商家名称4', 'file/shangjiaTouxiang4.jpg', '负责人4', '19819881114', '商家地址4', '是', '');
-INSERT INTO `shangjia` VALUES (115, '2025-03-25 17:01:10', '商家账号5', '123456', '商家名称5', 'file/shangjiaTouxiang5.jpg', '负责人5', '19819881115', '商家地址5', '是', '');
-INSERT INTO `shangjia` VALUES (116, '2025-03-25 17:01:10', '商家账号6', '123456', '商家名称6', 'file/shangjiaTouxiang6.jpg', '负责人6', '19819881116', '商家地址6', '是', '');
-INSERT INTO `shangjia` VALUES (117, '2025-03-25 17:01:10', '商家账号7', '123456', '商家名称7', 'file/shangjiaTouxiang7.jpg', '负责人7', '19819881117', '商家地址7', '是', '');
-INSERT INTO `shangjia` VALUES (118, '2025-03-25 17:01:10', '商家账号8', '123456', '商家名称8', 'file/shangjiaTouxiang8.jpg', '负责人8', '19819881118', '商家地址8', '是', '');
-INSERT INTO `shangjia` VALUES (119, '2025-03-25 17:01:10', '商家账号9', '123456', '商家名称9', 'file/shangjiaTouxiang9.jpg', '负责人9', '19819881119', '商家地址9', '是', '');
-INSERT INTO `shangjia` VALUES (120, '2025-03-25 17:01:10', '商家账号10', '123456', '商家名称10', 'file/shangjiaTouxiang10.jpg', '负责人10', '198198811110', '商家地址10', '是', '');
+INSERT INTO `orders` VALUES (1, '2025-03-25 17:06:12', '20250325170612297987', 'meishixinxi', 10, '菜品名称10', 'file/meishixinxiCaipintupian10.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已完成', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '菜品类型10', NULL);
+INSERT INTO `orders` VALUES (2, '2025-11-02 03:08:14', '20251102030814535592', 'meishixinxi', 1, '菜品名称1', 'file/meishixinxiCaipintupian1.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '菜品类型1', NULL);
+INSERT INTO `orders` VALUES (3, '2025-11-02 13:23:35', '20251102132335451607', 'meishixinxi', 4, '菜品名称4', 'file/meishixinxiCaipintupian4.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '菜品类型4', NULL);
+INSERT INTO `orders` VALUES (4, '2025-11-02 13:23:49', '20251102132349820663', 'meishixinxi', 4, '菜品名称4', 'file/meishixinxiCaipintupian4.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '未支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '菜品类型4', NULL);
+INSERT INTO `orders` VALUES (5, '2025-11-02 17:48:53', '20251102174853680425', 'meishixinxi', 2, '海鲜面', 'file/meishixinxiCaipintupian2.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '未支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '面食', NULL);
+INSERT INTO `orders` VALUES (6, '2025-11-02 17:49:12', '20251102174912127554', 'meishixinxi', 1, '生腌虾', 'file/meishixinxiCaipintupian1.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '潮汕特色菜', NULL);
+INSERT INTO `orders` VALUES (7, '2025-11-02 18:12:21', '20251102181221199879', 'meishixinxi', 2, '海鲜面', 'file/meishixinxiCaipintupian2.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '面食', NULL);
+INSERT INTO `orders` VALUES (8, '2025-11-02 18:38:22', '20251102183822242515', 'meishixinxi', 1, '生腌虾', 'file/meishixinxiCaipintupian1.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '潮汕特色菜', NULL);
+INSERT INTO `orders` VALUES (9, '2025-11-02 18:38:44', '20251102183844249292', 'meishixinxi', 1, '生腌虾', 'file/meishixinxiCaipintupian1.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '潮汕特色菜', NULL);
+INSERT INTO `orders` VALUES (10, '2025-11-03 15:52:13', '20251103155213184209', 'meishixinxi', 2, '海鲜面', 'file/meishixinxiCaipintupian2.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '面食', NULL);
+INSERT INTO `orders` VALUES (11, '2025-11-03 17:07:15', '20251103170715904821', 'meishixinxi', 1, '生腌虾', 'file/meishixinxiCaipintupian1.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '潮汕特色菜', NULL);
+INSERT INTO `orders` VALUES (12, '2025-11-09 13:39:18', '20251109133918228235', 'meishixinxi', 3, '梅菜扣肉', 'file/meishixinxiCaipintupian3.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '粤菜', NULL);
+INSERT INTO `orders` VALUES (13, '2025-11-09 13:39:34', '20251109133934249274', 'meishixinxi', 3, '梅菜扣肉', 'file/meishixinxiCaipintupian3.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '粤菜', NULL);
+INSERT INTO `orders` VALUES (14, '2025-11-09 13:39:48', '20251109133948871652', 'meishixinxi', 3, '梅菜扣肉', 'file/meishixinxiCaipintupian3.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '粤菜', NULL);
+INSERT INTO `orders` VALUES (15, '2025-11-09 13:40:04', '20251109134004229720', 'meishixinxi', 1, '生腌虾', 'file/meishixinxiCaipintupian1.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '潮汕特色菜', NULL);
+INSERT INTO `orders` VALUES (16, '2025-11-09 15:21:30', '20251109152130885050', 'meishixinxi', 1, '生腌虾', 'file/meishixinxiCaipintupian1.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '潮汕特色菜', NULL);
+INSERT INTO `orders` VALUES (17, '2025-11-09 15:21:30', '20251109152130903273', 'meishixinxi', 3, '梅菜扣肉', 'file/meishixinxiCaipintupian3.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已完成', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '粤菜', NULL);
+INSERT INTO `orders` VALUES (18, '2025-11-09 16:11:58', '20251109161158014500', 'meishixinxi', 1, '生腌虾', 'file/meishixinxiCaipintupian1.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已完成', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '潮汕特色菜', NULL);
+INSERT INTO `orders` VALUES (19, '2025-11-09 18:58:16', '20251109185816593607', 'meishixinxi', 1, '生腌虾', 'file/meishixinxiCaipintupian1.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '潮汕特色菜', NULL);
+INSERT INTO `orders` VALUES (20, '2025-11-09 21:46:36', '20251109214636101837', 'meishixinxi', 2, '海鲜面', 'file/meishixinxiCaipintupian2.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '面食', NULL);
+INSERT INTO `orders` VALUES (21, '2025-11-09 22:04:03', '20251109220403230322', 'meishixinxi', 2, '海鲜面', 'file/meishixinxiCaipintupian2.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已完成', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '面食', NULL);
+INSERT INTO `orders` VALUES (22, '2025-11-09 22:12:57', '20251109221257515377', 'meishixinxi', 1, '生腌虾', 'file/meishixinxiCaipintupian1.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '潮汕特色菜', NULL);
+INSERT INTO `orders` VALUES (23, '2025-11-09 22:16:29', '20251109221629636614', 'meishixinxi', 1, '生腌虾', 'file/meishixinxiCaipintupian1.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '未支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '潮汕特色菜', '餐桌名称1');
+INSERT INTO `orders` VALUES (24, '2025-11-09 22:16:49', '20251109221649508555', 'meishixinxi', 1, '生腌虾', 'file/meishixinxiCaipintupian1.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已完成', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '潮汕特色菜', '餐桌名称1');
+INSERT INTO `orders` VALUES (25, '2025-11-09 22:28:56', '20251109222856384830', 'meishixinxi', 1, '生腌虾', 'file/meishixinxiCaipintupian1.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '不要辣', NULL, 'yonghu', 11, '潮汕特色菜', '餐桌名称10');
+INSERT INTO `orders` VALUES (26, '2025-11-09 22:31:01', '20251109223101668030', 'meishixinxi', 1, '生腌虾', 'file/meishixinxiCaipintupian1.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '潮汕特色菜', '餐桌名称2');
+INSERT INTO `orders` VALUES (27, '2025-11-09 22:39:58', '20251109223958498813', 'meishixinxi', 1, '生腌虾', 'file/meishixinxiCaipintupian1.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '潮汕特色菜', '餐桌名称1');
+INSERT INTO `orders` VALUES (28, '2025-11-09 22:40:57', '20251109224057504129', 'meishixinxi', 1, '生腌虾', 'file/meishixinxiCaipintupian1.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已完成', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '潮汕特色菜', '餐桌名称1');
+INSERT INTO `orders` VALUES (29, '2025-12-03 17:11:24', '20251203171124720754', 'meishixinxi', 4, '山药卷', 'file/meishixinxiCaipintupian4.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '小吃', '餐桌名称2');
+INSERT INTO `orders` VALUES (30, '2025-12-03 17:19:19', '20251203171919284425', 'meishixinxi', 1, '生腌虾', 'file/meishixinxiCaipintupian1.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '潮汕特色菜', '餐桌名称2');
+INSERT INTO `orders` VALUES (31, '2025-12-03 19:06:23', '20251203190623550065', 'meishixinxi', 1, '生腌虾', 'file/meishixinxiCaipintupian1.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已支付', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '潮汕特色菜', '餐桌名称2');
+INSERT INTO `orders` VALUES (32, '2025-12-03 19:08:55', '20251203190855075957', 'meishixinxi', 1, '生腌虾', 'file/meishixinxiCaipintupian1.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已完成', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '潮汕特色菜', '餐桌名称1');
+INSERT INTO `orders` VALUES (33, '2025-12-03 21:02:23', '20251203210223704698', 'meishixinxi', 4, '山药卷', 'file/meishixinxiCaipintupian4.jpg', 1, 99.9, 99.9, 99.9, 99.9, '1', '已完成', NULL, NULL, NULL, '', NULL, 'yonghu', 11, '小吃', '餐桌名称2');
 
 -- ----------------------------
 -- Table structure for storeup
@@ -530,13 +493,15 @@ CREATE TABLE `storeup`  (
   `remark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
   `userid` bigint NOT NULL COMMENT '用户id',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '我的收藏' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '我的收藏' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of storeup
 -- ----------------------------
 INSERT INTO `storeup` VALUES (1, '2025-10-25 17:05:46', 10, 'meishixinxi', '菜品名称10', 'file/meishixinxiCaipintupian10.jpg', '1', '菜品类型10', NULL, 11);
 INSERT INTO `storeup` VALUES (2, '2025-10-25 17:06:27', 2, 'cantingxinxi', '餐桌名称2', 'file/cantingxinxiFengmian2.jpg', '1', NULL, NULL, 11);
+INSERT INTO `storeup` VALUES (3, '2025-11-09 13:39:02', 3, 'meishixinxi', '梅菜扣肉', 'file/meishixinxiCaipintupian3.jpg', '1', '粤菜', NULL, 11);
+INSERT INTO `storeup` VALUES (4, '2025-11-09 21:46:24', 4, 'meishixinxi', '山药卷', 'file/meishixinxiCaipintupian4.jpg', '1', '小吃', NULL, 11);
 
 -- ----------------------------
 -- Table structure for system_notice
@@ -547,7 +512,7 @@ CREATE TABLE `system_notice`  (
   `addtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `content` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '公告内容',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '系统公告' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '系统公告' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of system_notice
@@ -568,16 +533,17 @@ CREATE TABLE `token`  (
   `addtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '新增时间',
   `expiratedtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '过期时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = 'token表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci COMMENT = 'token表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of token
 -- ----------------------------
-INSERT INTO `token` VALUES (1, 11, '账号1', 'yonghu', '用户', 'e8fau3lu3zgbtls78iwuvk76j32rg1h9', '2025-03-25 17:05:40', '2025-11-07 23:37:48');
-INSERT INTO `token` VALUES (2, 1, 'admin', 'users', '管理员', 'fdzkicrqc7n507lmlg1nvcvuzqjjfpx7', '2025-03-25 17:06:55', '2025-11-07 23:36:43');
-INSERT INTO `token` VALUES (3, 111, '商家账号1', 'shangjia', '商家', '51ny60yai98q0yrllfbbsgn0fdncs9l5', '2025-03-25 17:12:56', '2025-03-25 18:14:27');
-INSERT INTO `token` VALUES (4, 120, '商家账号10', 'shangjia', '商家', 's38knhieonf4eirhdvb1qdsv9jjcj9ep', '2025-03-25 17:15:53', '2025-03-25 18:15:54');
+INSERT INTO `token` VALUES (1, 11, '账号1', 'yonghu', '用户', '5p6ep2epiufj0n91pcb6djbdjv9qsaaz', '2025-03-25 17:05:40', '2025-12-04 10:59:54');
+INSERT INTO `token` VALUES (2, 1, 'admin', 'users', '管理员', 'p54itiqjzzzru90g1om1b4m18a7w9l6l', '2025-03-25 17:06:55', '2025-12-04 11:35:25');
+INSERT INTO `token` VALUES (3, 111, '员工1', 'yuangong', '员工', 'qadv53owpn6e6b85cfuyc2jtlitre9wq', '2025-03-25 17:12:56', '2025-12-04 10:17:19');
+INSERT INTO `token` VALUES (4, 120, '员工10', 'yuangong', '员工', 's38knhieonf4eirhdvb1qdsv9jjcj9ep', '2025-03-25 17:15:53', '2025-03-25 18:15:54');
 INSERT INTO `token` VALUES (5, 1742894247741, '11', 'yonghu', '用户', '6rqn1u4qxzox90p69kiuu7yormas1b4y', '2025-03-25 17:17:36', '2025-03-25 18:17:36');
+INSERT INTO `token` VALUES (6, 111, '员工1', 'yuangong', '员工', 'czu8yy2uupd46rhnvhw5uezcegpmz6h1', '2025-12-03 16:42:55', '2025-12-03 17:42:56');
 
 -- ----------------------------
 -- Table structure for users
@@ -592,46 +558,12 @@ CREATE TABLE `users`  (
   `tupian` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '图片',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `username`(`username` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '管理员' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '管理员' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of users
 -- ----------------------------
 INSERT INTO `users` VALUES (1, '2025-10-25 17:01:10', 'admin', 'admin', '管理员', 'file/1742893901879.jpg');
-
--- ----------------------------
--- Table structure for wodeyuyue
--- ----------------------------
-DROP TABLE IF EXISTS `wodeyuyue`;
-CREATE TABLE `wodeyuyue`  (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `addtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `orderid` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'orderid',
-  `goodname` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '菜品名称',
-  `buynumber` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '数量',
-  `total` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '价格',
-  `zhanghao` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '账号',
-  `mingcheng` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '名称',
-  `dingdanzhuangtai` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '订单状态',
-  `shangjiazhanghao` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '商家账号',
-  `shangjiamingcheng` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '商家名称',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '我的预约' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of wodeyuyue
--- ----------------------------
-INSERT INTO `wodeyuyue` VALUES (1, '2025-10-25 17:01:10', 'orderid1', '菜品名称1', '数量1', '价格1', '账号1', '名称1', '备料', '商家账号1', '商家名称1');
-INSERT INTO `wodeyuyue` VALUES (2, '2025-10-25 17:01:10', 'orderid2', '菜品名称2', '数量2', '价格2', '账号2', '名称2', '备料', '商家账号2', '商家名称2');
-INSERT INTO `wodeyuyue` VALUES (3, '2025-10-25 17:01:10', 'orderid3', '菜品名称3', '数量3', '价格3', '账号3', '名称3', '备料', '商家账号3', '商家名称3');
-INSERT INTO `wodeyuyue` VALUES (4, '2025-10-25 17:01:10', 'orderid4', '菜品名称4', '数量4', '价格4', '账号4', '名称4', '备料', '商家账号4', '商家名称4');
-INSERT INTO `wodeyuyue` VALUES (5, '2025-10-25 17:01:10', 'orderid5', '菜品名称5', '数量5', '价格5', '账号5', '名称5', '备料', '商家账号5', '商家名称5');
-INSERT INTO `wodeyuyue` VALUES (6, '2025-10-25 17:01:10', 'orderid6', '菜品名称6', '数量6', '价格6', '账号6', '名称6', '备料', '商家账号6', '商家名称6');
-INSERT INTO `wodeyuyue` VALUES (7, '2025-10-25 17:01:10', 'orderid7', '菜品名称7', '数量7', '价格7', '账号7', '名称7', '备料', '商家账号7', '商家名称7');
-INSERT INTO `wodeyuyue` VALUES (8, '2025-10-25 17:01:10', 'orderid8', '菜品名称8', '数量8', '价格8', '账号8', '名称8', '备料', '商家账号8', '商家名称8');
-INSERT INTO `wodeyuyue` VALUES (9, '2025-10-25 17:01:10', 'orderid9', '菜品名称9', '数量9', '价格9', '账号9', '名称9', '备料', '商家账号9', '商家名称9');
-INSERT INTO `wodeyuyue` VALUES (10, '2025-10-25 17:01:10', 'orderid10', '菜品名称10', '数量10', '价格10', '账号10', '名称10', '备料', '商家账号10', '商家名称10');
-INSERT INTO `wodeyuyue` VALUES (11, '2025-10-25 17:01:10', '20250325170612297987', '菜品名称10', '1', '99.9', '账号1', '名称1', '备料', '商家账号10', '商家名称10');
 
 -- ----------------------------
 -- Table structure for yonghu
@@ -654,12 +586,12 @@ CREATE TABLE `yonghu`  (
   `money` double NULL DEFAULT 0 COMMENT '余额',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `zhanghao`(`zhanghao` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1742894247741 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1742894247742 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of yonghu
 -- ----------------------------
-INSERT INTO `yonghu` VALUES (11, '2025-03-25 17:01:09', '账号1', 'file/yonghuTouxiang1.jpg', '123456', '名称1', '男', '19819881111', '车牌号1', '密保问题1', '密保答案1', 1, 0, 311.9);
+INSERT INTO `yonghu` VALUES (11, '2025-03-25 17:01:09', '账号1', 'file/yonghuTouxiang1.jpg', '123456', '名称1', '男', '19819881111', '车牌号1', '密保问题1', '密保答案1', 1, 0, 774);
 INSERT INTO `yonghu` VALUES (12, '2025-03-25 17:01:09', '账号2', 'file/yonghuTouxiang2.jpg', '123456', '名称2', '男', '19819881112', '车牌号2', '密保问题2', '密保答案2', 2, 0, 200);
 INSERT INTO `yonghu` VALUES (13, '2025-03-25 17:01:09', '账号3', 'file/yonghuTouxiang3.jpg', '123456', '名称3', '男', '19819881113', '车牌号3', '密保问题3', '密保答案3', 3, 0, 200);
 INSERT INTO `yonghu` VALUES (14, '2025-03-25 17:01:09', '账号4', 'file/yonghuTouxiang4.jpg', '123456', '名称4', '男', '19819881114', '车牌号4', '密保问题4', '密保答案4', 4, 0, 200);
@@ -670,5 +602,39 @@ INSERT INTO `yonghu` VALUES (18, '2025-03-25 17:01:09', '账号8', 'file/yonghuT
 INSERT INTO `yonghu` VALUES (19, '2025-03-25 17:01:09', '账号9', 'file/yonghuTouxiang9.jpg', '123456', '名称9', '男', '19819881119', '车牌号9', '密保问题9', '密保答案9', 9, 0, 200);
 INSERT INTO `yonghu` VALUES (20, '2025-03-25 17:01:09', '账号10', 'file/yonghuTouxiang10.jpg', '123456', '名称10', '男', '198198811110', '车牌号10', '密保问题10', '密保答案10', 10, 0, 200);
 INSERT INTO `yonghu` VALUES (1742894247741, '2025-03-25 17:17:27', '11', NULL, '11', '11', '男', '16666666666', '闽A88888', '2', '3', 5, 0, 0);
+
+-- ----------------------------
+-- Table structure for yuangong
+-- ----------------------------
+DROP TABLE IF EXISTS `yuangong`;
+CREATE TABLE `yuangong`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `addtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `yuangongzhanghao` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '员工账号',
+  `mima` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '密码',
+  `yuangongmingcheng` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '员工姓名',
+  `touxiang` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '头像',
+  `zhiwei` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '职位',
+  `dianhua` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '电话',
+  `gongzuodizhi` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '工作地址',
+  `sfsh` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '是否审核',
+  `shhf` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '回复内容',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `yuangongzhanghao`(`yuangongzhanghao` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 121 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '员工' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of yuangong
+-- ----------------------------
+INSERT INTO `yuangong` VALUES (111, '2025-03-25 17:01:10', '员工1', '123456', '员工姓名1', 'file/shangjiaTouxiang1.jpg', '主管1', '19819881111', '工作地址1', '是', '');
+INSERT INTO `yuangong` VALUES (112, '2025-03-25 17:01:10', '员工2', '123456', '员工姓名2', 'file/shangjiaTouxiang2.jpg', '主管2', '19819881112', '工作地址2', '是', '');
+INSERT INTO `yuangong` VALUES (113, '2025-03-25 17:01:10', '员工3', '123456', '员工姓名3', 'file/shangjiaTouxiang3.jpg', '主管3', '19819881113', '工作地址3', '是', '');
+INSERT INTO `yuangong` VALUES (114, '2025-03-25 17:01:10', '员工4', '123456', '员工姓名4', 'file/shangjiaTouxiang4.jpg', '主管4', '19819881114', '工作地址4', '是', '');
+INSERT INTO `yuangong` VALUES (115, '2025-03-25 17:01:10', '员工5', '123456', '员工姓名5', 'file/shangjiaTouxiang5.jpg', '主管5', '19819881115', '工作地址5', '是', '');
+INSERT INTO `yuangong` VALUES (116, '2025-03-25 17:01:10', '员工6', '123456', '员工姓名6', 'file/shangjiaTouxiang6.jpg', '主管6', '19819881116', '工作地址6', '是', '');
+INSERT INTO `yuangong` VALUES (117, '2025-03-25 17:01:10', '员工7', '123456', '员工姓名7', 'file/shangjiaTouxiang7.jpg', '主管7', '19819881117', '工作地址7', '是', '');
+INSERT INTO `yuangong` VALUES (118, '2025-03-25 17:01:10', '员工8', '123456', '员工姓名8', 'file/shangjiaTouxiang8.jpg', '主管8', '19819881118', '工作地址8', '是', '');
+INSERT INTO `yuangong` VALUES (119, '2025-03-25 17:01:10', '员工9', '123456', '员工姓名9', 'file/shangjiaTouxiang9.jpg', '主管9', '19819881119', '工作地址9', '是', '');
+INSERT INTO `yuangong` VALUES (120, '2025-03-25 17:01:10', '员工10', '123456', '员工姓名10', 'file/shangjiaTouxiang10.jpg', '主管10', '198198811110', '工作地址10', '是', '');
 
 SET FOREIGN_KEY_CHECKS = 1;
