@@ -56,10 +56,10 @@ public class Query<T> extends LinkedHashMap<String, Object> {
 
         //分页参数
         if(params.get("page") != null){
-            currPage = Integer.parseInt((String)params.get("page"));
+            currPage = Integer.parseInt(String.valueOf(params.get("page")));
         }
         if(params.get("limit") != null){
-            limit = Integer.parseInt((String)params.get("limit"));
+            limit = Integer.parseInt(String.valueOf(params.get("limit")));
         }
 
         this.put("offset", (currPage - 1) * limit);
@@ -67,8 +67,8 @@ public class Query<T> extends LinkedHashMap<String, Object> {
         this.put("limit", limit);
 
         //防止SQL注入（因为sidx、order是通过拼接SQL实现排序的，会有SQL注入风险）
-        String sidx = SQLFilter.sqlInject((String)params.get("sidx"));
-        String order = SQLFilter.sqlInject((String)params.get("order"));
+        String sidx = params.get("sidx")!=null?SQLFilter.sqlInject(String.valueOf(params.get("sidx"))):"";
+        String order = params.get("order")!=null?SQLFilter.sqlInject(String.valueOf(params.get("order"))):"";
         this.put("sidx", sidx);
         this.put("order", order);
 

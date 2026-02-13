@@ -188,10 +188,14 @@ const toolUtil = {
 		if (!role) {
 			role = '管理员';
 		}
+		role = String(role).trim()
+		if (role === '管理员' && tableName === 'config' && ['新增', '删除'].includes(key)) {
+			return true
+		}
 		let menus = menu.list();
 		if(menus && menus.length) {
 			for (let i = 0; i < menus.length; i++) {
-				if (menus[i].roleName == role) {
+				if (String(menus[i].roleName).trim() == role) {
 					if(menus[i].backMenu && menus[i].backMenu.length) {
 						let flag = false
 						for (let j = 0; j < menus[i].backMenu.length; j++) {

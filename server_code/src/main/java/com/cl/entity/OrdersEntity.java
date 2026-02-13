@@ -6,7 +6,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.lang.reflect.InvocationTargetException;
 
 import java.io.Serializable;
@@ -124,34 +126,16 @@ public class OrdersEntity<T> implements Serializable {
 	private String status;
 	
 	/**
-	 * 地址
-	 */
-					
-	private String address;
-	
-	/**
 	 * 电话
 	 */
 					
 	private String tel;
 	
 	/**
-	 * 收货人
-	 */
-					
-	private String consignee;
-	
-	/**
 	 * 备注
 	 */
 					
 	private String remark;
-	
-	/**
-	 * 物流
-	 */
-					
-	private String logistics;
 	
 	/**
 	 * 用户角色
@@ -174,8 +158,10 @@ public class OrdersEntity<T> implements Serializable {
 	/**
 	 * 餐桌名称
 	 */
-					
-	private String canzhuomingcheng;
+	@TableField("seat_name")
+	@JsonProperty("seat_name")
+	@JsonAlias({"seatName", "seat_name"})
+	private String seatName;
 	
 
 	@JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
@@ -340,18 +326,6 @@ public class OrdersEntity<T> implements Serializable {
 		return status;
 	}
 	/**
-	 * 设置：地址
-	 */
-	public void setAddress(String address) {
-		this.address = address;
-	}
-	/**
-	 * 获取：地址
-	 */
-	public String getAddress() {
-		return address;
-	}
-	/**
 	 * 设置：电话
 	 */
 	public void setTel(String tel) {
@@ -364,18 +338,6 @@ public class OrdersEntity<T> implements Serializable {
 		return tel;
 	}
 	/**
-	 * 设置：收货人
-	 */
-	public void setConsignee(String consignee) {
-		this.consignee = consignee;
-	}
-	/**
-	 * 获取：收货人
-	 */
-	public String getConsignee() {
-		return consignee;
-	}
-	/**
 	 * 设置：备注
 	 */
 	public void setRemark(String remark) {
@@ -386,18 +348,6 @@ public class OrdersEntity<T> implements Serializable {
 	 */
 	public String getRemark() {
 		return remark;
-	}
-	/**
-	 * 设置：物流
-	 */
-	public void setLogistics(String logistics) {
-		this.logistics = logistics;
-	}
-	/**
-	 * 获取：物流
-	 */
-	public String getLogistics() {
-		return logistics;
 	}
 	/**
 	 * 设置：用户角色
@@ -438,14 +388,14 @@ public class OrdersEntity<T> implements Serializable {
 	/**
 	 * 设置：餐桌名称
 	 */
-	public void setCanzhuomingcheng(String canzhuomingcheng) {
-		this.canzhuomingcheng = canzhuomingcheng;
+	public void setSeatName(String seatName) {
+		this.seatName = seatName;
 	}
 	/**
 	 * 获取：餐桌名称
 	 */
-	public String getCanzhuomingcheng() {
-		return canzhuomingcheng;
+	public String getSeatName() {
+		return seatName;
 	}
 
 }

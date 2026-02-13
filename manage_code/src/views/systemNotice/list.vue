@@ -19,7 +19,6 @@
 				:stripe='false'
 				@selection-change="handleSelectionChange"
 				ref="table"
-				v-if="btnAuth('system_notice','查看')"
 				:data="list"
 				@row-click="listChange">
 				<el-table-column :resizable='true' align="left" header-align="left" type="selection" width="55" />
@@ -89,7 +88,7 @@
 	import formModel from './formModel.vue'
 	//基础信息
 
-	const tableName = 'systemnotice'
+	const tableName = 'system_notice'
 	const formName = '系统公告'
 	const route = useRoute()
 	//基础信息
@@ -155,6 +154,7 @@
 			}).then(res => {
 				context?.$toolUtil.message('删除成功', 'success',()=>{
 					getList()
+					store.dispatch('system/getSystemNotice')
 				})
 			})
 		}).catch(_ => {})
@@ -189,6 +189,7 @@
 	const formRef = ref(null)
 	const formModelChange=()=>{
 		searchClick()
+		store.dispatch('system/getSystemNotice')
 	}
 	const addClick = ()=>{
 		formRef.value.init()
@@ -225,31 +226,15 @@
 			context?.$toolUtil.message('文件不存在','error')
 		}
 		let arr = file.replace(new RegExp('file/', "g"), "")
-		axios.get((location.href.split(context?.$config.name).length>1 ? location.href.split(context?.$config.name)[0] :'') + context?.$config.name + '/file/download?fileName=' + arr, {
-			headers: {
-				token: context?.$toolUtil.storageGet('Token')
-			},
-			responseType: "blob"
-		}).then(({
-			data
-		}) => {
-			const binaryData = [];
-			binaryData.push(data);
-			const objectUrl = window.URL.createObjectURL(new Blob(binaryData, {
-				type: 'application/pdf;chartset=UTF-8'
-			}))
-			const a = document.createElement('a')
-			a.href = objectUrl
-			a.download = arr
-			// a.click()
-			// 下面这个写法兼容火狐
-			a.dispatchEvent(new MouseEvent('click', {
-				bubbles: true,
-				cancelable: true,
-				view: window
-			}))
-			window.URL.revokeObjectURL(data)
-		})
+		const url = (location.href.split(context?.$config.name).length>1 ? location.href.split(context?.$config.name)[0] :'') + context?.$config.name + '/file/' + arr
+		const a = document.createElement('a')
+		a.href = url
+		a.download = arr
+		a.dispatchEvent(new MouseEvent('click', {
+			bubbles: true,
+			cancelable: true,
+			view: window
+		}))
 	}
 	//初始化
 	const init = () => {

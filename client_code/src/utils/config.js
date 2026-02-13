@@ -11,19 +11,19 @@ const config = {
 
 						{
 							name:'美食信息',
-                            url:'/index/meishixinxiList'
+                            url:'/index/dish_infoList'
 
 						},
 					]
 				},
 				{
-					name: '店铺活动管理',
+					name: '餐厅活动管理',
 					icon: '',
 					child:[
 
 						{
-							name:'店铺活动',
-                            url:'/index/dianpuhuodongList'
+							name:'餐厅活动',
+                            url:'/index/restaurant_eventList'
 
 						},
 					]
@@ -47,7 +47,7 @@ const config = {
 
 						{
 							name:'车位信息',
-                            url:'/index/cheweixinxiList'
+                            url:'/index/parking_spotList'
 
 						},
 					]
@@ -59,7 +59,7 @@ const config = {
 
 						{
 							name:'餐厅信息',
-                            url:'/index/cantingxinxiList'
+                            url:'/index/restaurant_infoList'
 
 						},
 					]

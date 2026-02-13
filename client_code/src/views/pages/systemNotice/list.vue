@@ -66,7 +66,8 @@
 	const router = useRouter()
 	const route = useRoute()
 	//基础信息
-	const tableName = 'systemnotice'
+	const tableName = 'systemNotice'
+	const apiTableName = 'system_notice'
 	const formName = '系统公告'
 	//基础信息
 	const breadList = ref([{
@@ -112,7 +113,7 @@
 		listLoading.value = true
 		let params = JSON.parse(JSON.stringify(listQuery.value))
 		context?.$http({
-			url: `${tableName}/${centerType.value?'page':'list'}`,
+			url: `${apiTableName}/${centerType.value?'page':'list'}`,
 			method: 'get',
 			params: params
 		}).then(res => {

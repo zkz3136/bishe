@@ -1,15 +1,15 @@
-﻿<template>
+<template>
 	<div>
 		<div class="center_view edit_form">
 			<el-form class="password_form" ref="passwordFormRef" :model="form" label-width="120px" :rules="rules">
-				<el-form-item label="密码" prop="mima1">
-					<el-input class="list_inp" v-model="form.mima1" type="password" show-password />
+				<el-form-item label="密码" prop="password1">
+					<el-input class="list_inp" v-model="form.password1" type="password" show-password />
 				</el-form-item>
-				<el-form-item label="新密码" prop="mima">
-					<el-input class="list_inp" v-model="form.mima" type="password" show-password />
+				<el-form-item label="新密码" prop="password">
+					<el-input class="list_inp" v-model="form.password" type="password" show-password />
 				</el-form-item>
-				<el-form-item label="确认密码" prop="mima2">
-					<el-input class="list_inp" v-model="form.mima2" type="password" show-password />
+				<el-form-item label="确认密码" prop="password2">
+					<el-input class="list_inp" v-model="form.password2" type="password" show-password />
 				</el-form-item>
 				<span class="formModel_btn_box">
 					<el-button class="confirm_btn" type="primary" @click="onSubmit">保存</el-button>
@@ -32,17 +32,17 @@
 	const sessionTable = ref('')
 	const passwordFormRef = ref(null)
 	const rules = ref({
-		mima1: [{
+		password1: [{
 			required: true,
 			message: '请输入',
 			trigger: 'blur'
 		}, ],
-		mima: [{
+		password: [{
 			required: true,
 			message: '请输入',
 			trigger: 'blur'
 		}, ],
-		mima2: [{
+		password2: [{
 			required: true,
 			message: '请输入',
 			trigger: 'blur'
@@ -51,26 +51,26 @@
 	const onSubmit = async () => {
 		passwordFormRef.value.validate(async (valid) => {
 			if (valid) {
-				if(sessionTable.value == 'users'){
-					if (form.value.mima1 != user.value.password) {
+				if(sessionTable.value == 'admin'){
+					if (form.value.password1 != user.value.password) {
 						context?.$toolUtil.message('原密码不正确','error')
 						return false
 					}
-					user.value.password = form.value.mima
+					user.value.password = form.value.password
 				}else{
-					if(sessionTable.value == 'Yuangong'){
-						if(form.value.mima1 != user.value.mima){
+					if(sessionTable.value == 'staff'){
+						if(form.value.password1 != user.value.password){
 							context?.$toolUtil.message('原密码不正确', 'error')
 							return false
 						}
 					}
 				}
-				if (form.value.mima2 != form.value.mima) {
+				if (form.value.password2 != form.value.password) {
 					context?.$toolUtil.message('两次密码输入不一致','error')
 					return false
 				}
-				if(sessionTable.value == 'Yuangong'){
-					user.value.mima = form.value.mima
+				if(sessionTable.value == 'staff'){
+					user.value.password = form.value.password
 				}
 				context?.$http({
 					url: `${sessionTable.value}/update`,

@@ -61,8 +61,7 @@
 		ref,
 		getCurrentInstance,
 		nextTick,
-		computed,
-		defineEmits
+		computed
 	} from 'vue'
     import {
         useStore
@@ -72,29 +71,29 @@
 	const context = getCurrentInstance()?.appContext.config.globalProperties;	
 	const emit = defineEmits(['formModelChange'])
 	//基础信息
-	const tableName = 'storeup'
+	const tableName = 'favorites'
 	const formName = '我的收藏'
 	//基础信息
 	//form表单
 	const form = ref({})
 	const disabledForm = ref({
-        refid : false,
-        tablename : false,
+        ref_id : false,
+        source_table : false,
         name : false,
         picture : false,
         type : false,
         inteltype : false,
         remark : false,
-        userid : false,
+        user_id : false,
 	})
 	const formVisible = ref(false)
 	const isAdd = ref(false)
 	const formTitle = ref('')
     
 	const rules = ref({
-		refid: [
+		ref_id: [
 		],
-		tablename: [
+		source_table: [
 		],
 		name: [
 			{required: true,message: '请输入',trigger: 'blur'}, 
@@ -107,7 +106,7 @@
 		],
 		remark: [
 		],
-		userid: [
+		user_id: [
 			{required: true,message: '请输入',trigger: 'blur'}, 
 		],
 	})
@@ -128,13 +127,13 @@
 	//重置
 	const resetForm = () => {
 		form.value = {
-			refid: '',
-			tablename: '',
+			ref_id: '',
+			source_table: '',
 			name: '',
 			picture: '',
 			inteltype: '',
 			remark: '',
-			userid: '',
+			user_id: '',
 		}
 	}
 	//获取info
@@ -178,14 +177,14 @@
 			formTitle.value = formNames
 			// getInfo()
 			for(let x in row){
-				if(x=='refid'){
-					form.value.refid = row[x];
-					disabledForm.value.refid = true;
+				if(x=='ref_id'){
+					form.value.ref_id = row[x];
+					disabledForm.value.ref_id = true;
 					continue;
 				}
-				if(x=='tablename'){
-					form.value.tablename = row[x];
-					disabledForm.value.tablename = true;
+				if(x=='source_table'){
+					form.value.source_table = row[x];
+					disabledForm.value.source_table = true;
 					continue;
 				}
 				if(x=='name'){
@@ -213,9 +212,9 @@
 					disabledForm.value.remark = true;
 					continue;
 				}
-				if(x=='userid'){
-					form.value.userid = row[x];
-					disabledForm.value.userid = true;
+				if(x=='user_id'){
+					form.value.user_id = row[x];
+					disabledForm.value.user_id = true;
 					continue;
 				}
 			}

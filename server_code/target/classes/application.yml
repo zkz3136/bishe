@@ -4,25 +4,29 @@ server:
         uri-encoding: UTF-8
     port: 8080
     servlet:
-        context-path: /cl200442145
+        context-path: /canteen
+
 
 
 spring:
     datasource:
         driverClassName: com.mysql.cj.jdbc.Driver
-        url: jdbc:mysql://127.0.0.1:3306/cl200442145?useUnicode=true&characterEncoding=utf-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2B8&useSSL=false
+        url: jdbc:mysql://127.0.0.1:3306/canteen?useUnicode=true&characterEncoding=utf-8&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Shanghai
         username: root
         password: 3570
 
+    jackson:
+      property-naming-strategy: SNAKE_CASE
+
 #        driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
-#        url: jdbc:sqlserver://127.0.0.1:1433;DatabaseName=cl200442145
+#        url: jdbc:sqlserver://127.0.0.1:1433;DatabaseName=canteen
 #        username: sa
 #        password: 123456
 
     servlet:
       multipart:
-        max-file-size: 300MB
-        max-request-size: 300MB
+        max-file-size: 30MB
+        max-request-size: 30MB
     resources:
       static-locations: classpath:static/,file:static/
 
@@ -51,3 +55,16 @@ mybatis-plus:
     call-setters-on-nulls: true
     #springboot 项目mybatis plus 设置 jdbcTypeForNull (oracle数据库需配置JdbcType.NULL, 默认是Other)
     jdbc-type-for-null: 'null' 
+
+coze:
+  enabled: true
+  workflow-run-url: ${COZE_WORKFLOW_RUN_URL:https://api.coze.cn/v1/workflow/run}
+  workflow-id: 7551090810286358579
+  app-id: 7551035132703604763
+  workflow-query-key: input
+  token: pat_LxaLl3aHqmdIeSypPfuq4WbgM7ZaMRjEM241ItYKpCYi5PPN0eZi4b1CHAfTwuve
+  timeout-ms: ${COZE_TIMEOUT_MS:150000}
+
+jwt:
+  secret: ${JWT_SECRET:change-me-change-me-change-me-change-me-32bytes}
+  expire-seconds: ${JWT_EXPIRE_SECONDS:3600}

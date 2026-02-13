@@ -48,7 +48,7 @@
 	const route = useRoute()
 	const router = useRouter()
 	//基础信息
-	const tableName = 'systemnotice'
+	const tableName = 'system_notice'
 	const formName = '系统公告'
 	//基础信息
 	const breadList = ref([{
@@ -84,7 +84,7 @@
 			method: 'get'
 		}).then(res => {
 			let reg=new RegExp('../../../file','g')
-			res.data.data.content = res.data.data.content.replace(reg,'../../../cl200442145/file');
+			res.data.data.content = res.data.data.content.replace(reg,'../../../canteen/file');
 			form.value = res.data.data
 		})
 	}
@@ -162,7 +162,7 @@
 					//修改跨表数据
 					changeCrossData(objcross)
 				}else{
-					crossUserId = context?.$toolUtil.storageGet('userid')
+					crossUserId = context?.$toolUtil.storageGet('user_id')
 					crossRefId = objcross['id']
 					crossOptNum = crossColumnName.value.replace(/\[/,"").replace(/\]/,"")
 				}
@@ -235,7 +235,10 @@
 			tips = context?.$toolUtil.storageGet('crossTips')
 			statusColumnValue = context?.$toolUtil.storageGet('crossStatusColumnValue')
 		}
-		init(route.query.id?route.query.id:null, type.value,'', row, table, statusColumnName, tips, statusColumnValue)
+		const qid = route.query.id
+		const rawId = Array.isArray(qid) ? qid[0] : qid
+		const id = rawId && rawId !== 'undefined' && rawId !== 'null' ? rawId : null
+		init(id, type.value,'', row, table, statusColumnName, tips, statusColumnValue)
 	})
     onUnmounted(()=>{
         Object.keys(localStorage).map(item=>{

@@ -76,7 +76,7 @@
 	defineExpose({
 		payClick
 	})
-	const paySave = () => {
+	const paySave = async () => {
 		if (payType.value == '') {
 			context?.$toolUtil.message('请选择支付方式', 'error')
 			return false
@@ -87,8 +87,23 @@
 				return false
 			}
 		}
+		// 余额校验：需满足定金金额
+		try {
+			const deposit = Number(form.value?.deposit ?? 50)
+			const res = await context?.$http({
+				url: `${context?.$toolUtil.storageGet('frontSessionTable')}/session`,
+				method: 'get'
+			})
+			const userBalance = parseFloat(res?.data?.data?.balance ?? res?.data?.data?.money ?? 0)
+			if (!Number.isFinite(userBalance) || userBalance < deposit) {
+				context?.$toolUtil.message(`余额不足，请先充值（需${deposit}元定金）`, 'error')
+				return false
+			}
+		} catch (e) {
+			// 获取余额失败时不中断支付流程，但提示用户稍后检查个人中心余额
+		}
 		// 设置支付状态
-		form.value.zhifuzhuangtai = '已支付'
+		form.value.payment_status = '已支付'
 		// 模拟支付成功，关闭弹窗并通知父组件
 		context?.$toolUtil.message('支付成功，已扣除50元定金', 'success', () => {
 			payVisible.value = false

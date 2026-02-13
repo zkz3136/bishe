@@ -113,13 +113,11 @@
 	
 				// 上传进度的回调函数
 				onProgress(progress) {
-					// console.log('progress', progress);
 					// progress 是 0-100 的数字
 				},
 	
 				// 上传错误，或者触发 timeout 超时
 				onError(img, err, res) {
-					// console.log(`${img.name} 上传出错`, err, res);
 				}
 			}
 		}

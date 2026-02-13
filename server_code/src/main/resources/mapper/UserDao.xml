@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cl.dao.UserDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.cl.entity.UserEntity" id="userMap">
+        <result property="loginName" column="login_name"/>
+        <result property="avatar" column="avatar"/>
+        <result property="password" column="password"/>
+        <result property="name" column="name"/>
+        <result property="gender" column="gender"/>
+        <result property="mobile" column="mobile"/>
+        <result property="securityQuestion" column="security_question"/>
+        <result property="securityAnswer" column="security_answer"/>
+        <result property="maxPasswordWrong" column="max_password_wrong"/>
+        <result property="isLocked" column="is_locked"/>
+        <result property="balance" column="money"/>
+    </resultMap>
+
+    <select id="selectListView"
+		resultType="com.cl.entity.view.UserView" >
+
+		SELECT `user`.*, `user`.money AS balance FROM users `user` 	        
+        <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	
+	<select id="selectView"
+		resultType="com.cl.entity.view.UserView" >
+		SELECT `user`.*, `user`.money AS balance FROM users `user` <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+
+
+
+</mapper>

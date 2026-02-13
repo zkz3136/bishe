@@ -1,18 +1,21 @@
-﻿<template>
+<template>
 	<div>
 		<el-dialog modal-class="edit_form_modal" class="edit_form" v-model="formVisible" :title="formTitle" width="50%" destroy-on-close :fullscreen='false'>
 			<el-form class="formModel_form" ref="formRef" :model="form" :rules="rules">
 				<el-row >
 					<el-col :span="24">
-						<el-form-item label="订单编号" prop="orderid">
-							<el-input class="list_inp" v-model="form.orderid" :readonly="true" placeholder="订单编号" />
+						<el-form-item label="订单编号" prop="order_id">
+							<el-input class="list_inp" v-model="form.order_id" placeholder="订单编号"
+                                type="text"
+								:readonly="true" />
 						</el-form-item>
 					</el-col>
+
 					<el-col :span="24">
-						<el-form-item label="商品名称" prop="goodname">
-							<el-input class="list_inp" v-model="form.goodname" placeholder="商品名称"
+						<el-form-item label="商品名称" prop="good_name">
+							<el-input class="list_inp" v-model="form.good_name" placeholder="商品名称"
                                 type="text"
-								:readonly="!isAdd||disabledForm.goodname?true:false" />
+								:readonly="!isAdd||disabledForm.good_name?true:false" />
 						</el-form-item>
 					</el-col>
 
@@ -31,10 +34,10 @@
 						</el-form-item>
 					</el-col>
 					<el-col :span="24">
-						<el-form-item label="购买数量" prop="buynumber">
-							<el-input class="list_inp" v-model.number="form.buynumber" placeholder="购买数量"
+						<el-form-item label="购买数量" prop="buy_number">
+							<el-input class="list_inp" v-model.number="form.buy_number" placeholder="购买数量"
                                 type="text"
-								:readonly="!isAdd||disabledForm.buynumber?true:false" />
+								:readonly="!isAdd||disabledForm.buy_number?true:false" />
 						</el-form-item>
 					</el-col>
 
@@ -47,10 +50,10 @@
 					</el-col>
 
 					<el-col :span="24">
-						<el-form-item label="折扣价" prop="discountprice">
-							<el-input class="list_inp" v-model.number="form.discountprice" placeholder="折扣价"
+						<el-form-item label="折扣价" prop="discount_price">
+							<el-input class="list_inp" v-model.number="form.discount_price" placeholder="折扣价"
                                 type="number"
-								:readonly="!isAdd||disabledForm.discountprice?true:false" />
+								:readonly="!isAdd||disabledForm.discount_price?true:false" />
 						</el-form-item>
 					</el-col>
 
@@ -63,108 +66,50 @@
 					</el-col>
 
 					<el-col :span="24">
-						<el-form-item label="折扣总价格" prop="discounttotal">
-							<el-input class="list_inp" v-model.number="form.discounttotal" placeholder="折扣总价格"
+						<el-form-item label="折扣总价" prop="discount_total">
+							<el-input class="list_inp" v-model.number="form.discount_total" placeholder="折扣总价"
                                 type="number"
-								:readonly="!isAdd||disabledForm.discounttotal?true:false" />
+								:readonly="!isAdd||disabledForm.discount_total?true:false" />
 						</el-form-item>
 					</el-col>
 
 					<el-col :span="24">
-						<el-form-item label="支付类型" prop="type">
-							<el-select
-								class="list_sel"
-								:disabled="!isAdd||disabledForm.type?true:false"
-								v-model="form.type" 
-								placeholder="请选择支付类型"
-								>
-								<el-option v-for="(item,index) in typeLists" :label="item"
-									:value="index + 1+''"
-									>
-								</el-option>
-							</el-select>
+						<el-form-item label="餐桌名称" prop="seat_name">
+							<el-input class="list_inp" v-model="form.seat_name" placeholder="餐桌名称"
+                                type="text"
+								:readonly="!isAdd||disabledForm.seat_name?true:false" />
 						</el-form-item>
 					</el-col>
-					<el-col :span="24">
+
+                    <el-col :span="24">
 						<el-form-item label="订单状态" prop="status">
-							<el-input class="list_inp" v-model="form.status" placeholder="订单状态"
-                                type="text"
-								:readonly="!isAdd||disabledForm.status?true:false" />
+                            <el-select v-model="form.status" placeholder="请选择订单状态" style="width:100%;" :disabled="!isAdd||disabledForm.status?true:false">
+                                <el-option label="未支付" value="未支付"></el-option>
+                                <el-option label="已支付" value="已支付"></el-option>
+                                <el-option label="已完成" value="已完成"></el-option>
+                                <el-option label="申请退款" value="申请退款"></el-option>
+                                <el-option label="已退款" value="已退款"></el-option>
+                                <el-option label="已取消" value="已取消"></el-option>
+                            </el-select>
 						</el-form-item>
 					</el-col>
 
-					<el-col :span="24">
-						<el-form-item label="地址" prop="address">
-							<el-input class="list_inp" v-model="form.address" placeholder="地址"
-                                type="text"
-								:readonly="!isAdd||disabledForm.address?true:false" />
-						</el-form-item>
-					</el-col>
-
-					<el-col :span="24">
-						<el-form-item label="电话" prop="tel">
-							<el-input class="list_inp" v-model="form.tel" placeholder="电话"
-                                type="text"
-								:readonly="!isAdd||disabledForm.tel?true:false" />
-						</el-form-item>
-					</el-col>
-
-					<el-col :span="24">
-						<el-form-item label="收货人" prop="consignee">
-							<el-input class="list_inp" v-model="form.consignee" placeholder="收货人"
-                                type="text"
-								:readonly="!isAdd||disabledForm.consignee?true:false" />
-						</el-form-item>
-					</el-col>
-
-					<el-col :span="24">
+                    <el-col :span="24">
 						<el-form-item label="备注" prop="remark">
 							<el-input class="list_inp" v-model="form.remark" placeholder="备注"
-                                type="text"
+                                type="textarea"
 								:readonly="!isAdd||disabledForm.remark?true:false" />
 						</el-form-item>
 					</el-col>
 
-					<el-col :span="24">
-						<el-form-item label="创建时间" prop="addtime">
-							<el-date-picker
-								class="list_date"
-								v-model="form.addtime"
-								format="YYYY-MM-DD HH:mm:ss"
-								value-format="YYYY-MM-DD HH:mm:ss"
-								type="datetime"
-								:readonly="!isAdd||disabledForm.addtime?true:false"
-								placeholder="请选择创建时间" />
-						</el-form-item>
-					</el-col>
-					<el-col :span="24">
-						<el-form-item label="商户名称" prop="yuangongzhanghao">
-							<el-input class="list_inp" v-model="form.yuangongzhanghao" placeholder="商户名称"
+                    <el-col :span="24">
+						<el-form-item label="商品类型" prop="good_type">
+							<el-input class="list_inp" v-model="form.good_type" placeholder="商品类型"
                                 type="text"
-								:readonly="!isAdd||disabledForm.yuangongzhanghao?true:false" />
+								:readonly="!isAdd||disabledForm.good_type?true:false" />
 						</el-form-item>
 					</el-col>
 
-					<el-col :span="24">
-						<el-form-item label="商品类型" prop="goodtype">
-							<el-input class="list_inp" v-model="form.goodtype" placeholder="商品类型"
-                                type="text"
-								:readonly="!isAdd||disabledForm.goodtype?true:false" />
-						</el-form-item>
-					</el-col>
-
-					<el-col :span="24">
-						<el-form-item label="下单时间" prop="addtime">
-							<el-input class="list_inp" v-model="form.addtime" placeholder="下单时间"
-							readonly />
-						</el-form-item>
-					</el-col>
-					<el-col :span="24">
-						<el-form-item label="物流" prop="logistics">
-							<editor :value="form.logistics" placeholder="请输入物流" :readonly="!isAdd||disabledForm.logistics?true:false"
-								class="list_editor" @change="(e)=>editorChange(e,'logistics')"></editor>
-						</el-form-item>
-					</el-col>
 				</el-row>
 			</el-form>
 			<template #footer v-if="isAdd||type=='logistics'||type=='reply'">
@@ -185,8 +130,7 @@
 		ref,
 		getCurrentInstance,
 		nextTick,
-		computed,
-		defineEmits
+		computed
 	} from 'vue'
     import {
         useStore
@@ -202,87 +146,53 @@
 	//form表单
 	const form = ref({})
 	const disabledForm = ref({
-        orderid : false,
-        tablename : false,
-        goodid : false,
-        goodname : false,
+        order_id : false,
+        good_name : false,
         picture : false,
-        buynumber : false,
+        buy_number : false,
         price : false,
-        discountprice : false,
+        discount_price: false,
         total : false,
-        discounttotal : false,
-        type : false,
+        discount_total: false,
+        seat_name : false,
         status : false,
-        address : false,
-        tel : false,
-        consignee : false,
         remark : false,
-        logistics : false,
-        role : false,
-        addtime : false,
-        userid : false,
-        yuangongzhanghao : false,
-        goodtype : false,
+        good_type : false,
 	})
 	const formVisible = ref(false)
 	const isAdd = ref(false)
 	const formTitle = ref('')
     
 	const rules = ref({
-		orderid: [
-			{required: true,message: '请输入',trigger: 'blur'}, 
+		order_id: [
 		],
-		tablename: [
-		],
-		goodid: [
-			{required: true,message: '请输入',trigger: 'blur'}, 
-		],
-		goodname: [
+		good_name: [
 		],
 		picture: [
-			{required: true,message: '请输入',trigger: 'blur'}, 
 		],
-		buynumber: [
+		buy_number: [
 			{ validator: context.$toolUtil.validator.intNumber, trigger: 'blur' },
 		],
 		price: [
 			{ validator: context.$toolUtil.validator.number, trigger: 'blur' },
 		],
-		discountprice: [
+		discount_price: [
 			{ validator: context.$toolUtil.validator.number, trigger: 'blur' },
 		],
 		total: [
 			{ validator: context.$toolUtil.validator.number, trigger: 'blur' },
 		],
-		discounttotal: [
+		discount_total: [
 			{ validator: context.$toolUtil.validator.number, trigger: 'blur' },
 		],
-		type: [
+		seat_name: [
 		],
 		status: [
 		],
-		address: [
-		],
-		tel: [
-		],
-		consignee: [
-		],
 		remark: [
 		],
-		logistics: [
-		],
-		role: [
-		],
-		addtime: [
-		],
-		userid: [
-			{required: true,message: '请输入',trigger: 'blur'}, 
-		],
-		yuangongzhanghao: [
-		],
-		goodtype: [
-		],
+        good_type: [
+        ],
 	})
 	//表单验证
 	
@@ -293,8 +203,6 @@
 	const pictureUploadSuccess=(e)=>{
 		form.value.picture = e
 	}
-	//支付类型列表
-    const typeLists = ref(['','现金','积分','团购'])
 
 	//获取唯一标识
 	const getUUID =()=> {
@@ -303,27 +211,18 @@
 	//重置
 	const resetForm = () => {
 		form.value = {
-			orderid: getUUID(),
-			goodid: '',
-			goodname: '',
+			order_id: getUUID(),
+			good_name: '',
 			picture: '',
-			buynumber: '',
+			buy_number: '',
 			price: '',
-			discountprice: '',
+			discount_price: '',
 			total: '',
-			discounttotal: '',
-			type: '',
-			status: '',
-			address: '',
-			tel: '',
-			consignee: '',
+			discount_total: '',
+			seat_name: '',
+			status: '未支付',
 			remark: '',
-			logistics: '',
-			role: '',
-			addtime: '',
-			userid: '',
-			yuangongzhanghao: '',
-			goodtype: '',
+            good_type: '',
 		}
 	}
 	//获取info
@@ -333,8 +232,16 @@
 			method: 'get'
 		}).then(res => {
 			let reg=new RegExp('../../../file','g')
-			res.data.data.logistics = res.data.data.logistics?(res.data.data.logistics.replace(reg,'../../../cl200442145/file')):'';
-			form.value = res.data.data
+			const data = res?.data?.data || {}
+			const normalized = { ...data }
+			if (normalized.order_id === undefined && normalized.orderid !== undefined) normalized.order_id = normalized.orderid
+			if (normalized.good_name === undefined && normalized.goodname !== undefined) normalized.good_name = normalized.goodname
+			if (normalized.buy_number === undefined && normalized.buynumber !== undefined) normalized.buy_number = normalized.buynumber
+			if (normalized.discount_price === undefined && normalized.discountprice !== undefined) normalized.discount_price = normalized.discountprice
+			if (normalized.discount_total === undefined && normalized.discounttotal !== undefined) normalized.discount_total = normalized.discounttotal
+			if (normalized.good_type === undefined && normalized.goodtype !== undefined) normalized.good_type = normalized.goodtype
+			if (normalized.user_id === undefined && normalized.userid !== undefined) normalized.user_id = normalized.userid
+			form.value = normalized
 			formVisible.value = true
 		})
 	}
@@ -354,38 +261,32 @@
 			isAdd.value = true
 			formTitle.value = '新增' + formName
 			formVisible.value = true
-		}else if(formType == 'info'){
+		} else if(formType == 'info'){
 			isAdd.value = false
 			formTitle.value = '查看' + formName
 			getInfo()
-		}else if(formType == 'edit'){
+		} else if(formType == 'edit'){
 			isAdd.value = true
 			formTitle.value = '修改' + formName
 			getInfo()
-		}
-		else if(formType == 'cross'){
+		} else if(formType == 'cross'){
 			isAdd.value = true
 			formTitle.value = formNames
-			// getInfo()
+			// row = row
+			crossRow.value = row
+			crossTable.value = table
+			crossTips.value = tips
+			crossColumnName.value = statusColumnName
+			crossColumnValue.value = statusColumnValue
 			for(let x in row){
-				if(x=='orderid'){
-					form.value.orderid = row[x];
-					disabledForm.value.orderid = true;
+				if(x=='order_id'){
+					form.value.order_id = row[x];
+					disabledForm.value.order_id = true;
 					continue;
 				}
-				if(x=='tablename'){
-					form.value.tablename = row[x];
-					disabledForm.value.tablename = true;
-					continue;
-				}
-				if(x=='goodid'){
-					form.value.goodid = row[x];
-					disabledForm.value.goodid = true;
-					continue;
-				}
-				if(x=='goodname'){
-					form.value.goodname = row[x];
-					disabledForm.value.goodname = true;
+				if(x=='good_name'){
+					form.value.good_name = row[x];
+					disabledForm.value.good_name = true;
 					continue;
 				}
 				if(x=='picture'){
@@ -393,9 +294,9 @@
 					disabledForm.value.picture = true;
 					continue;
 				}
-				if(x=='buynumber'){
-					form.value.buynumber = row[x];
-					disabledForm.value.buynumber = true;
+				if(x=='buy_number'){
+					form.value.buy_number = row[x];
+					disabledForm.value.buy_number = true;
 					continue;
 				}
 				if(x=='price'){
@@ -403,9 +304,9 @@
 					disabledForm.value.price = true;
 					continue;
 				}
-				if(x=='discountprice'){
-					form.value.discountprice = row[x];
-					disabledForm.value.discountprice = true;
+				if(x=='discount_price'){
+					form.value.discount_price = row[x];
+					disabledForm.value.discount_price = true;
 					continue;
 				}
 				if(x=='total'){
@@ -413,14 +314,14 @@
 					disabledForm.value.total = true;
 					continue;
 				}
-				if(x=='discounttotal'){
-					form.value.discounttotal = row[x];
-					disabledForm.value.discounttotal = true;
+				if(x=='discount_total'){
+					form.value.discount_total = row[x];
+					disabledForm.value.discount_total = true;
 					continue;
 				}
-				if(x=='type'){
-					form.value.type = row[x];
-					disabledForm.value.type = true;
+				if(x=='seat_name'){
+					form.value.seat_name = row[x];
+					disabledForm.value.seat_name = true;
 					continue;
 				}
 				if(x=='status'){
@@ -428,232 +329,109 @@
 					disabledForm.value.status = true;
 					continue;
 				}
-				if(x=='address'){
-					form.value.address = row[x];
-					disabledForm.value.address = true;
-					continue;
-				}
-				if(x=='tel'){
-					form.value.tel = row[x];
-					disabledForm.value.tel = true;
-					continue;
-				}
-				if(x=='consignee'){
-					form.value.consignee = row[x];
-					disabledForm.value.consignee = true;
-					continue;
-				}
 				if(x=='remark'){
 					form.value.remark = row[x];
 					disabledForm.value.remark = true;
 					continue;
 				}
-				if(x=='logistics'){
-					form.value.logistics = row[x];
-					disabledForm.value.logistics = true;
+                if(x=='good_type'){
+					form.value.good_type = row[x];
+					disabledForm.value.good_type = true;
 					continue;
 				}
-				if(x=='role'){
-					form.value.role = row[x];
-					disabledForm.value.role = true;
-					continue;
-				}
-				if(x=='addtime'){
-					form.value.addtime = row[x];
-					disabledForm.value.addtime = true;
-					continue;
-				}
-				if(x=='userid'){
-					form.value.userid = row[x];
-					disabledForm.value.userid = true;
-					continue;
-				}
-				if(x=='yuangongzhanghao'){
-					form.value.yuangongzhanghao = row[x];
-					disabledForm.value.yuangongzhanghao = true;
-					continue;
-				}
-				if(x=='goodtype'){
-					form.value.goodtype = row[x];
-					disabledForm.value.goodtype = true;
-					continue;
-				}
-			}
-			if(row){
-				crossRow.value = row
-			}
-			if(table){
-				crossTable.value = table
-			}
-			if(tips){
-				crossTips.value = tips
-			}
-			if(statusColumnName){
-				crossColumnName.value = statusColumnName
-			}
-			if(statusColumnValue){
-				crossColumnValue.value = statusColumnValue
 			}
 			formVisible.value = true
 		}
-
-		typeLists.value = "现金,积分".split(',')
 	}
-	//初始化
-	//声明父级调用
-	defineExpose({
-		init
-	})
+	//提交
+	const save = () => {
+		let params = JSON.parse(JSON.stringify(form.value))
+		const hasValue = (v) => v !== undefined && v !== null && v !== '' && !(typeof v === 'number' && Number.isNaN(v))
+		if (params.orderid === undefined && hasValue(params.order_id)) {
+			params.orderid = params.order_id
+		}
+		if (params.goodname === undefined && hasValue(params.good_name)) {
+			params.goodname = params.good_name
+		}
+		if (params.buynumber === undefined && hasValue(params.buy_number)) {
+			params.buynumber = params.buy_number
+		}
+		if (params.userid === undefined && hasValue(params.user_id)) {
+			params.userid = params.user_id
+		}
+		if (params.goodtype === undefined && hasValue(params.good_type)) {
+			params.goodtype = params.good_type
+		}
+		if (params.discountprice === undefined && hasValue(params.discount_price)) {
+			params.discountprice = params.discount_price
+		}
+		if (params.discounttotal === undefined && hasValue(params.discount_total)) {
+			params.discounttotal = params.discount_total
+		}
+		let url = `${tableName}/${!form.value.id ? 'save' : 'update'}`
+		if(type.value == 'cross'){
+			var statusColumnName = crossColumnName.value
+			var statusColumnValue = crossColumnValue.value
+			if(statusColumnName!='') {
+				var obj = JSON.parse(JSON.stringify(crossRow.value))
+				if(statusColumnName.indexOf("[")>=0 && statusColumnName.indexOf("]")>=0){
+					if(statusColumnName.startsWith("[")){
+						var subStatusColumnName = statusColumnName.substring(1,statusColumnName.length-1)
+						obj[subStatusColumnName] = statusColumnValue;
+					}else{
+						var subStatusColumnName = statusColumnName.substring(0,statusColumnName.indexOf("["))
+						obj[subStatusColumnName].push(statusColumnValue);
+					}
+				}else{
+					obj[statusColumnName] = statusColumnValue;
+				}
+				
+				context?.$http({
+					url: `${crossTable.value}/update`,
+					method: 'post',
+					data: obj
+				}).then(res=>{})
+			}
+		}
+		context?.$http({
+			url: url,
+			method: 'post',
+			data: params
+		}).then(res => {
+			emit('formModelChange')
+			context?.$toolUtil.message('操作成功', 'success')
+			formVisible.value = false
+		})
+	}
 	//关闭
 	const closeClick = () => {
 		formVisible.value = false
 	}
-	//富文本
-	const editorChange = (e,name) =>{
-		form.value[name] = e
-	}
-	//提交
-	const save= async ()=>{
-		if(form.value.picture!=null) {
-			form.value.picture = form.value.picture.replace(new RegExp(context?.$config.url,"g"),"");
-		}
-		var table = crossTable.value
-		var objcross = JSON.parse(JSON.stringify(crossRow.value))
-		let crossUserId = ''
-		let crossRefId = ''
-		let crossOptNum = ''
-		if(type.value == 'cross'){
-			if(crossColumnName.value!=''){
-				if(!crossColumnName.value.startsWith('[')){
-					for(let o in objcross){
-						if(o == crossColumnName.value){
-							objcross[o] = crossColumnValue.value
-						}
-					}
-					//修改跨表数据
-					changeCrossData(objcross)
-				}else{
-					crossUserId = user.value.id
-					crossRefId = objcross['id']
-					crossOptNum = crossColumnName.value.replace(/\[/,"").replace(/\]/,"")
-				}
-			}
-		}
-		formRef.value.validate((valid)=>{
-			if(valid){
-				if(crossUserId&&crossRefId){
-					form.value.crossuserid = crossUserId
-					form.value.crossrefid = crossRefId
-					let params = {
-						page: 1,
-						limit: 1000, 
-						crossuserid:form.value.crossuserid,
-						crossrefid:form.value.crossrefid,
-					}
-					context?.$http({
-						url: `${tableName}/page`,
-						method: 'get', 
-						params: params 
-					}).then(res=>{
-						if(res.data.data.total>=crossOptNum){
-							context?.$toolUtil.message(`${crossTips.value}`,'error')
-							return false
-						}else{
-							context?.$http({
-								url: `${tableName}/${!form.value.id ? "save" : "update"}`,
-								method: 'post', 
-								data: form.value 
-							}).then(async res=>{
-								emit('formModelChange')
-								context?.$toolUtil.message(`操作成功`,'success')
-                                formVisible.value = false
-							})
-						}
-					})
-				}else{
-					context?.$http({
-						url: `${tableName}/${!form.value.id ? "save" : "update"}`,
-						method: 'post', 
-						data: form.value 
-					}).then(async (res)=>{
-						emit('formModelChange')
-						context?.$toolUtil.message(`操作成功`,'success')
-                        formVisible.value = false
-					})
-				}
-			}else{
-                context.$message.error('请完善信息')
-            }
-		})
-	}
-	//修改跨表数据
-	const changeCrossData = async (row)=>{
-        if(type.value == 'cross'){
-            await context?.$http({
-                url: `${crossTable.value}/update`,
-                method: 'post',
-                data: row
-            }).then(res=>{})
-        }
-	}
+	defineExpose({
+		init,
+	})
 </script>
 <style lang="scss" scoped>
-	// 表单
-	.formModel_form{
-		// form item
-		:deep(.el-form-item) {
-			//label
-			.el-form-item__label {
-			}
-			// 内容盒子
-			.el-form-item__content {
-				// 输入框
-				.list_inp {
-				}
-				//日期选择器
-				.list_date {
-				}
-				// 下拉框
-				.list_sel {
-					//去掉默认样式
-					.select-trigger{
-						height: 100%;
-						.el-input{
-							height: 100%;
-						}
-					}
-				}
-				// 富文本
-				.list_editor {
-				}
-				//图片上传样式
-				.el-upload-list  {
-					//提示语
-					.el-upload__tip {
-					}
-					//外部盒子
-					.el-upload--picture-card {
-						//图标
-						.el-icon{
-						}
-					}
-					.el-upload-list__item {
-					}
-				}
+	.edit_form {
+		// 模态框层级
+		:deep(.el-dialog) {
+		}
+		// 模态框内容
+		:deep(.el-dialog__body) {
+			// 表单
+			.el-form {
 			}
 		}
-	}
-	// 按钮盒子
-	.formModel_btn_box {
-		.cancel_btn {
-		}
-		.cancel_btn:hover {
+		// 模态框底部
+		:deep(.el-dialog__footer) {
 		}
 		
-		.confirm_btn {
-		}
-		.confirm_btn:hover {
+		// 按钮盒子
+		.formModel_btn_box {
+			.cancel_btn {
+			}
+			.confirm_btn {
+			}
 		}
 	}
 </style>
-

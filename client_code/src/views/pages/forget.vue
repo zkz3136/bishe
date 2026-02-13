@@ -15,11 +15,11 @@
 				</div>
 				<div class="list_item" v-if="pageType==1">
 					<div class="item_label">账号：</div>
-					<input class="list_inp" v-model="forgetForm.username" placeholder="请输入账号" />
+					<input class="list_inp" v-model="forgetForm.login_name" placeholder="请输入账号" />
 				</div>
 				<div class="list_item" v-if="pageType==2">
 					<div class="item_label">密保问题：</div>
-					<input class="list_inp question" v-model="userForm.pquestion" placeholder="请输入密保问题" />
+					<input class="list_inp question" v-model="userForm.security_question" placeholder="请输入密保问题" />
 				</div>
 				<div class="list_item" v-if="pageType==2">
 					<div class="item_label">密保答案：</div>
@@ -27,11 +27,11 @@
 				</div>
 				<div class="list_item" v-if="pageType==3">
 					<div class="item_label">密码：</div>
-					<input class="list_inp mima" v-model="forgetForm.mima" type="password" placeholder="请输入密码" />
+					<input class="list_inp password" v-model="forgetForm.password" type="password" placeholder="请输入密码" />
 				</div>
 				<div class="list_item" v-if="pageType==3">
 					<div class="item_label">确认密码：</div>
-					<input class="list_inp mima1" v-model="forgetForm.mima2" type="password" placeholder="请输入确认密码" />
+					<input class="list_inp password1" v-model="forgetForm.password2" type="password" placeholder="请输入确认密码" />
 				</div>
 				<div class="list_btn">
 					<el-button v-if="pageType==1" class="get_btn" type="success" @click="getSecurity">获取密保</el-button>
@@ -60,17 +60,17 @@
 	const userForm = ref({})
     //获取用户信息
     const getSecurity=()=>{
-            forgetForm.value.role = 'yonghu'
+            forgetForm.value.role = 'user'
 		if(!forgetForm.value.role) {
 		    context?.$toolUtil.message('请选择角色','error');
 		    return false
 		}
-		if(!forgetForm.value.username){
+		if(!forgetForm.value.login_name){
 			context?.$toolUtil.message('请输入账号','error');
 		    return false
 		}
 		context?.$http({
-			url:forgetForm.value.role + `/security?username=${forgetForm.value.username}`,
+			url:forgetForm.value.role + `/security?login_name=${forgetForm.value.login_name}`,
 			method:'get',
 		}).then(res=>{
 			if(res.data.data){
@@ -84,7 +84,7 @@
 	}
 	//验证
 	const validateSecurity=()=>{
-		if(userForm.value.panswer != forgetForm.value.myanswer){
+		if(userForm.value.security_answer != forgetForm.value.myanswer){
 			context?.$toolUtil.message('答案输入不正确','error');
 			return false
 		}
@@ -93,12 +93,12 @@
 		})
 	}
 	const updatePassword=()=>{
-		if(forgetForm.value.mima!=forgetForm.value.mima2){
+		if(forgetForm.value.password!=forgetForm.value.password2){
 			context?.$toolUtil.message('两次密码输入不一致','error')
 			return false
 		}
-		if(forgetForm.value.role == 'yonghu'){
-			userForm.value.mima = forgetForm.value.mima
+		if(forgetForm.value.role == 'user'){
+			userForm.value.password = forgetForm.value.password
 		}
 		context?.$http({
 			url:forgetForm.value.role + `/update`,
@@ -120,7 +120,7 @@
 
 <style lang="scss" scoped>
 	.forget_view {
-        background-image: url("http://clfile.zggen.cn/20241220/58d86a65b0df43398aa5b351985f8140.jpg")!important;
+        background-image: url("@/assets/loginpicture.png")!important;
 		// 标题盒子
 		.outTitle_view {
 			.outTilte {
@@ -218,7 +218,7 @@
 .forget_view{
     min-height: 100vh;
     position: relative;
-    background: url(http://clfile.zggen.cn/20241220/58d86a65b0df43398aa5b351985f8140.jpg) no-repeat center center / cover;
+    background: url("@/assets/loginpicture.png") no-repeat center center / cover;
     display: flex;
     flex-direction: column;
     align-items: center;

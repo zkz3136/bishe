@@ -29,8 +29,7 @@
 		ref,
 		getCurrentInstance,
 		nextTick,
-		computed,
-		defineEmits
+		computed
 	} from 'vue'
     import {
         useStore
@@ -79,7 +78,7 @@
 			method: 'get'
 		}).then(res => {
 			let reg=new RegExp('../../../file','g')
-			res.data.data.content = res.data.data.content?(res.data.data.content.replace(reg,'../../../cl200442145/file')):'';
+			res.data.data.content = res.data.data.content?(res.data.data.content.replace(reg,'../../../canteen/file')):'';
 			form.value = res.data.data
 			formVisible.value = true
 		})

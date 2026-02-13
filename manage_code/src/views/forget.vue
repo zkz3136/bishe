@@ -83,9 +83,9 @@
 					}
 					// 选中样式
 					.line_number1{
-						color: #d3623d;
+						color: #ea580c;
 						font-size: 22px;
-						border-color: #d3623d;
+						border-color: #ea580c;
 					}
 					// 完成样式
 					.line_number2{
@@ -227,13 +227,13 @@
 
 .list_btn{ margin-top:20px;  text-align:center;  }
 
-.list_btn .get_btn{  width: 100%; height: 46px; line-height: 46px; background:#d3623d; border: 0px solid #ccc; font-weight: 600; font-size: 20px; color: #fff; letter-spacing: 4px; margin-bottom:20px; padding:0; border-radius:4px;  } 
+.list_btn .get_btn{  width: 100%; height: 46px; line-height: 46px; background:#ea580c; border: 0px solid #ccc; font-weight: 600; font-size: 20px; color: #fff; letter-spacing: 4px; margin-bottom:20px; padding:0; border-radius:4px;  } 
 .list_btn .get_btn:hover {  } 
 
-.list_btn .valid_btn{ width: 100%; height: 46px; line-height: 46px; background:#d3623d; border: 0px solid #ccc; font-weight: 600; font-size: 20px; color: #fff; letter-spacing: 4px; margin-bottom:20px; padding:0; border-radius:4px;  } 
+.list_btn .valid_btn{ width: 100%; height: 46px; line-height: 46px; background:#ea580c; border: 0px solid #ccc; font-weight: 600; font-size: 20px; color: #fff; letter-spacing: 4px; margin-bottom:20px; padding:0; border-radius:4px;  } 
 .list_btn .valid_btn:hover {  } 
 
-.list_btn .update_btn{ width: 100%; height: 46px; line-height: 46px; background:#d3623d; border: 0px solid #ccc; font-weight: 600; font-size: 20px; color: #fff; letter-spacing: 4px; margin-bottom:20px; padding:0; border-radius:4px;  } 
+.list_btn .update_btn{ width: 100%; height: 46px; line-height: 46px; background:#ea580c; border: 0px solid #ccc; font-weight: 600; font-size: 20px; color: #fff; letter-spacing: 4px; margin-bottom:20px; padding:0; border-radius:4px;  } 
 .list_btn .update_btn:hover {  } 
 
 .list_btn .r-login{  font-size: 16px; color: #666; text-align:right;  } 

@@ -1,0 +1,29 @@
+# 后端项目
+target/
+*.jar
+*.war
+
+# 前端项目
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 忽略 server_code 下的前端打包产物（之前看到的 css/js/img）
+server_code/src/main/resources/manage/css/
+server_code/src/main/resources/manage/js/
+server_code/src/main/resources/manage/img/
+
+# IDE 配置
+.idea/
+*.iml
+.vscode/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 临时备份文件（如 drawio 备份）
+*.drawio.bkp
+*.drawio.dtmp

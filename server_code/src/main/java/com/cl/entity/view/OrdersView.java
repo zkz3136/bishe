@@ -35,6 +35,25 @@ public class OrdersView  extends OrdersEntity implements Serializable {
 		}
  		
 	}
+	
+	private String userTel;
+
+	public String getUserTel() {
+		return userTel;
+	}
+
+	public void setUserTel(String userTel) {
+		this.userTel = userTel;
+	}
+	
+	@Override
+	public String getTel() {
+		String tel = super.getTel();
+		if ((tel == null || tel.isEmpty()) && userTel != null && !userTel.isEmpty()) {
+			return userTel;
+		}
+		return tel;
+	}
 
 
 

@@ -1,15 +1,9 @@
-﻿<template>
+<template>
 	<div>
 		<el-dialog modal-class="edit_form_modal" class="edit_form" v-model="formVisible" :title="formTitle" width="50%" destroy-on-close :fullscreen='false'>
 			<el-form class="formModel_form" ref="formRef" :model="form" :rules="rules">
 				<el-row >
-					<el-col :span="24">
-						<el-form-item label="商品表名" prop="tablename">
-							<el-input class="list_inp" v-model="form.tablename" placeholder="商品表名"
-                                type="text"
-								:readonly="!isAdd||disabledForm.tablename?true:false" />
-						</el-form-item>
-					</el-col>
+                    
 
 					<el-col :span="24">
 						<el-form-item label="商品id" prop="goodid">
@@ -66,10 +60,10 @@
 					</el-col>
 
 					<el-col :span="24">
-						<el-form-item label="商户名称" prop="yuangongzhanghao">
-							<el-input class="list_inp" v-model="form.yuangongzhanghao" placeholder="商户名称"
+						<el-form-item label="商户名称" prop="staff_account">
+							<el-input class="list_inp" v-model="form.staff_account" placeholder="商户名称"
                                 type="text"
-								:readonly="!isAdd||disabledForm.yuangongzhanghao?true:false" />
+								:readonly="!isAdd||disabledForm.staff_account?true:false" />
 						</el-form-item>
 					</el-col>
 
@@ -101,8 +95,7 @@
 		ref,
 		getCurrentInstance,
 		nextTick,
-		computed,
-		defineEmits
+		computed
 	} from 'vue'
     import {
         useStore
@@ -117,8 +110,7 @@
 	//基础信息
 	//form表单
 	const form = ref({})
-	const disabledForm = ref({
-        tablename : false,
+    const disabledForm = ref({
         goodid : false,
         goodname : false,
         picture : false,
@@ -126,16 +118,14 @@
         price : false,
         discountprice : false,
         userid : false,
-        yuangongzhanghao : false,
+        staff_account : false,
         goodtype : false,
 	})
 	const formVisible = ref(false)
 	const isAdd = ref(false)
 	const formTitle = ref('')
     
-	const rules = ref({
-		tablename: [
-		],
+    const rules = ref({
 		goodid: [
 			{required: true,message: '请输入',trigger: 'blur'}, 
 		],
@@ -156,7 +146,7 @@
 		userid: [
 			{required: true,message: '请输入',trigger: 'blur'}, 
 		],
-		yuangongzhanghao: [
+		staff_account: [
 		],
 		goodtype: [
 		],
@@ -185,7 +175,7 @@
 			price: '',
 			discountprice: '',
 			userid: '',
-			yuangongzhanghao: '',
+			staff_account: '',
 			goodtype: '',
 		}
 	}
@@ -205,7 +195,7 @@
 	const crossTips = ref('')
 	const crossColumnName = ref('')
 	const crossColumnValue = ref('')
-	//初始化
+	//初始�?
 	const init=(formId=null,formType='add',formNames='',row=null,table=null,statusColumnName=null,tips=null,statusColumnValue=null)=>{
 		resetForm()
 		if(formId){
@@ -229,12 +219,7 @@
 			isAdd.value = true
 			formTitle.value = formNames
 			// getInfo()
-			for(let x in row){
-				if(x=='tablename'){
-					form.value.tablename = row[x];
-					disabledForm.value.tablename = true;
-					continue;
-				}
+            for(let x in row){
 				if(x=='goodid'){
 					form.value.goodid = row[x];
 					disabledForm.value.goodid = true;
@@ -270,9 +255,9 @@
 					disabledForm.value.userid = true;
 					continue;
 				}
-				if(x=='yuangongzhanghao'){
-					form.value.yuangongzhanghao = row[x];
-					disabledForm.value.yuangongzhanghao = true;
+				if(x=='staff_account'){
+					form.value.staff_account = row[x];
+					disabledForm.value.staff_account = true;
 					continue;
 				}
 				if(x=='goodtype'){
@@ -300,7 +285,7 @@
 		}
 
 	}
-	//初始化
+	//初始�?
 	//声明父级调用
 	defineExpose({
 		init
@@ -309,7 +294,7 @@
 	const closeClick = () => {
 		formVisible.value = false
 	}
-	//富文本
+	//富文�?
 	const editorChange = (e,name) =>{
 		form.value[name] = e
 	}
@@ -408,12 +393,12 @@
 			}
 			// 内容盒子
 			.el-form-item__content {
-				// 输入框
+				// 输入�?
 				.list_inp {
 				}
 				//图片上传样式
 				.el-upload-list  {
-					//提示语
+					//提示�?
 					.el-upload__tip {
 					}
 					//外部盒子

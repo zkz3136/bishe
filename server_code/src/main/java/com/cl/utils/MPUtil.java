@@ -180,9 +180,6 @@ public class MPUtil {
         return sb.toString();
     }
 
-    public static void main(String[] ages) {
-        System.out.println(camelToUnderline("ABCddfANM"));
-    }
 
     public static Map camelToUnderlineMap(Map param, String pre) {
 

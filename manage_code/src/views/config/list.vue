@@ -3,6 +3,14 @@
 		<div class="center_view">
 			<div class="list_search_view">
 				<div class="btn_view">
+					<el-button class="add_btn" type="primary" @click="addClick">
+						<i class="iconfont icon-lx-add"></i>
+						新增
+					</el-button>
+					<el-button class="del_btn" type="danger" :disabled="selRows.length?false:true" @click="delClick(null)">
+						<i class="iconfont icon-lx-delete"></i>
+						删除
+					</el-button>
 				</div>
 			</div>
 			<el-table
@@ -45,9 +53,9 @@
 				</el-table-column>
 				<el-table-column label="操作" width="300" :resizable='true' :sortable='true' align="left" header-align="left">
 					<template #default="scope">
-						<el-button class="view_btn" type="info" v-if=" btnAuth('config','查看')" @click="infoClick(scope.row.id)">
+						<!-- <el-button class="view_btn" type="info" v-if=" btnAuth('config','查看')" @click="infoClick(scope.row.id)">
 							详情
-						</el-button>
+						</el-button> -->
 						<el-button class="edit_btn" type="primary" @click="editClick(scope.row.id)" v-if=" btnAuth('config','修改')">
 							修改						</el-button>
 					</template>
@@ -236,31 +244,15 @@
 			context?.$toolUtil.message('文件不存在','error')
 		}
 		let arr = file.replace(new RegExp('file/', "g"), "")
-		axios.get((location.href.split(context?.$config.name).length>1 ? location.href.split(context?.$config.name)[0] :'') + context?.$config.name + '/file/download?fileName=' + arr, {
-			headers: {
-				token: context?.$toolUtil.storageGet('Token')
-			},
-			responseType: "blob"
-		}).then(({
-			data
-		}) => {
-			const binaryData = [];
-			binaryData.push(data);
-			const objectUrl = window.URL.createObjectURL(new Blob(binaryData, {
-				type: 'application/pdf;chartset=UTF-8'
-			}))
-			const a = document.createElement('a')
-			a.href = objectUrl
-			a.download = arr
-			// a.click()
-			// 下面这个写法兼容火狐
-			a.dispatchEvent(new MouseEvent('click', {
-				bubbles: true,
-				cancelable: true,
-				view: window
-			}))
-			window.URL.revokeObjectURL(data)
-		})
+		const url = (location.href.split(context?.$config.name).length>1 ? location.href.split(context?.$config.name)[0] :'') + context?.$config.name + '/file/' + arr
+		const a = document.createElement('a')
+		a.href = url
+		a.download = arr
+		a.dispatchEvent(new MouseEvent('click', {
+			bubbles: true,
+			cancelable: true,
+			view: window
+		}))
 	}
 	//初始化
 	const init = () => {

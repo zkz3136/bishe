@@ -17,7 +17,7 @@
 					名称：
 				</div>
 				<div class="search_box">
-					<el-input class="search_inp" v-model="searchQuery.name" placeholder="名称" style="100%"
+					<el-input class="search_inp" v-model="searchQuery.name" placeholder="名称" style="width: 100%;"
 						size="small" clearable>
 					</el-input>
 				</div>
@@ -73,7 +73,7 @@
 	const router = useRouter()
 	const route = useRoute()
 	//基础信息
-	const tableName = 'storeup'
+	const tableName = 'favorites'
 	const formName = ref('')
 	//基础信息
 	const breadList = ref([{
@@ -98,14 +98,11 @@
 	const backClick = () => {
 		router.push(`/index/${context?.$toolUtil.storageGet('frontSessionTable')}Center`)
 	}
-	const init = () => {
+    const init = () => {
 		if (route.query.centerType) {
 			centerType.value = true
 		}
-
-        if(route.query.type=='1'){
-            formName.value = '我的收藏'
-        }
+        formName.value = '我的收藏'
 		getList()
 	}
 	//搜索
@@ -133,9 +130,7 @@
 		if (searchQuery.value.name && searchQuery.value.name != '') {
 			params.name = '%' + searchQuery.value.name + '%'
 		}
-		if (route.query.type) {
-			params.type = route.query.type
-		}
+        // 不再按类型过滤
 		context?.$http({
 			url: `${tableName}/page`,
 			method: 'get',
@@ -147,11 +142,17 @@
 		})
 	}
 	const detailClick = (item) => {
-        if(item.tablename == 'news'){
-            router.push(`newsList?id=${item.refid}`)
+		const sourceTable = item?.source_table ?? item?.tablename ?? item?.sourceTable ?? item?.table_name ?? item?.tableName
+		const refId = item?.ref_id ?? item?.refid ?? item?.refId
+		if (!sourceTable || !refId) {
+			context?.$toolUtil.message('收藏数据异常，无法查看详情', 'error')
+			return
+		}
+        if(sourceTable == 'news'){
+            router.push(`newsList?id=${refId}`)
             return
         }
-		router.push(`${item.tablename}Detail?id=${item.refid}`)
+		router.push(`${sourceTable}Detail?id=${refId}`)
 	}
 	init()
 </script>

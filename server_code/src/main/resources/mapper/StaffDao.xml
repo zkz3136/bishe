@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cl.dao.StaffDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.cl.entity.StaffEntity" id="yuangongMap">
+        <result property="loginName" column="login_name"/>
+        <result property="password" column="password"/>
+        <result property="name" column="name"/>
+        <result property="avatar" column="avatar"/>
+        <result property="position" column="position"/>
+        <result property="mobile" column="mobile"/>
+    </resultMap>
+
+    <select id="selectListView"
+		resultType="com.cl.entity.view.StaffView" >
+		SELECT staff.* FROM users staff
+        <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	
+	<select id="selectView"
+		resultType="com.cl.entity.view.StaffView" >
+		SELECT staff.* FROM users staff <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+
+
+
+</mapper>

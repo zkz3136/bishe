@@ -52,12 +52,6 @@ public class CartEntity<T> implements Serializable {
 	@TableId(type = IdType.AUTO)
 	private Long id;
 	/**
-	 * 商品表名
-	 */
-					
-	private String tablename;
-	
-	/**
 	 * 商品id
 	 */
 					
@@ -122,18 +116,6 @@ public class CartEntity<T> implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-	/**
-	 * 设置：商品表名
-	 */
-	public void setTablename(String tablename) {
-		this.tablename = tablename;
-	}
-	/**
-	 * 获取：商品表名
-	 */
-	public String getTablename() {
-		return tablename;
 	}
 	/**
 	 * 设置：商品id

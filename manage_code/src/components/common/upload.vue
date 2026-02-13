@@ -1,9 +1,12 @@
 <template>
 	<div>
-		<el-upload v-if="type=='img'" class="img-uploader" :action="uploadUrl" list-type="picture-card" :limit="limit" :multiple="multiple"
+		<el-upload ref="upload" v-if="type=='img'" class="img-uploader" :action="uploadUrl" list-type="picture-card" :limit="limit" :multiple="multiple"
 			v-model:file-list="fileList" :on-success="uploadSuccess" :on-exceed="uploadExceed" :disabled="disabled"
 			:headers="uploadHeaders" accept="image/*">
-			<el-icon>
+			<div v-if="uploadLabel" class="upload-text-mode">
+				<el-button size="small" type="primary">{{ uploadLabel }}</el-button>
+			</div>
+			<el-icon v-else>
 				<Plus />
 			</el-icon>
 			<template #file="{ file }">
@@ -23,13 +26,13 @@
 					</span>
 				</div>
 			</template>
-			<template #tip v-if="!disabled">
+			<template #tip v-if="!disabled && !uploadLabel && fileList.length==0">
 				<div class="el-upload__tip">
 					{{tips}}
 				</div>
 			</template>
 		</el-upload>
-		<el-upload v-else class="upload-demo" drag :action="uploadUrl" :headers="uploadHeaders" :limit="limit"
+		<el-upload ref="upload" v-else class="upload-demo" drag :action="uploadUrl" :headers="uploadHeaders" :limit="limit"
 			:multiple="multiple" v-model:file-list="fileList" :on-preview="uploadPreview" multiple
 			:on-success="uploadSuccess" :on-error="uploadError" :on-exceed="uploadExceed" :on-remove="handleRemove" :disabled="disabled">
 			<el-icon class="el-icon--upload">
@@ -58,6 +61,7 @@
 		defineEmits,
 		watch
 	} from 'vue'
+	import { genFileId } from 'element-plus'
 	const context = getCurrentInstance()?.appContext.config.globalProperties;
 	const emit = defineEmits(['change'])
 	//props
@@ -83,6 +87,10 @@
 		disabled: {
 			type: Boolean,
 			default: false
+		},
+		uploadLabel: {
+			type: String,
+			default: ''
 		}
 	})
 	//data
@@ -90,6 +98,7 @@
 	const uploadUrl = ref('')
 	const fileList = ref([])
 	const fileUrlList = ref([])
+	const upload = ref(null)
 	const {
 		action,
 		fileUrls,
@@ -97,11 +106,25 @@
 		multiple,
 		tip,
 		type,
-		disabled
+		disabled,
+		uploadLabel
 	} = toRefs(props)
 	const dialogImageUrl = ref('')
 	const dialogVisible = ref(false)
 	const uploadHeaders = ref({})
+
+	const uploadClick = () => {
+		if (upload.value && upload.value.$el) {
+			const input = upload.value.$el.querySelector('input')
+			if (input) {
+				input.click()
+			}
+		}
+	}
+	
+	defineExpose({
+		uploadClick
+	})
 
 	watch(fileUrls, () => {
 		init()
@@ -121,6 +144,9 @@
 	}
 	//成功回调
 	const uploadSuccess = (e, file, fileList) => {
+		if(limit.value==1){
+			fileUrlList.value = []
+		}
 		fileUrlList.value.push("file/" + e.file)
 		fileUrlsChange(fileUrlList.value)
 		emit('change', fileUrlList.value.join(','))
@@ -155,7 +181,15 @@
 		fileUrlList.value = list2;
 	}
 	//超出数量
-	const uploadExceed = () => {
+	const uploadExceed = (files) => {
+		if (limit.value == 1) {
+			upload.value.clearFiles()
+			const file = files[0]
+			file.uid = genFileId()
+			upload.value.handleStart(file)
+			upload.value.submit()
+			return
+		}
 		context?.$toolUtil.message(`最多上传${limit.value}个文件`, 'error')
 	}
 	//created

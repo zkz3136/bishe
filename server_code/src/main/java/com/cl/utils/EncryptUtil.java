@@ -216,7 +216,7 @@ public class EncryptUtil {
 			byte[] decodedData = Base64.getDecoder().decode(text);
 			// 解密数据
 			byte[] decryptedData = cipher.doFinal(decodedData);
-			// 返回解密后的数据
+			// 将解密后的数据转换为字符串
 			return new String(decryptedData, StandardCharsets.UTF_8);
 		} catch (InvalidKeyException e) {
 			e.printStackTrace();
@@ -233,5 +233,4 @@ public class EncryptUtil {
 		}
         return null;
     }
-
 }

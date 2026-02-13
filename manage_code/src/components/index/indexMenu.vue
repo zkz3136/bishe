@@ -10,9 +10,11 @@
 					</template>
 				</el-menu-item>
                 <template v-for=" (item,index) in menuList.backMenu">
-                    <el-sub-menu   class="first-item" :index="index+2+''">
+                    <el-sub-menu v-if="item.child.length>1" class="first-item" :index="index+2+''">
                         <template #title>
-                            <i class="iconfont" :class="item.fontClass" v-if="collapse?false:true"></i>
+							<el-icon v-if="collapse?false:true && isSupportGroup(item)" class="menu-el-icon"><ChatDotRound /></el-icon>
+							<i class="iconfont" :class="item.fontClass" v-else-if="collapse?false:true && !item.iconImg"></i>
+                            <img v-else-if="collapse?false:true && item.iconImg" :src="item.iconImg" class="menu-img-icon" alt="" @error="onMenuIconError(item)">
                             <span>{{ item.menu }}</span>
                         </template>
                         <el-menu-item class="second-item" v-for=" (child,sort) in item.child" :key="sort"
@@ -20,6 +22,14 @@
                             @click="menuHandler(child.classname||child.tableName,child.menuJump)">{{ child.menu }}
                         </el-menu-item>
                     </el-sub-menu>
+                    <el-menu-item v-else class="first-item" :index="index+2+''" @click="menuHandler(item.child[0].classname||item.child[0].tableName,item.child[0].menuJump)">
+						<el-icon v-if="collapse?false:true && isSupportGroup(item)" class="menu-el-icon"><ChatDotRound /></el-icon>
+                        <i class="iconfont" :class="item.fontClass" v-else-if="collapse?false:true && !item.iconImg"></i>
+                        <img v-else-if="collapse?false:true && item.iconImg" :src="item.iconImg" class="menu-img-icon" alt="" @error="onMenuIconError(item)">
+                        <template #title>
+                            <span>{{ item.menu }}</span>
+                        </template>
+                    </el-menu-item>
                 </template>
 			</el-menu>
 		</el-scrollbar>
@@ -28,6 +38,7 @@
 
 <script setup>
 	import menu from '@/utils/menu'
+	import { ChatDotRound } from '@element-plus/icons-vue'
 	import {
 		ref,
 		toRefs,
@@ -51,12 +62,25 @@
 	const btnAuth = (e,a)=>{
 		return context?.$toolUtil.isAuth(e,a)
 	}
+	const isSupportGroup = (g) => {
+		if (!g) return false
+		const hasSupportChild = Array.isArray(g.child) && g.child.some(c => {
+			const tn = c && (c.tableName || c.classname)
+			return tn === 'support_ticket' || tn === 'support_faq'
+		})
+		return (g.menu && String(g.menu).includes('客服')) || hasSupportChild
+	}
 	const init = () => {
 		const menus = menu.list()
 		if (menus) {
 			menuList.value = menus
 		}
 		role.value = context?.$toolUtil.storageGet('role')
+		const isBlankValue = (v) => {
+			if (v === null || v === undefined) return true
+			const s = String(v).trim()
+			return s === '' || s === 'null' || s === 'undefined'
+		}
 
 		for (let i = 0; i < menuList.value.length; i++) {
 			if (menuList.value[i].roleName == role.value) {
@@ -64,12 +88,42 @@
 				break;
 			}
 		}
+		if (menuList.value && Array.isArray(menuList.value.backMenu)) {
+			for (let i = 0; i < menuList.value.backMenu.length; i++) {
+				const g = menuList.value.backMenu[i]
+				if (!g) continue
+				if (isSupportGroup(g) && isBlankValue(g.fontClass)) g.fontClass = 'icon-kefu'
+			}
+		}
+
+	}
+	const onMenuIconError = (item) => {
+		if (!item) return
+		item.iconImg = ''
 	}
 	const menuHandler = (name,menuJump) => {
         if(name == 'center'){
             context.$router.push(`/${role.value}Center`)
-        }else if(name == 'storeup'){
+        }else if(name == 'favorites'){
             context.$router.push(`/storeup?type=${menuJump}`)
+        }else if(name == 'menu'){
+            context.$router.push(`/menu_manage`)
+        }else if(name == 'dish_info'){
+            context.$router.push(`/dish_info${menuJump?'?menuJump='+menuJump:''}`)
+        }else if(name == 'restaurant_info'){
+            context.$router.push(`/restaurant_info${menuJump?'?menuJump='+menuJump:''}`)
+        }else if(name == 'restaurant_reservation'){
+            context.$router.push(`/restaurant_reservation${menuJump?'?menuJump='+menuJump:''}`)
+        }else if(name == 'parking_spot'){
+            context.$router.push(`/parking_spot${menuJump?'?menuJump='+menuJump:''}`)
+        }else if(name == 'dish_review'){
+            context.$router.push(`/discuss_dish_info${menuJump?'?menuJump='+menuJump:''}`)
+        }else if(name == 'user'){
+            context.$router.push(`/user${menuJump?'?menuJump='+menuJump:''}`)
+        }else if(name == 'staff'){
+            context.$router.push(`/staff${menuJump?'?menuJump='+menuJump:''}`)
+        }else if(name == 'restaurant_event'){
+            context.$router.push(`/restaurant_event${menuJump?'?menuJump='+menuJump:''}`)
         }else if(name == 'exampaper' && menuJump == '12'){
             context.$router.push('/exampaperlist')
         }else if(name == 'examrecord' && menuJump == '22'){
@@ -150,13 +204,13 @@
 				}
 				// 二级悬浮
 				.second-item:hover {
-					color: #d3623d;
+					color: #ea580c;
 					background: none;
 					border-color: rgba(211,98,91,.5);
 				}
 				// 二级选中
 				.is-active.second-item {
-					color: #d3623d;
+					color: #ea580c;
 					background: none;
 					border-color: rgba(211,98,91,.5);
 					line-height: 24px;
@@ -386,7 +440,7 @@
     color: rgba(255, 255, 255,1);
 }
 /* 图标 */
-.menu_view li .iconfont,.menu_view li .el-icon-menu,.menu_view li .el-icon-location{
+.menu_view li .iconfont,.menu_view li .el-icon-menu,.menu_view li .el-icon-location,.menu_view li .menu-el-icon{
     background:#ffffff;
     width: auto;
     padding:16px;
@@ -395,6 +449,29 @@
     border-radius:10px;
     line-height: 1;
     margin:0 0 5px;
+}
+.menu_view li .menu-el-icon{
+    color:#ea580c !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    box-sizing: content-box;
+}
+.menu_view li .menu-el-icon svg{
+    width: 32px !important;
+    height: 32px !important;
+}
+.menu_view li .menu-img-icon{
+    background:#ffffff;
+    width: auto;
+    height: 32px;
+    padding:16px;
+    border-radius:10px;
+    line-height: 1;
+    margin:0 0 5px;
+    object-fit: contain;
 }
 /* 图标颜色 */
 .menu_view li:nth-child(1) i{
@@ -443,7 +520,7 @@
     color:#dfb528;
 }
 .menu_view li:nth-child(2n+16) i{
-    color:#d3623d;
+    color:#ea580c;
 }
 .menu_view li:nth-child(2n+17) i{
     color:#36b874;

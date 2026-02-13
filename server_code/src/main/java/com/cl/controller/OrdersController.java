@@ -27,7 +27,6 @@ import com.cl.entity.OrdersEntity;
 import com.cl.entity.view.OrdersView;
 
 import com.cl.service.OrdersService;
-import com.cl.service.TokenService;
 import com.cl.utils.PageUtils;
 import com.cl.utils.R;
 import com.cl.utils.MPUtil;
@@ -54,23 +53,21 @@ public class OrdersController {
 
 
 
-
     /**
      * 后台列表
      */
     @RequestMapping("/page")
     public R page(@RequestParam Map<String, Object> params,OrdersEntity orders,
                                                                                                                                                                                                                                                                                                         HttpServletRequest request){
-                    String tableName = request.getSession().getAttribute("tableName").toString();
-                                        if(!tableName.equals("yuangong") && !request.getSession().getAttribute("role").toString().equals("管理员")) {
-                            orders.setUserid((Long)request.getSession().getAttribute("userId"));
-                        }
-                                                                                            EntityWrapper<OrdersEntity> ew = new EntityWrapper<OrdersEntity>();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
-        
+        String tableName = request.getSession().getAttribute("tableName").toString();
+        if(!tableName.equals("staff") && !request.getSession().getAttribute("role").toString().equals("管理员")) {
+            orders.setUserid((Long)request.getSession().getAttribute("userId"));
+        }
+        EntityWrapper<OrdersEntity> ew = new EntityWrapper<OrdersEntity>();
         PageUtils page = ordersService.queryPage(params, MPUtil.sort(MPUtil.between(MPUtil.likeOrEq(ew, orders), params), params));
         return R.ok().put("data", page);
     }
+
 
 
 
@@ -153,6 +150,9 @@ public class OrdersController {
     @RequestMapping("/add")
     public R add(@RequestBody OrdersEntity orders, HttpServletRequest request){
     	//ValidatorUtils.validateEntity(orders);
+        if (StringUtils.isBlank(orders.getSeatName())) {
+            return R.error("请选择餐桌");
+        }
         ordersService.insert(orders);
         return R.ok();
     }
@@ -169,8 +169,6 @@ public class OrdersController {
         ordersService.updateById(orders);//全部更新
         return R.ok();
     }
-
-
 
     
 
@@ -198,8 +196,8 @@ public class OrdersController {
         params.put("xColumn", MPUtil.camelToSnake(xColumnName));
         params.put("yColumn", MPUtil.camelToSnake(yColumnName));
         EntityWrapper<OrdersEntity> ew = new EntityWrapper<OrdersEntity>();
-		String tableName = request.getSession().getAttribute("tableName").toString();
-		// 员工功能已移除，不再按员工账号过滤
+        String tableName = request.getSession().getAttribute("tableName").toString();
+        // 员工功能已移除，不再按员工账号过滤
             ew.in("status", new String[]{"已支付","已发货","已完成"}).ne("type",2);
         List<Map<String, Object>> result = MPUtil.snakeListToCamel(ordersService.selectValue(params, ew));
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -245,7 +243,7 @@ public class OrdersController {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         EntityWrapper<OrdersEntity> ew = new EntityWrapper<OrdersEntity>();
         String tableName = request.getSession().getAttribute("tableName").toString();
-        if(tableName.equals("yuangong")) {
+        if(tableName.equals("staff")) {
             // 员工功能已移除，不再按员工账号过滤
         }
         for(int i=0;i<yColumnNames.length;i++) {
@@ -274,7 +272,7 @@ public class OrdersController {
         params.put("timeStatType", timeStatType);
         EntityWrapper<OrdersEntity> ew = new EntityWrapper<OrdersEntity>();
         String tableName = request.getSession().getAttribute("tableName").toString();
-        if(tableName.equals("yuangong")) {
+        if(tableName.equals("staff")) {
             // 员工功能已移除，不再按员工账号过滤
         }
             ew.in("status", new String[]{"已支付","已发货","已完成"}).ne("type",2);
@@ -303,7 +301,7 @@ public class OrdersController {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         EntityWrapper<OrdersEntity> ew = new EntityWrapper<OrdersEntity>();
         String tableName = request.getSession().getAttribute("tableName").toString();
-        if(tableName.equals("yuangong")) {
+        if(tableName.equals("staff")) {
             // 员工功能已移除，不再按员工账号过滤
         }
         for(int i=0;i<yColumnNames.length;i++) {
@@ -330,7 +328,7 @@ public class OrdersController {
         params.put("column", MPUtil.camelToSnake(columnName));
         EntityWrapper<OrdersEntity> ew = new EntityWrapper<OrdersEntity>();
         String tableName = request.getSession().getAttribute("tableName").toString();
-        if(tableName.equals("yuangong")) {
+        if(tableName.equals("staff")) {
             // 员工功能已移除，不再按员工账号过滤
         }
             ew.in("status", new String[]{"已支付","已发货","已完成"}).ne("type",2);
@@ -355,7 +353,7 @@ public class OrdersController {
     @RequestMapping("/count")
     public R count(@RequestParam Map<String, Object> params,OrdersEntity orders, HttpServletRequest request){
         String tableName = request.getSession().getAttribute("tableName").toString();
-        if(tableName.equals("yuangong")) {
+        if(tableName.equals("staff")) {
             // 员工端显示所有订单，创建新的空对象避免字段干扰
             orders = new OrdersEntity();
         }
@@ -394,4 +392,3 @@ public class OrdersController {
 
 
 }
-

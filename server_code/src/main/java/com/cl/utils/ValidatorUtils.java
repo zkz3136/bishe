@@ -1,6 +1,5 @@
 package com.cl.utils;
 
-
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;

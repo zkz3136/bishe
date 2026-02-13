@@ -16,7 +16,7 @@
 			<el-table-column type="selection" width="55" :resizable='true' align="left" header-align="left" />
 			<el-table-column label="商品名称" :resizable='true' align="left" header-align="left">
 				<template #default="scope">
-					{{scope.row.goodname}}
+					{{scope.row.good_name}}
 				</template>
 			</el-table-column>
 			<el-table-column label="商品图片" :resizable='true' align="left" header-align="left">
@@ -32,13 +32,13 @@
 			</el-table-column>
 			<el-table-column label="数量" :resizable='true' align="left" header-align="left">
 				<template #default="scope">
-					<el-input-number v-model="scope.row.buynumber" :min="1"
+					<el-input-number v-model="scope.row.buy_number" :min="1"
 						@change="numberChange(scope.row)" @click.stop></el-input-number>
 				</template>
 			</el-table-column>
 			<el-table-column label="总价" :resizable='true' align="left" header-align="left">
 				<template #default="scope">
-					<span style="font-size: 12px;">￥</span>{{(scope.row.realPrice * scope.row.buynumber).toFixed(2)}}
+					<span style="font-size: 12px;">￥</span>{{(scope.row.realPrice * scope.row.buy_number).toFixed(2)}}
 				</template>
 			</el-table-column>
 			<el-table-column label="操作" :resizable='true' align="left" header-align="left">
@@ -89,8 +89,7 @@
 	const listLoading = ref(false)
 	const listQuery = ref({
 		page: 1,
-		limit: 20,
-		userid: context?.$toolUtil.storageGet('userid')
+		limit: 20
 	})
 	//基础信息
     //判断是否从个人中心跳转
@@ -113,15 +112,32 @@
 			params: listQuery.value
 		}).then(res => {
 			listLoading.value = false
-			list.value = res.data.data.list
-            list.value.forEach(item=>{
-                item.realPrice = item.price
-            })
+			list.value = (res.data.data.list || []).map((raw) => {
+				const item = raw || {}
+				const buyNumber = Number(item.buy_number ?? item.buynumber ?? 1)
+				const realPrice = Number(item.realPrice ?? item.discount_price ?? item.discountprice ?? item.price ?? 0)
+				item.good_name = item.good_name ?? item.goodname ?? ''
+				item.good_id = item.good_id ?? item.goodid
+                item.source_table = item.source_table ?? 'dish_info'
+				item.buy_number = Number.isFinite(buyNumber) && buyNumber > 0 ? buyNumber : 1
+				item.buynumber = item.buy_number
+				item.realPrice = Number.isFinite(realPrice) ? realPrice : 0
+				item.good_type = item.good_type ?? item.goodtype ?? ''
+				item.user_id = item.user_id ?? item.userid
+				item.discount_price = item.discount_price ?? item.discountprice
+				return item
+			})
 		})
 	}
 	//跳转商品详情
 	const detailClick = (row) => {
-		router.push(`/index/${row.tablename}Detail?id=${row.goodid}`)
+        const sourceTable = row?.source_table ?? 'dish_info'
+		const goodId = row?.good_id ?? row?.goodid ?? row?.goodId ?? row?.ref_id ?? row?.refid ?? row?.refId
+		if (!sourceTable || !goodId) {
+			context?.$toolUtil.message('商品数据异常，无法查看详情', 'error')
+			return
+		}
+		router.push(`/index/${sourceTable}Detail?id=${goodId}`)
 	}
 	//多选
 	const handleSelectionChange = (e) => {
@@ -155,19 +171,29 @@
 		}
 	}
 	const numberChange = (row) => {
+		row.buynumber = row.buy_number
+        const sourceTable = row?.source_table ?? 'dish_info'
+		const goodId = row?.good_id ?? row?.goodid ?? row?.goodId ?? row?.ref_id ?? row?.refid ?? row?.refId
+		if (!sourceTable || !goodId) {
+			context?.$toolUtil.message('商品数据异常，无法校验限购', 'error')
+			return
+		}
 		context?.$http({
-			url: `${row.tablename}/detail/${row.goodid}`,
+			url: `${sourceTable}/detail/${goodId}`,
 			method: 'get'
 		}).then(res => {
-			if (res.data.data.onelimittimes&&(res.data.data.onelimittimes>0)&&(row.buynumber > res.data.data.onelimittimes)) {
-				row.buynumber = res.data.data.onelimittimes
-				context?.$toolUtil.message(`每人单次只能购买${res.data.data.onelimittimes}件`, 'error')
+			if (res.data.data.purchase_limit&&(res.data.data.purchase_limit>0)&&(row.buy_number > res.data.data.purchase_limit)) {
+				row.buy_number = res.data.data.purchase_limit
+				context?.$toolUtil.message(`每人单次只能购买${res.data.data.purchase_limit}件`, 'error')
 				return false
 			}
 			context?.$http({
 				url: `cart/update`,
 				method: 'post',
-				data: row
+				data: {
+					id: row.id,
+					buynumber: row.buy_number
+				}
 			}).then(obj => {})
 		})
 	}
@@ -175,7 +201,7 @@
 	const allPrice = () => {
 		let price = 0
 		for (let x in selRows.value) {
-			price += Number((selRows.value[x].realPrice * selRows.value[x].buynumber))
+			price += Number((selRows.value[x].realPrice * selRows.value[x].buy_number))
 		}
 		return Number(price).toFixed(2)
 	}
@@ -183,12 +209,26 @@
 		if (selRows.value.length){
 			let data = []
 			for(let x in selRows.value){
+				const row = selRows.value[x] || {}
+				row.buy_number = Number(row.buy_number ?? row.buynumber ?? 1)
+				row.buynumber = row.buy_number
+				row.realPrice = Number(row.realPrice ?? row.discount_price ?? row.discountprice ?? row.price ?? 0)
+				row.good_name = row.good_name ?? row.goodname ?? ''
+				row.good_id = row.good_id ?? row.goodid
+                row.source_table = row.source_table ?? 'dish_info'
+				row.good_type = row.good_type ?? row.goodtype ?? ''
+                const sourceTable = row?.source_table ?? 'dish_info'
+				const goodId = row?.good_id ?? row?.goodid ?? row?.goodId ?? row?.ref_id ?? row?.refid ?? row?.refId
+				if (!sourceTable || !goodId) {
+					context?.$toolUtil.message('商品数据异常，无法提交订单', 'error')
+					return false
+				}
                 let res = await context?.$http({
-					url: `${selRows.value[x].tablename}/detail/${selRows.value[x].goodid}`,
+					url: `${sourceTable}/detail/${goodId}`,
 					method:'get'
 				})
-                if(selRows.value[x].buynumber>res.data.data.alllimittimes){
-                    context?.$toolUtil.message(`${selRows.value[x].goodname}库存不足`,'error')
+                if(selRows.value[x].buy_number>res.data.data.stock){
+                    context?.$toolUtil.message(`${selRows.value[x].good_name}库存不足`,'error')
                     return false
                 }
                 if(x==selRows.value.length - 1){
@@ -208,6 +248,11 @@
         if(route.query.centerType){
             centerType.value = true
         }
+		if(!context?.$toolUtil.storageGet('frontToken')){
+			context?.$toolUtil.storageSet('toPath',window.history.state.current)
+			router.push('/login')
+			return
+		}
 		getList()
 	}
 	init()

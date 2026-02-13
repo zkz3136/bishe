@@ -4,7 +4,7 @@
 		<div style="border: 1px solid #ccc">
 			<Toolbar style="border-bottom: 1px solid #ccc" :editor="editorRef" :defaultConfig="toolbarConfig"
 				:mode="mode" />
-			<Editor style="height: 500px; overflow-y: hidden;" v-model="valueHtml" :defaultConfig="editorConfig"
+			<Editor style="height: 100px; overflow-y: hidden;" v-model="valueHtml" :defaultConfig="editorConfig"
 				:mode="mode" @onCreated="handleCreated" @onChange="handleChange" />
 		</div>
 	</div>
@@ -111,7 +111,6 @@
 					}
 					// 从 res 中找到 url alt href ，然后插入图片
 					insertFn(context?.$config.url + 'file/' + res.file);
-					// console.log(res, "res.data")
 				},
 
 				// 单个文件上传成功之后
@@ -122,13 +121,11 @@
 
 				// 上传进度的回调函数
 				onProgress(progress) {
-					// console.log('progress', progress);
 					// progress 是 0-100 的数字
 				},
 
 				// 上传错误，或者触发 timeout 超时
 				onError(img, err, res) {
-					// console.log(`${img.name} 上传出错`, err, res);
 				}
 			}
 		}

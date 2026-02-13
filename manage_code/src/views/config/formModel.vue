@@ -7,7 +7,7 @@
 						<el-form-item label="名称" prop="name">
 							<el-input class="list_inp" v-model="form.name" placeholder="名称"
                                 type="text"
-								readonly />
+								:readonly="!isAdd" />
 						</el-form-item>
 					</el-col>
 
@@ -16,6 +16,7 @@
 									  label="图片"
 						>
 							<uploads
+								ref="uploadsRef"
 								:disabled="!isAdd||disabledForm.value?true:false"
 								action="file/upload"
 								tip="请上传图片"
@@ -26,21 +27,23 @@
 							</uploads>
 						</el-form-item>
 					</el-col>
+
 					<el-col :span="24">
-						<el-form-item label="链接" prop="url">
-							<el-input v-model="form.url" placeholder="链接" type="textarea"
-							:readonly="!isAdd||disabledForm.url?true:false"
-							/>
+						<el-form-item label="跳转链接" prop="url">
+							<el-input class="list_inp" v-model="form.url" placeholder="http(s)链接或站内路径"
+                                type="text"
+								:readonly="!isAdd||disabledForm.url?true:false" />
 						</el-form-item>
 					</el-col>
+
 				</el-row>
 			</el-form>
 			<template #footer v-if="isAdd||type=='logistics'||type=='reply'">
 				<span class="formModel_btn_box">
-					<el-button class="cancel_btn" @click="closeClick">取消</el-button>
-					<el-button class="confirm_btn" type="primary" @click="save"
+					<el-button class="cancel_btn" @click="save">提交</el-button>
+					<el-button class="confirm_btn" type="primary" @click="triggerUpload"
 						>
-						提交
+						更换
 					</el-button>
 				</span>
 			</template>
@@ -53,8 +56,7 @@
 		ref,
 		getCurrentInstance,
 		nextTick,
-		computed,
-		defineEmits
+		computed
 	} from 'vue'
     import {
         useStore
@@ -85,6 +87,7 @@
 		value: [
 		],
 		url: [
+			{ validator: context.$toolUtil.validator.url, trigger: 'blur' },
 		],
 	})
 	//表单验证
@@ -92,6 +95,13 @@
 	const formRef = ref(null)
 	const id = ref(0)
 	const type = ref('')
+	const uploadsRef = ref(null)
+
+	const triggerUpload = () => {
+		if (uploadsRef.value) {
+			uploadsRef.value.uploadClick()
+		}
+	}
 	//值上传回调
 	const valueUploadSuccess=(e)=>{
 		form.value.value = e
@@ -136,6 +146,7 @@
 			isAdd.value = true
 			formTitle.value = '新增' + formName
 			formVisible.value = true
+			form.value.name = 'swiper'
 		}else if(formType == 'info'){
 			isAdd.value = false
 			formTitle.value = '查看' + formName
@@ -301,18 +312,24 @@
 				}
 				//图片上传样式
 				.el-upload-list  {
+                    width: 100%;
 					//提示语
 					.el-upload__tip {
 					}
-					//外部盒子
-					.el-upload--picture-card {
-						//图标
-						.el-icon{
-						}
-					}
 					.el-upload-list__item {
+                        width: 100%;
+                        height: 350px;
 					}
 				}
+                //外部盒子
+                .el-upload--picture-card {
+                    display: none;
+                    width: 100%;
+                    height: 350px;
+                    //图标
+                    .el-icon{
+                    }
+                }
 			}
 		}
 	}

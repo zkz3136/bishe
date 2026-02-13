@@ -27,7 +27,6 @@ import com.cl.entity.SystemNoticeEntity;
 import com.cl.entity.view.SystemNoticeView;
 
 import com.cl.service.SystemNoticeService;
-import com.cl.service.TokenService;
 import com.cl.utils.PageUtils;
 import com.cl.utils.R;
 import com.cl.utils.MPUtil;
@@ -42,7 +41,7 @@ import com.cl.utils.CommonUtil;
  * @date 2025-03-25 17:00:57
  */
 @RestController
-@RequestMapping("/systemnotice")
+@RequestMapping("/system_notice")
 public class SystemNoticeController {
     @Autowired
     private SystemNoticeService systemNoticeService;

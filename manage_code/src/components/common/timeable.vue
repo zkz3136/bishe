@@ -174,7 +174,6 @@
                         this.timetable[item.start - 1][week] = item
                     })
 				}
-				console.log(this.timetable)
 			},
 			objectSpanMethod({
 				row,

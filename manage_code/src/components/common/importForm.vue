@@ -36,8 +36,7 @@
 	import {
 		ref,
 		toRefs,
-		getCurrentInstance,
-		defineEmits
+		getCurrentInstance
 	} from 'vue';
 	const emit = defineEmits(['importChange'])
 	const context = getCurrentInstance()?.appContext.config.globalProperties;
@@ -86,7 +85,6 @@
 		if (tip.value) {
 			tips.value = tip.value
 		}
-		console.log(tips.value)
 	}
 	
 </script>

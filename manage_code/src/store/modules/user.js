@@ -1,7 +1,8 @@
-﻿import toolUtil from '@/utils/toolUtil.js'
+import toolUtil from '@/utils/toolUtil.js'
 import config from '@/utils/config.js'
 import http from '@/utils/http.js'
 import default_avatar from "@/assets/img/avatar.png"
+import router from '@/router'
 
 export default {
     namespaced: true,
@@ -19,14 +20,14 @@ export default {
         },
         avatar(state){
             let key;
-            if(toolUtil.storageGet('sessionTable') == 'yonghu'){
-                key = 'touxiang'
+            if(toolUtil.storageGet('sessionTable') == 'user'){
+                key = 'avatar'
             }
-            if(toolUtil.storageGet('sessionTable') == 'users'){
-                key = 'tupian'
+            if(toolUtil.storageGet('sessionTable') == 'admin'){
+                key = 'avatar'
             }
-            if(toolUtil.storageGet('sessionTable') == 'Yuangong'){
-                key = 'touxiang'
+            if(toolUtil.storageGet('sessionTable') == 'staff'){
+                key = 'avatar'
             }
             let avatar = state.session[key]
             state.avatar = avatar
@@ -38,21 +39,29 @@ export default {
             let sessionTable = toolUtil.storageGet('sessionTable')
             if(!sessionTable){
                 router.push('/login')
-                return
+                return null
             }
-            let res = await http.get(`${sessionTable}/session`)
-            if(res.data.code==0){
-                localStorage.setItem('admin_userid',res.data.data.id)
-                commit('set_session',res.data.data)
+            try{
+                let res = await http.get(`${sessionTable}/session`)
+                if(res.data.code==0){
+                    localStorage.setItem('admin_userid',res.data.data.id)
+                    commit('set_session',res.data.data)
+                }
+                return res
+            }catch(e){
+                return null
             }
-            return res
         },
         async update({commit},data){
-            let res = await http.post(`${toolUtil.storageGet('sessionTable')}/update`,data)
-            if(res.data.code==0){
-                commit('assign_session',data)
+            try{
+                let res = await http.post(`${toolUtil.storageGet('sessionTable')}/update`,data)
+                if(res.data.code==0){
+                    commit('assign_session',data)
+                }
+                return res
+            }catch(e){
+                return null
             }
-            return res
         },
         async loginOut({commit},data){
             commit('loginOut')

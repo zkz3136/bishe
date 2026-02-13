@@ -18,11 +18,23 @@ body .el-pagination{
 .el-select .el-input__wrapper.is-focus{
   box-shadow: none!important;
 }
+.el-select .el-input__wrapper{
+  box-shadow: none!important;
+  outline: none!important;
+}
 .el-select:hover .el-input__wrapper {
   box-shadow: none!important;
 }
 .el-input__wrapper.is-focus {
-  box-shadow: none
+  box-shadow: none!important;
+}
+.el-input.is-focus .el-input__wrapper {
+  box-shadow: none!important;
+  outline: none!important;
+}
+.el-select__wrapper {
+  box-shadow: none!important;
+  outline: none!important;
 }
 textarea {
   box-shadow: none!important;
@@ -68,7 +80,7 @@ p>img {
   height: auto!important;
 }
 body{
-    --theme:#C02C38;
+    --theme:#ea580c;
 }
 /*自定义主题色(全局)*/
 :root {
@@ -84,14 +96,14 @@ body{
 --line-height:36px;
 
 /*自定义主题*/
---theme-color: #c02c38;
---theme-color50: #9896f150;
---theme2-color: #c45a65;
---theme2-color10: #edb1f110;
---theme2-color20: #edb1f120;
---theme2-color30: #edb1f130;
---theme2-color50: #edb1f150;
---theme3-color:#7c1823;
+--theme-color: #ea580c;
+--theme-color50: rgba(234, 88, 12, 0.5);
+--theme2-color: #f97316;
+--theme2-color10: rgba(249, 115, 22, 0.1);
+--theme2-color20: rgba(249, 115, 22, 0.2);
+--theme2-color30: rgba(249, 115, 22, 0.3);
+--theme2-color50: rgba(249, 115, 22, 0.5);
+--theme3-color:#c2410c;
 
 /*默认按钮*/
 --button-height:36px;
@@ -157,7 +169,7 @@ body{
     border-radius: 0px;
 }
 .list-page .list_search .search_view .search_box .search_sel{
-    border: 0px solid #ddd;
+    border: 1px solid #ddd;
     box-sizing: border-box;
     width: 100%;
     padding: 0px 10px;
@@ -168,11 +180,11 @@ body{
 .list-page .list_search .search_view .search_box .search_sel .el-input__inner{
     font-size: 16px;
     border-radius: 0px;
-    border: 1px solid #ddd;
+    border: none;
 }
 
 .list-page .list_search .search_view .search_box .search_date{
-    border: 0px solid #ddd;
+    border: 1px solid #ddd;
     box-sizing: border-box;
     width: 100%;
     border-radius: 0px;
@@ -183,7 +195,7 @@ body{
 }
 .list-page .list_search .search_view .search_box .search_date .el-input__inner{
     border-radius: 0px;
-    border: 1px solid #ddd;
+    border: none;
 }
 
 .list-page .list_search .search_btn_view{
@@ -591,7 +603,7 @@ cursor: default;
     padding: 0px;
     color: rgb(96, 98, 102);
     border-radius: 3px;
-    border: 0px solid rgb(220, 223, 230);
+    border: 1px solid rgb(220, 223, 230);
     outline: 0px;
     background: rgb(255, 255, 255);
     text-align: center;
@@ -600,7 +612,7 @@ cursor: default;
 }
  .el-pagination .el-pagination__sizes .el-select .el-input__inner{
     font-size: 16px;
-    border: 1px solid #dcdfe6;
+    border: none;
 }
 /* jump盒子 */
 .el-pagination .el-pagination__jump{
@@ -620,7 +632,7 @@ cursor: default;
     color: rgb(96, 98, 102);
     font-size: 16px;
     border-radius: 3px;
-    border: 0px solid rgb(220, 223, 230);
+    border: 1px solid rgb(220, 223, 230);
     outline: 0px;
     background: rgb(255, 255, 255);
     text-align: center;
@@ -628,7 +640,7 @@ cursor: default;
     cursor: pointer;
 }
 .el-pagination .el-pagination__jump .el-input .el-input__inner{
-    border: 1px solid #dcdfe6;
+    border: none;
 }
 
 /*详情页*/
@@ -867,6 +879,10 @@ cursor: default;
 .detail-page .detail_view .info_view .btn_view .inputNumber .el-icon-plus{
     color: rgb(102, 102, 102);
     font-size: 14px;
+}
+
+.detail-page .detail_view .info_view .btn_view .inputNumber .el-input{
+    border: none;
 }
 
 .detail-page .detail_view .info_view .btn_view .inputNumber .el-input .el-input__inner{

@@ -18,10 +18,10 @@
 					</div>
 				</el-form>
 				<div class="btn_view">
-					<el-button class="add_btn" type="success" @click="addClick" v-if="btnAuth('storeup','新增')">
+					<el-button class="add_btn" type="success" @click="addClick" v-if="btnAuth('favorites','新增')">
 						新增
 					</el-button>
-					<el-button class="del_btn" type="danger" :disabled="selRows.length?false:true" @click="delClick(null)"  v-if="btnAuth('storeup','删除')">
+					<el-button class="del_btn" type="danger" :disabled="selRows.length?false:true" @click="delClick(null)"  v-if="btnAuth('favorites','删除')">
 						删除
 					</el-button>
 				</div>
@@ -32,7 +32,7 @@
 				:stripe='false'
 				@selection-change="handleSelectionChange"
 				ref="table"
-				v-if="btnAuth('storeup','查看')"
+				v-if="btnAuth('favorites','查看')"
 				:data="list"
 				@row-click="listChange">
 				<el-table-column :resizable='true' align="left" header-align="left" type="selection" width="55" />
@@ -88,12 +88,12 @@
 				</el-table-column>
 				<el-table-column label="操作" width="300" :resizable='true' :sortable='true' align="left" header-align="left">
 					<template #default="scope">
-						<el-button class="view_btn" type="info" v-if=" btnAuth('storeup','查看')" @click="infoClick(scope.row.id)">
+						<el-button class="view_btn" type="info" v-if=" btnAuth('favorites','查看')" @click="infoClick(scope.row.id)">
 							详情
 						</el-button>
-						<el-button class="edit_btn" type="primary" @click="editClick(scope.row.id)" v-if=" btnAuth('storeup','修改')">
+						<el-button class="edit_btn" type="primary" @click="editClick(scope.row.id)" v-if=" btnAuth('favorites','修改')">
 							修改						</el-button>
-						<el-button class="del_btn" type="danger" @click="delClick(scope.row.id)"  v-if="btnAuth('storeup','删除')">
+						<el-button class="del_btn" type="danger" @click="delClick(scope.row.id)"  v-if="btnAuth('favorites','删除')">
 							删除						</el-button>
 					</template>
 				</el-table-column>
@@ -144,7 +144,7 @@
 	import formModel from './formModel.vue'
 	//基础信息
 
-	const tableName = 'storeup'
+	const tableName = 'favorites'
 	const formName = '我的收藏'
 	const route = useRoute()
 	watch(() => route.query,() => {
@@ -287,31 +287,15 @@
 			context?.$toolUtil.message('文件不存在','error')
 		}
 		let arr = file.replace(new RegExp('file/', "g"), "")
-		axios.get((location.href.split(context?.$config.name).length>1 ? location.href.split(context?.$config.name)[0] :'') + context?.$config.name + '/file/download?fileName=' + arr, {
-			headers: {
-				token: context?.$toolUtil.storageGet('Token')
-			},
-			responseType: "blob"
-		}).then(({
-			data
-		}) => {
-			const binaryData = [];
-			binaryData.push(data);
-			const objectUrl = window.URL.createObjectURL(new Blob(binaryData, {
-				type: 'application/pdf;chartset=UTF-8'
-			}))
-			const a = document.createElement('a')
-			a.href = objectUrl
-			a.download = arr
-			// a.click()
-			// 下面这个写法兼容火狐
-			a.dispatchEvent(new MouseEvent('click', {
-				bubbles: true,
-				cancelable: true,
-				view: window
-			}))
-			window.URL.revokeObjectURL(data)
-		})
+		const url = (location.href.split(context?.$config.name).length>1 ? location.href.split(context?.$config.name)[0] :'') + context?.$config.name + '/file/' + arr
+		const a = document.createElement('a')
+		a.href = url
+		a.download = arr
+		a.dispatchEvent(new MouseEvent('click', {
+			bubbles: true,
+			cancelable: true,
+			view: window
+		}))
 	}
 	//初始化
 	const init = () => {

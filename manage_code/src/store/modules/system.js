@@ -12,7 +12,7 @@ export default {
     },
     actions:{
         getSystemNotice({commit}){
-            http.get('/systemnotice/list?sort=id&order=desc').then(res=>{
+            http.get('/system_notice/list?sort=id&order=desc&t=' + new Date().getTime()).then(res=>{
                 commit('setNotice',res.data.data.list[0])
             })
         },

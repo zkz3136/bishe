@@ -2,40 +2,34 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import index from '../views'
 import home from '../views/pages/home.vue'
 import login from '../views/pages/login.vue'
-import yonghuList from '@/views/pages/yonghu/list'
-import yonghuDetail from '@/views/pages/yonghu/formModel'
-import yonghuAdd from '@/views/pages/yonghu/formAdd'
-import yonghuRegister from '@/views/pages/yonghu/register'
-import yonghuCenter from '@/views/pages/yonghu/center'
-import newsList from '@/views/pages/news/list'
-import caipinleixingList from '@/views/pages/caipinleixing/list'
-import caipinleixingDetail from '@/views/pages/caipinleixing/formModel'
-import caipinleixingAdd from '@/views/pages/caipinleixing/formAdd'
-import meishixinxiList from '@/views/pages/meishixinxi/list'
-import meishixinxiDetail from '@/views/pages/meishixinxi/formModel'
-import meishixinxiAdd from '@/views/pages/meishixinxi/formAdd'
+import userList from '@/views/pages/user/list'
+import userDetail from '@/views/pages/user/formModel'
+import userAdd from '@/views/pages/user/formAdd'
+import userRegister from '@/views/pages/user/register'
+import userCenter from '@/views/pages/user/center'
+import dish_infoList from '@/views/pages/dish_info/list'
+import dish_infoDetail from '@/views/pages/dish_info/formModel'
+import dish_infoAdd from '@/views/pages/dish_info/formAdd'
 import systemNoticeList from '@/views/pages/systemNotice/list'
 import systemNoticeDetail from '@/views/pages/systemNotice/formModel'
 import systemNoticeAdd from '@/views/pages/systemNotice/formAdd'
 import cartList from '@/views/pages/shop_order/cart'
 import storeupList from '@/views/pages/storeup/list'
-import cantingxinxiList from '@/views/pages/cantingxinxi/list'
-import cantingxinxiDetail from '@/views/pages/cantingxinxi/formModel'
-import cantingxinxiAdd from '@/views/pages/cantingxinxi/formAdd'
-import cantingyuyueList from '@/views/pages/cantingyuyue/list'
-import cantingyuyueDetail from '@/views/pages/cantingyuyue/formModel'
-import cantingyuyueAdd from '@/views/pages/cantingyuyue/formAdd'
-import dianpuhuodongList from '@/views/pages/dianpuhuodong/list'
-import dianpuhuodongDetail from '@/views/pages/dianpuhuodong/formModel'
-import dianpuhuodongAdd from '@/views/pages/dianpuhuodong/formAdd'
-import cheweiyuyueList from '@/views/pages/cheweiyuyue/list'
-import cheweiyuyueDetail from '@/views/pages/cheweiyuyue/formModel'
-import cheweiyuyueAdd from '@/views/pages/cheweiyuyue/formAdd'
-import cheweixinxiList from '@/views/pages/cheweixinxi/list'
-import cheweixinxiDetail from '@/views/pages/cheweixinxi/formModel'
-import cheweixinxiAdd from '@/views/pages/cheweixinxi/formAdd'
+import restaurant_infoList from '@/views/pages/restaurant_info/list'
+import restaurant_infoDetail from '@/views/pages/restaurant_info/formModel'
+import restaurant_infoAdd from '@/views/pages/restaurant_info/formAdd'
+import restaurant_reservationList from '@/views/pages/restaurant_reservation/list'
+import restaurant_reservationDetail from '@/views/pages/restaurant_reservation/formModel'
+import restaurant_reservationAdd from '@/views/pages/restaurant_reservation/formAdd'
+import restaurant_eventList from '@/views/pages/restaurant_event/list'
+import restaurant_eventDetail from '@/views/pages/restaurant_event/formModel'
+import restaurant_eventAdd from '@/views/pages/restaurant_event/formAdd'
+import parking_spotList from '@/views/pages/parking_spot/list'
+import parking_spotDetail from '@/views/pages/parking_spot/formModel'
+import parking_spotAdd from '@/views/pages/parking_spot/formAdd'
 import order_confirm from '@/views/pages/shop_order/confirm'
 import ordersList from '@/views/pages/shop_order/list'
+import myReviews from '@/views/pages/user/myReviews'
 
 const routes = [{
 	path: '/',
@@ -49,42 +43,28 @@ const routes = [{
 			component: home
 		}
 			, {
-				path: 'yonghuList',
-				component: yonghuList
+				path: 'userList',
+				component: userList
 			}, {
-				path: 'yonghuDetail',
-				component: yonghuDetail
+				path: 'userDetail',
+				component: userDetail
 			}, {
-				path: 'yonghuAdd',
-				component: yonghuAdd
+				path: 'userAdd',
+				component: userAdd
 			}
 			, {
-				path: 'yonghuCenter',
-				component: yonghuCenter
+				path: 'userCenter',
+				component: userCenter
 			}
 			, {
-				path: 'newsList',
-				component: newsList
-			}
-			, {
-				path: 'caipinleixingList',
-				component: caipinleixingList
+				path: 'dish_infoList',
+				component: dish_infoList
 			}, {
-				path: 'caipinleixingDetail',
-				component: caipinleixingDetail
+				path: 'dish_infoDetail',
+				component: dish_infoDetail
 			}, {
-				path: 'caipinleixingAdd',
-				component: caipinleixingAdd
-			}
-			, {
-				path: 'meishixinxiList',
-				component: meishixinxiList
-			}, {
-				path: 'meishixinxiDetail',
-				component: meishixinxiDetail
-			}, {
-				path: 'meishixinxiAdd',
-				component: meishixinxiAdd
+				path: 'dish_infoAdd',
+				component: dish_infoAdd
 			}
 			, {
 				path: 'systemNoticeList',
@@ -105,54 +85,45 @@ const routes = [{
 			component: storeupList
 		}
 			, {
-				path: 'cantingxinxiList',
-				component: cantingxinxiList
+				path: 'restaurant_infoList',
+				component: restaurant_infoList
 			}, {
-				path: 'cantingxinxiDetail',
-				component: cantingxinxiDetail
+				path: 'restaurant_infoDetail',
+				component: restaurant_infoDetail
 			}, {
-				path: 'cantingxinxiAdd',
-				component: cantingxinxiAdd
+				path: 'restaurant_infoAdd',
+				component: restaurant_infoAdd
 			}
 			, {
-				path: 'cantingyuyueList',
-				component: cantingyuyueList
+				path: 'restaurant_reservationList',
+				component: restaurant_reservationList
 			}, {
-				path: 'cantingyuyueDetail',
-				component: cantingyuyueDetail
+				path: 'restaurant_reservationDetail',
+				component: restaurant_reservationDetail
 			}, {
-				path: 'cantingyuyueAdd',
-				component: cantingyuyueAdd
+				path: 'restaurant_reservationAdd',
+				component: restaurant_reservationAdd
 			}
 		, {
-			path: 'dianpuhuodongList',
-			component: dianpuhuodongList
+			path: 'restaurant_eventList',
+			component: restaurant_eventList
 		}, {
-			path: 'dianpuhuodongDetail',
-			component: dianpuhuodongDetail
+			path: 'restaurant_eventDetail',
+			component: restaurant_eventDetail
 		}, {
-			path: 'dianpuhuodongAdd',
-			component: dianpuhuodongAdd
+			path: 'restaurant_eventAdd',
+			component: restaurant_eventAdd
 		}
-		, {
-			path: 'cheweiyuyueList',
-			component: cheweiyuyueList
-		}, {
-				path: 'cheweiyuyueDetail',
-				component: cheweiyuyueDetail
-			}, {
-				path: 'cheweiyuyueAdd',
-				component: cheweiyuyueAdd
-			}
+
 			, {
-				path: 'cheweixinxiList',
-				component: cheweixinxiList
+				path: 'parking_spotList',
+				component: parking_spotList
 			}, {
-				path: 'cheweixinxiDetail',
-				component: cheweixinxiDetail
+				path: 'parking_spotDetail',
+				component: parking_spotDetail
 			}, {
-				path: 'cheweixinxiAdd',
-				component: cheweixinxiAdd
+				path: 'parking_spotAdd',
+				component: parking_spotAdd
 			}
 			, {
 				path: 'order_confirm',
@@ -161,6 +132,9 @@ const routes = [{
 			, {
 				path: 'ordersList',
 				component: ordersList
+			}, {
+				path: 'myReviews',
+				component: myReviews
 			}
 		]
 	},
@@ -169,13 +143,17 @@ const routes = [{
 		component: login
 	}
 	,{
-		path: '/yonghuRegister',
-		component: yonghuRegister
+		path: '/userRegister',
+		component: userRegister
 	}
 	,{
 		path: '/forget',
 		name: 'forget',
 		component: () => import('../views/pages/forget.vue')
+	},
+	{
+		path: '/:pathMatch(.*)*',
+		redirect: '/index/home'
 	}
 ]
 

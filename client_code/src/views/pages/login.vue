@@ -9,7 +9,7 @@
 					<div class="list_label">
 						账号：
 					</div>
-					<input class="list_inp" v-model="loginForm.username" name="username" placeholder="请输入账号" />
+					<input class="list_inp" v-model="loginForm.login_name" name="login_name" placeholder="请输入账号" />
 				</div>
 				<div class="list_item" v-if="loginType==1">
 					<div class="list_label">
@@ -21,15 +21,15 @@
 					<div class="list_label">
 						用户类型：
 					</div>
-				  <el-select v-model="loginForm.role" placeholder="请选择用户类型">
-				    <el-option v-for="(item,index) in userList" :label="item.roleName" :value="item.roleName"></el-option>
-				  </el-select>
+				  <el-radio-group v-model="loginForm.role">
+				    <el-radio v-for="(item,index) in userList" :key="index" :label="item.roleName">{{item.roleName}}</el-radio>
+				  </el-radio-group>
 				</div>
 				<div class="btn_view">
 					<el-button class="login" v-if="loginType==1" type="success" @click="handleLogin">登录</el-button>
 				</div>
 				<div class="link_view">
-					<el-button class="register" text @click="handleRegister('yonghu')">注册账号</el-button>
+					<el-button class="register" text @click="handleRegister('user')">注册账号</el-button>
 					<span class="divider">|</span>
 					<el-button class="forget" text @click="handleForget">忘记密码</el-button>
 				</div>
@@ -53,7 +53,7 @@
 	const menus = ref([])
 	const loginForm = ref({
 		role: '',
-		username: '',
+		login_name: '',
 		password: ''
 	})
 	const tableName = ref('')
@@ -65,8 +65,8 @@
     	
     }
 	const handleLogin = () => {
-		if (!loginForm.value.username) {
-			context?.$toolUtil.message('请输入用户名', 'error')
+		if (!loginForm.value.login_name) {
+			context?.$toolUtil.message('请输入账号', 'error')
 			return;
 		}
 		if (!loginForm.value.password) {
@@ -88,11 +88,12 @@
 			tableName.value = userList.value[0].pathName||userList.value[0].tableName;
 			loginForm.value.role = userList.value[0].roleName;
 		}
+		if(tableName.value == 'yuangong') tableName.value = 'staff';
 		login()
 	}
 	const login = () => {
 		context?.$http({
-			url: `${tableName.value}/login?username=${loginForm.value.username}&password=${loginForm.value.password}`,
+			url: `${tableName.value}/login?login_name=${loginForm.value.login_name}&password=${loginForm.value.password}`,
 			method: 'post'
 		}).then(res => {
 			context?.$toolUtil.storageSet("frontToken", res.data.token);
@@ -143,7 +144,7 @@
 
 <style lang="scss" scoped>
 	.login_view {
-        background-image: url("http://clfile.zggen.cn/20241220/58d86a65b0df43398aa5b351985f8140.jpg")!important;
+        background-image: url("@/assets/loginpicture.png")!important;
 		// 标题盒子
 		.outTitle_view {
 			.outTilte {
@@ -201,7 +202,7 @@
 .login_view {
     min-height: 100vh;
     position: relative;
-    background: url(http://clfile.zggen.cn/20241220/58d86a65b0df43398aa5b351985f8140.jpg) no-repeat center center / cover;
+    background: url("@/assets/loginpicture.png") no-repeat center center / cover;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -271,19 +272,10 @@
     text-align: right;
     font-size: 16px;
 }
-.login_view .login_form .list_type .el-select{
-    line-height: 36px;
-    border:none;
-    border-bottom: 1px solid rgb(221, 221, 221);
-    box-sizing: border-box;
+.login_view .login_form .list_type .el-radio-group{
     width: calc(100% - 120px);
-    padding: 0px 10px;
-    border-radius: 0px;
-    font-size: 16px;
-    color: rgb(102, 102, 102);
-}
-.login_view .login_form .list_type .el-select .el-input__inner{
-    font-size: 16px;
+    align-items: center;
+    justify-content: center;
 }
 
 

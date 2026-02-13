@@ -1,0 +1,97 @@
+@startuml
+left to right direction
+hide stereotypes
+skinparam linetype ortho
+skinparam ArrowColor #888888
+skinparam Class {
+  BackgroundColor #ffffff
+  BorderColor #333333
+}
+
+rectangle "用户" as Users
+rectangle "员工" as Staff
+rectangle "管理员" as Admin
+rectangle "菜品信息" as DishInfo
+rectangle "购物车" as Cart
+rectangle "订单" as Orders
+rectangle "菜品评论" as DishReview
+rectangle "餐桌信息" as RestaurantInfo
+rectangle "餐厅预约" as Reservation
+rectangle "车位信息" as Parking
+rectangle "客服会话" as Message
+rectangle "会话消息" as TicketMsg
+rectangle "常见问题" as FAQ
+rectangle "收藏/互动" as Storeup
+rectangle "系统公告" as Notice
+rectangle "菜单配置" as Menu
+rectangle "配置项" as Config
+
+usecase "下单" as R_Order
+Users "1" -- R_Order
+R_Order -- "N" Orders
+
+usecase "加入" as R_CartAdd
+Users "1" -- R_CartAdd
+R_CartAdd -- "N" Cart
+
+usecase "包含" as R_CartItem
+Cart "1" -- R_CartItem
+R_CartItem -- "N" DishInfo
+
+usecase "评论" as R_Review
+Users "1" -- R_Review
+R_Review -- "N" DishReview
+
+usecase "针对" as R_ReviewOn
+DishReview "N" -- R_ReviewOn
+R_ReviewOn -- "1" DishInfo
+
+usecase "收藏/互动" as R_Storeup
+Users "1" -- R_Storeup
+R_Storeup -- "N" Storeup
+
+usecase "预约" as R_Reserve
+Users "1" -- R_Reserve
+R_Reserve -- "N" Reservation
+
+usecase "被预约" as R_ReservedBy
+RestaurantInfo "1" -- R_ReservedBy
+R_ReservedBy -- "N" Reservation
+
+usecase "会话" as R_Message
+Users "1" -- R_Message
+R_Message -- "1" Message
+
+usecase "发送消息" as R_TicketMsg
+Message "1" -- R_TicketMsg
+R_TicketMsg -- "N" TicketMsg
+
+usecase "查看公告" as R_Notice
+Users "N" -- R_Notice
+R_Notice -- "N" Notice
+
+usecase "查看/搜索" as R_FAQ
+Users "N" -- R_FAQ
+R_FAQ -- "N" FAQ
+
+usecase "就餐/点单" as R_OrderSeat
+RestaurantInfo "1" -- R_OrderSeat
+R_OrderSeat -- "N" Orders
+
+usecase "管理菜单" as R_MenuAdmin
+Admin "1" -- R_MenuAdmin
+R_MenuAdmin -- "N" Menu
+
+usecase "管理配置" as R_ConfigAdmin
+Admin "1" -- R_ConfigAdmin
+R_ConfigAdmin -- "N" Config
+
+usecase "客服处理" as R_StaffSupport
+Staff "1" -- R_StaffSupport
+R_StaffSupport -- "N" Message
+
+usecase "使用/计费" as R_ParkingUse
+Users "N" -- R_ParkingUse
+R_ParkingUse -- "N" Parking
+
+@enduml

@@ -14,7 +14,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,14 +23,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cl.annotation.IgnoreAuth;
-import com.baidu.aip.face.AipFace;
-import com.baidu.aip.face.MatchRequest;
-import com.baidu.aip.util.Base64Util;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.cl.entity.ConfigEntity;
 import com.cl.service.CommonService;
 import com.cl.service.ConfigService;
-import com.cl.utils.BaiduUtil;
 import com.cl.utils.FileUtil;
 import com.cl.utils.R;
 import com.cl.utils.CommonUtil;
@@ -43,11 +38,21 @@ import com.cl.utils.MPUtil;
 public class CommonController{
 	@Autowired
 	private CommonService commonService;
-
-    private static AipFace client = null;
     
     @Autowired
     private ConfigService configService;    
+
+	private String normalizeTableName(String tableName) {
+		String normalized = MPUtil.camelToSnake(tableName);
+		if ("dish_category".equalsIgnoreCase(normalized)) {
+			return "dish_info";
+		}
+		return normalized;
+	}
+
+	private String normalizeColumnName(String columnName) {
+		return MPUtil.camelToSnake(columnName);
+	}
 	/**
 	 * 获取table表中的column列表(联动接口)
 	 * @param table
@@ -58,8 +63,8 @@ public class CommonController{
 	@RequestMapping("/option/{tableName}/{columnName}")
 	public R getOption(@PathVariable("tableName") String tableName, @PathVariable("columnName") String columnName,@RequestParam(required = false) String conditionColumn,@RequestParam(required = false) String conditionValue,String level,String parent) {
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("table", tableName);
-		params.put("column", columnName);
+		params.put("table", normalizeTableName(tableName));
+		params.put("column", normalizeColumnName(columnName));
 		if(StringUtils.isNotBlank(level)) {
 			params.put("level", level);
 		}
@@ -67,7 +72,7 @@ public class CommonController{
 			params.put("parent", parent);
 		}
         if(StringUtils.isNotBlank(conditionColumn)) {
-            params.put("conditionColumn", conditionColumn);
+            params.put("conditionColumn", normalizeColumnName(conditionColumn));
         }
         if(StringUtils.isNotBlank(conditionValue)) {
             params.put("conditionValue", conditionValue);
@@ -86,22 +91,22 @@ public class CommonController{
 	@RequestMapping("/follow/{tableName}/{columnName}")
 	public R getFollowByOption(@PathVariable("tableName") String tableName, @PathVariable("columnName") String columnName, @RequestParam String columnValue) {
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("table", MPUtil.camelToSnake(tableName));
-		params.put("column", MPUtil.camelToSnake(columnName));
+		params.put("table", normalizeTableName(tableName));
+		params.put("column", normalizeColumnName(columnName));
 		params.put("columnValue", columnValue);
 		Map<String, Object> result = commonService.getFollowByOption(params);
 		return R.ok().put("data", MPUtil.snakeMapToCamel(result));
 	}
 	
 	/**
-	 * 修改table表的sfsh状态
+	 * 修改table表的audit_status状态
 	 * @param table
 	 * @param map
 	 * @return
 	 */
 	@RequestMapping("/sh/{tableName}")
 	public R sh(@PathVariable("tableName") String tableName, @RequestBody Map<String, Object> map) {
-		map.put("table", tableName);
+		map.put("table", normalizeTableName(tableName));
 		commonService.sh(map);
 		return R.ok();
 	}
@@ -118,8 +123,8 @@ public class CommonController{
 	@RequestMapping("/remind/{tableName}/{columnName}/{type}")
 	public R remindCount(@PathVariable("tableName") String tableName, @PathVariable("columnName") String columnName, 
 						 @PathVariable("type") String type,@RequestParam Map<String, Object> map) {
-		map.put("table", tableName);
-		map.put("column", columnName);
+		map.put("table", normalizeTableName(tableName));
+		map.put("column", normalizeColumnName(columnName));
 		map.put("type", type);
 		
 		if(type.equals("2")) {
@@ -154,8 +159,8 @@ public class CommonController{
 	@RequestMapping("/cal/{tableName}/{columnName}")
 	public R cal(@PathVariable("tableName") String tableName, @PathVariable("columnName") String columnName) {
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("table", tableName);
-		params.put("column", columnName);
+		params.put("table", normalizeTableName(tableName));
+		params.put("column", normalizeColumnName(columnName));
 		Map<String, Object> result = commonService.selectCal(params);
 		return R.ok().put("data", result);
 	}
@@ -167,8 +172,8 @@ public class CommonController{
 	@RequestMapping("/group/{tableName}/{columnName}")
 	public R group(@PathVariable("tableName") String tableName, @PathVariable("columnName") String columnName) {
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("table", tableName);
-		params.put("column", columnName);
+		params.put("table", normalizeTableName(tableName));
+		params.put("column", normalizeColumnName(columnName));
 		List<Map<String, Object>> result = commonService.selectGroup(params);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		for(Map<String, Object> m : result) {
@@ -188,9 +193,9 @@ public class CommonController{
 	@RequestMapping("/value/{tableName}/{xColumnName}/{yColumnName}")
 	public R value(@PathVariable("tableName") String tableName, @PathVariable("yColumnName") String yColumnName, @PathVariable("xColumnName") String xColumnName) {
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("table", tableName);
-		params.put("xColumn", xColumnName);
-		params.put("yColumn", yColumnName);
+		params.put("table", normalizeTableName(tableName));
+		params.put("xColumn", normalizeColumnName(xColumnName));
+		params.put("yColumn", normalizeColumnName(yColumnName));
 		List<Map<String, Object>> result = commonService.selectValue(params);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		for(Map<String, Object> m : result) {
@@ -210,9 +215,9 @@ public class CommonController{
 	@RequestMapping("/value/{tableName}/{xColumnName}/{yColumnName}/{timeStatType}")
 	public R valueDay(@PathVariable("tableName") String tableName, @PathVariable("yColumnName") String yColumnName, @PathVariable("xColumnName") String xColumnName, @PathVariable("timeStatType") String timeStatType) {
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("table", tableName);
-		params.put("xColumn", xColumnName);
-		params.put("yColumn", yColumnName);
+		params.put("table", normalizeTableName(tableName));
+		params.put("xColumn", normalizeColumnName(xColumnName));
+		params.put("yColumn", normalizeColumnName(yColumnName));
 		params.put("timeStatType", timeStatType);
 		List<Map<String, Object>> result = commonService.selectTimeStatValue(params);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

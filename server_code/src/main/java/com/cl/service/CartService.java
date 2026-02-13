@@ -12,10 +12,6 @@ import com.cl.entity.view.CartView;
 
 /**
  * 购物车
- *
- * @author 
- * @email 
- * @date 2025-03-25 17:00:58
  */
 public interface CartService extends IService<CartEntity> {
 
@@ -29,4 +25,3 @@ public interface CartService extends IService<CartEntity> {
    	
    
 }
-

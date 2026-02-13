@@ -31,21 +31,10 @@
 					:sortable='true'
 					align="left"
 					header-align="left"
-					prop="tablename"
-					label="商品表名">
-					<template #default="scope">
-						{{scope.row.tablename}}
-					</template>
-				</el-table-column>
-				<el-table-column min-width="140"
-					:resizable='true'
-					:sortable='true'
-					align="left"
-					header-align="left"
-					prop="goodid"
+					prop="good_id"
 					label="商品id">
 					<template #default="scope">
-						{{scope.row.goodid}}
+                        {{scope.row.good_id ?? scope.row.goodid}}
 					</template>
 				</el-table-column>
 				<el-table-column min-width="140"
@@ -53,10 +42,10 @@
 					:sortable='true'
 					align="left"
 					header-align="left"
-					prop="goodname"
+					prop="good_name"
 					label="商品名称">
 					<template #default="scope">
-						{{scope.row.goodname}}
+                        {{scope.row.good_name ?? scope.row.goodname}}
 					</template>
 				</el-table-column>
 				<el-table-column label="图片" min-width="140" width="120" :resizable='true' :sortable='true' align="left" header-align="left">
@@ -78,10 +67,10 @@
 					:sortable='true'
 					align="left"
 					header-align="left"
-					prop="buynumber"
+					prop="buy_number"
 					label="购买数量">
 					<template #default="scope">
-						{{scope.row.buynumber}}
+                        {{scope.row.buy_number ?? scope.row.buynumber}}
 					</template>
 				</el-table-column>
 				<el-table-column min-width="140"
@@ -100,10 +89,10 @@
 					:sortable='true'
 					align="left"
 					header-align="left"
-					prop="discountprice"
+					prop="discount_price"
 					label="折扣价">
 					<template #default="scope">
-						{{scope.row.discountprice}}
+                        {{scope.row.discount_price ?? scope.row.discountprice}}
 					</template>
 				</el-table-column>
 				<el-table-column min-width="140"
@@ -111,10 +100,10 @@
 					:sortable='true'
 					align="left"
 					header-align="left"
-					prop="goodtype"
+					prop="good_type"
 					label="商品类型">
 					<template #default="scope">
-						{{scope.row.goodtype}}
+                        {{scope.row.good_type ?? scope.row.goodtype}}
 					</template>
 				</el-table-column>
 				<el-table-column label="操作" width="300" :resizable='true' :sortable='true' align="left" header-align="left">
@@ -213,6 +202,11 @@
 			listLoading.value = false
 			list.value = res.data.data.list
 			total.value = Number(res.data.data.total)
+		}).catch(() => {
+			listLoading.value = false
+			list.value = []
+			total.value = 0
+			context?.$toolUtil.message('获取购物车失败','error')
 		})
 	}
 	//删
@@ -311,31 +305,15 @@
 			context?.$toolUtil.message('文件不存在','error')
 		}
 		let arr = file.replace(new RegExp('file/', "g"), "")
-		axios.get((location.href.split(context?.$config.name).length>1 ? location.href.split(context?.$config.name)[0] :'') + context?.$config.name + '/file/download?fileName=' + arr, {
-			headers: {
-				token: context?.$toolUtil.storageGet('Token')
-			},
-			responseType: "blob"
-		}).then(({
-			data
-		}) => {
-			const binaryData = [];
-			binaryData.push(data);
-			const objectUrl = window.URL.createObjectURL(new Blob(binaryData, {
-				type: 'application/pdf;chartset=UTF-8'
-			}))
-			const a = document.createElement('a')
-			a.href = objectUrl
-			a.download = arr
-			// a.click()
-			// 下面这个写法兼容火狐
-			a.dispatchEvent(new MouseEvent('click', {
-				bubbles: true,
-				cancelable: true,
-				view: window
-			}))
-			window.URL.revokeObjectURL(data)
-		})
+		const url = (location.href.split(context?.$config.name).length>1 ? location.href.split(context?.$config.name)[0] :'') + context?.$config.name + '/file/' + arr
+		const a = document.createElement('a')
+		a.href = url
+		a.download = arr
+		a.dispatchEvent(new MouseEvent('click', {
+			bubbles: true,
+			cancelable: true,
+			view: window
+		}))
 	}
 	//初始化
 	const init = () => {

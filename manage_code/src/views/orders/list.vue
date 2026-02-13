@@ -1,4 +1,4 @@
-﻿<template>
+<template>
 	<div>
 		<div class="center_view">
 			<el-tabs
@@ -8,13 +8,12 @@
 				@tab-change="orderTabClick"
 				>
 				<el-tab-pane label="全部" :name="''"></el-tab-pane>
-				<el-tab-pane label="未支付" name="未支付" v-if="btnAuth(`orders/未支付`,'查看')"></el-tab-pane>
-				<el-tab-pane label="拼团中" name="拼团中" v-if="btnAuth(`orders/拼团中`,'查看')"></el-tab-pane>
-				<el-tab-pane label="已支付" name="已支付" v-if="btnAuth(`orders/已支付`,'查看')"></el-tab-pane>
-				<el-tab-pane label="已发货" name="已发货" v-if="btnAuth(`orders/已发货`,'查看')"></el-tab-pane>
-				<el-tab-pane label="已完成" name="已完成" v-if="btnAuth(`orders/已完成`,'查看')"></el-tab-pane>
-				<el-tab-pane label="已退款" name="已退款" v-if="btnAuth(`orders/已退款`,'查看')"></el-tab-pane>
-				<el-tab-pane label="已取消" name="已取消" v-if="btnAuth(`orders/已取消`,'查看')"></el-tab-pane>
+				<el-tab-pane label="未支付" name="未支付" v-if="btnAuth(`orders`,'查看')"></el-tab-pane>
+				<el-tab-pane label="已支付" name="已支付" v-if="btnAuth(`orders`,'查看')"></el-tab-pane>
+				<el-tab-pane label="已完成" name="已完成" v-if="btnAuth(`orders`,'查看')"></el-tab-pane>
+				<el-tab-pane label="申请退款" name="申请退款" v-if="btnAuth(`orders`,'查看')"></el-tab-pane>
+				<el-tab-pane label="已退款" name="已退款" v-if="btnAuth(`orders`,'查看')"></el-tab-pane>
+				<el-tab-pane label="已取消" name="已取消" v-if="btnAuth(`orders`,'查看')"></el-tab-pane>
 			</el-tabs>
 			<div class="list_search_view">
 				<el-form :model="searchQuery" class="search_form" >
@@ -23,7 +22,7 @@
 							订单编号：
 						</div>
 						<div class="search_box">
-							<el-input class="search_inp" v-model="searchQuery.orderid" placeholder="订单编号"
+							<el-input class="search_inp" v-model="searchQuery.order_id" placeholder="订单编号"
 								clearable>
 							</el-input>
 						</div>
@@ -71,10 +70,10 @@
 					:sortable='true'
 					align="left"
 					header-align="left"
-					prop="orderid"
+					prop="order_id"
 					label="订单编号">
 					<template #default="scope">
-						{{scope.row.orderid}}
+						{{ scope.row.order_id ?? scope.row.orderid ?? scope.row.orderId }}
 					</template>
 				</el-table-column>
 				<el-table-column min-width="140"
@@ -82,10 +81,10 @@
 					:sortable='true'
 					align="left"
 					header-align="left"
-					prop="goodname"
+					prop="good_name"
 					label="商品名称">
 					<template #default="scope">
-						{{scope.row.goodname}}
+						{{ scope.row.good_name ?? scope.row.goodname ?? scope.row.goodName }}
 					</template>
 				</el-table-column>
 				<el-table-column label="图片" min-width="140" width="120" :resizable='true' :sortable='true' align="left" header-align="left">
@@ -107,10 +106,10 @@
 					:sortable='true'
 					align="left"
 					header-align="left"
-					prop="buynumber"
+					prop="buy_number"
 					label="购买数量">
 					<template #default="scope">
-						{{scope.row.buynumber}}
+						{{ scope.row.buy_number ?? scope.row.buynumber ?? scope.row.buyNumber }}
 					</template>
 				</el-table-column>
 				<el-table-column min-width="140"
@@ -129,6 +128,17 @@
 					:sortable='true'
 					align="left"
 					header-align="left"
+					prop="discount_price"
+					label="折扣价">
+					<template #default="scope">
+						{{ scope.row.discount_price ?? scope.row.discountprice ?? scope.row.discountPrice }}
+					</template>
+				</el-table-column>
+				<el-table-column min-width="140"
+					:resizable='true'
+					:sortable='true'
+					align="left"
+					header-align="left"
 					prop="total"
 					label="总价">
 					<template #default="scope">
@@ -140,19 +150,21 @@
 					:sortable='true'
 					align="left"
 					header-align="left"
-					prop="type"
-					:formatter="orderStatusFormatter"
-					label="支付类型">
+					prop="discount_total"
+					label="折扣总价">
+					<template #default="scope">
+						{{ scope.row.discount_total ?? scope.row.discounttotal ?? scope.row.discountTotal }}
+					</template>
 				</el-table-column>
 				<el-table-column min-width="140"
 					:resizable='true'
 					:sortable='true'
 					align="left"
 					header-align="left"
-					prop="canzhuomingcheng"
+					prop="seat_name"
 					label="餐桌名称">
 					<template #default="scope">
-						{{scope.row.canzhuomingcheng || '未选择'}}
+						{{ (scope.row.seat_name ?? scope.row.seatName) || '未选择' }}
 					</template>
 				</el-table-column>
 				<el-table-column min-width="140"
@@ -182,10 +194,10 @@
 					:sortable='true'
 					align="left"
 					header-align="left"
-					prop="goodtype"
+					prop="good_type"
 					label="商品类型">
 					<template #default="scope">
-						{{scope.row.goodtype}}
+						{{ scope.row.good_type ?? scope.row.goodtype ?? scope.row.goodType }}
 					</template>
 				</el-table-column>
 				<el-table-column prop="addtime" label="下单时间" min-width="140" :resizable='true' :sortable='true' align="left" header-align="left">
@@ -202,8 +214,11 @@
 							修改						</el-button>
 						<el-button class="del_btn" type="danger" @click="delClick(scope.row.id)"  v-if="btnAuth('orders'+(orderStatus?'/'+orderStatus:''),'删除')">
 							删除						</el-button>
-					<el-button class="operate_btn" v-if="scope.row.status=='已支付'" type="success" @click="completeOrderClick(scope.row)">
+					<el-button class="operate_btn" v-if="scope.row.status=='已支付'||scope.row.status=='申请退款'" type="success" @click="completeOrderClick(scope.row)">
 						完成订单
+						</el-button>
+					<el-button class="operate_btn" v-if="scope.row.status=='申请退款'" type="danger" @click="refundClick(scope.row)">
+						同意退款
 						</el-button>
 					</template>
 				</el-table-column>
@@ -307,8 +322,9 @@
 		if(orderStatus.value){
 			params['status'] = orderStatus.value
 		}
-		if(searchQuery.value.orderid&&searchQuery.value.orderid!=''){
-			params['orderid'] = '%' + searchQuery.value.orderid + '%'
+		if(searchQuery.value.order_id&&searchQuery.value.order_id!=''){
+			params['orderid'] = '%' + searchQuery.value.order_id + '%'
+			params['order_id'] = '%' + searchQuery.value.order_id + '%'
 		}
 		context.$http({
 			url: `${tableName}/page`,
@@ -416,31 +432,15 @@
 			context?.$toolUtil.message('文件不存在','error')
 		}
 		let arr = file.replace(new RegExp('file/', "g"), "")
-		axios.get((location.href.split(context?.$config.name).length>1 ? location.href.split(context?.$config.name)[0] :'') + context?.$config.name + '/file/download?fileName=' + arr, {
-			headers: {
-				token: context?.$toolUtil.storageGet('Token')
-			},
-			responseType: "blob"
-		}).then(({
-			data
-		}) => {
-			const binaryData = [];
-			binaryData.push(data);
-			const objectUrl = window.URL.createObjectURL(new Blob(binaryData, {
-				type: 'application/pdf;chartset=UTF-8'
-			}))
-			const a = document.createElement('a')
-			a.href = objectUrl
-			a.download = arr
-			// a.click()
-			// 下面这个写法兼容火狐
-			a.dispatchEvent(new MouseEvent('click', {
-				bubbles: true,
-				cancelable: true,
-				view: window
-			}))
-			window.URL.revokeObjectURL(data)
-		})
+		const url = (location.href.split(context?.$config.name).length>1 ? location.href.split(context?.$config.name)[0] :'') + context?.$config.name + '/file/' + arr
+		const a = document.createElement('a')
+		a.href = url
+		a.download = arr
+		a.dispatchEvent(new MouseEvent('click', {
+			bubbles: true,
+			cancelable: true,
+			view: window
+		}))
 	}
     import '@/assets/js/echarts-theme'
 	// 统计图1
@@ -586,7 +586,7 @@
 		nextTick(()=>{
 			var buynumberEchart3 = echarts.init(document.getElementById("buynumberEchart3"),'theme');
 			context.$http({
-				url: `${tableName}/value/goodname/buynumber?order=desc`,
+				url: `${tableName}/value/good_name/buy_number?order=desc`,
 				method: 'get'
 			}).then(res=>{
 				let obj = res.data.data
@@ -594,11 +594,11 @@
 				let yAxis = [];
 				let dataList = []
 				for(let i=0;i<obj.length;i++){
-				    xAxis.push(obj[i].goodname);
+				    xAxis.push(obj[i].good_name);
 				    yAxis.push(parseFloat((obj[i].total)));
                     dataList.push({
 				        value: parseFloat((obj[i].total)),
-				        name: obj[i].goodname
+				        name: obj[i].good_name
 				    })
 				}
 				var option = {};
@@ -652,7 +652,9 @@
 				"图片",
 				"购买数量",
 				"单价",
+				"折扣价",
 				"总价",
+				"折扣总价",
 				"支付类型",
 				"餐桌名称",
 				"订单状态",
@@ -663,24 +665,44 @@
 				"商品类型",
 			]
 			const filterVal = [
-				"orderid",
-				"tablename",
-				"goodid",
-				"goodname",
+				"order_id",
+				"source_table",
+				"good_id",
+				"good_name",
 				"picture",
-				"buynumber",
+				"buy_number",
 				"price",
+				"discount_price",
 				"total",
+				"discount_total",
 				"type",
-				"canzhuomingcheng",
+				"seat_name",
 				"status",
 				"remark",
 			"addtime",
-			"userid",
-				"yuangongzhanghao",
-			"goodtype",
+			"user_id",
+			"good_type",
 		]
-			excel.export_json_to_excel2(tHeader, selRows.value, filterVal, formName)
+			const exportRows = (selRows.value || []).map(r => ({
+				order_id: r.order_id ?? r.orderid ?? r.orderId,
+				source_table: r.source_table ?? r.tablename ?? r.sourceTable,
+				good_id: r.good_id ?? r.goodid ?? r.goodId,
+				good_name: r.good_name ?? r.goodname ?? r.goodName,
+				picture: r.picture,
+				buy_number: r.buy_number ?? r.buynumber ?? r.buyNumber,
+				price: r.price,
+				discount_price: r.discount_price ?? r.discountprice ?? r.discountPrice,
+				total: r.total,
+				discount_total: r.discount_total ?? r.discounttotal ?? r.discountTotal,
+				type: r.type,
+				seat_name: r.seat_name ?? r.seatName,
+				status: r.status,
+				remark: r.remark,
+				addtime: r.addtime,
+				user_id: r.user_id ?? r.userid ?? r.userId,
+				good_type: r.good_type ?? r.goodtype ?? r.goodType,
+			}))
+			excel.export_json_to_excel2(tHeader, exportRows, filterVal, formName)
 		})
 	}
 	const orderTabClick = () => {
@@ -712,11 +734,14 @@
 			cancelButtonText: '取消',
 			type: 'warning',
 		}).then(()=>{
-			row.status = '已完成'
+			const payload = {
+				id: row.id,
+				status: '已完成',
+			}
 			context.$http({
 				url: 'orders/update',
 				method: 'post',
-				data: row
+				data: payload
 			}).then(res=>{
 				context?.$toolUtil.message('订单完成','success',()=>{
 					searchClick()
@@ -724,6 +749,48 @@
 			})
 		}).catch(_ => {})
 	}
+    //返回商品对象，如果商品存在库存,则返还库存
+    const returnLimit = async (order)=>{
+        const sourceTable = order.source_table ?? order.tablename ?? order.sourceTable
+        const goodId = order.good_id ?? order.goodid ?? order.goodId
+        const buyNumber = order.buy_number ?? order.buynumber ?? order.buyNumber
+        if (!sourceTable || !goodId) return null
+        let res = await context.$http.get(`${sourceTable}/info/${goodId}`)
+        let data = res.data.data
+        if(data.stock){ //如果商品存在库存，则加回去
+            data.stock = parseInt(data.stock) + parseInt(buyNumber ?? 0)
+            context.$http.post(`${sourceTable}/update`,data)
+        }
+        return data
+    }
+    // 同意退款
+    const refundClick = (row) => {
+        ElMessageBox.confirm(`是否同意该订单的退款申请？`, '提示', {
+            confirmButtonText: '是',
+            cancelButtonText: '否',
+            type: 'warning',
+        }).then(async () => {
+            await returnLimit(row)
+            const payload = {
+                id: row.id,
+                status: '已退款',
+            }
+            // 获取用户信息
+            const uid = row.user_id ?? row.userid ?? row.userId
+            let userRes = await context.$http.get(`user/info/${uid}`)
+            let userinfo = userRes.data.data
+
+            const currentBalance = parseFloat(userinfo.balance ?? 0)
+            const refundAmount = parseFloat(row.discount_total ?? row.discounttotal ?? row.discountTotal ?? row.total ?? 0)
+            userinfo.balance = Number((currentBalance + refundAmount).toFixed(2))
+            // 修改订单状态
+            await context.$http.post('orders/update',payload)
+            // 更新用户信息
+            await context.$http.post(`user/update`,userinfo)
+            context.$message.success("退款成功")
+            getList()
+        }).catch(_ => {})
+    }
 	//初始化
 	const init = () => {
         if(['未支付','已支付','已发货','已完成','已退款','已取消'].includes(route.query.menuJump)){

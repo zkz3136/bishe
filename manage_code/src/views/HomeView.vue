@@ -66,55 +66,30 @@
 					</el-collapse-transition>
 				</el-card>
 			</el-collapse-transition>
-			<el-collapse-transition v-if="btnAuth('cheweiyuyue','首页总数')">
-				<el-card v-show="countTypeList.closecheweiyuyueCountType" class="card_view count-item">
-					<template #header>
-						<div class="index_card_head">
-							<div class="card_head_title">
-								车位预约
-							</div>
-							<div class="card_head_right">
-								<el-icon @click="countTypeClick('hiddencheweiyuyueCountType')" class="showIcons"
-									:class="countTypeList.hiddencheweiyuyueCountType?'showIcons1':''">
-									<ArrowUpBold />
-								</el-icon>
-								<el-icon @click="countTypeClick('closecheweiyuyueCountType')" class="closeIcons">
-									<CloseBold />
-								</el-icon>
-							</div>
-						</div>
-					</template>
-					<el-collapse-transition>
-						<div class="count_item" v-show="countTypeList.hiddencheweiyuyueCountType">
-							<div class="count_title">车位预约总数</div>
-							<div class="count_num">{{cheweiyuyueCount}}</div>
-						</div>
-					</el-collapse-transition>
-				</el-card>
-			</el-collapse-transition>
+
 		</div>
 		<div class="card_list">
-			<el-collapse-transition v-if="btnAuth('meishixinxi','首页统计')">
-				<el-card v-show="cardTypeList.closemeishixinxiChartType1" class="card_view chart-item">
+			<el-collapse-transition v-if="btnAuth('dish_info','首页统计')">
+				<el-card v-show="cardTypeList.closeDishInfoChartType1" class="card_view chart-item">
 					<template #header>
 						<div class="index_card_head">
 							<div class="card_head_title">
 								美食信息
 							</div>
 							<div class="card_head_right">
-								<el-icon @click="cardTypeClick('hiddenmeishixinxiChartType1')" class="showIcons"
-										 :class="cardTypeList.hiddenmeishixinxiChartType1?'showIcons1':''">
+								<el-icon @click="cardTypeClick('hiddenDishInfoChartType1')" class="showIcons"
+										 :class="cardTypeList.hiddenDishInfoChartType1?'showIcons1':''">
 									<ArrowUpBold />
 								</el-icon>
-								<el-icon @click="cardTypeClick('closemeishixinxiChartType1')" class="closeIcons">
+								<el-icon @click="cardTypeClick('closeDishInfoChartType1')" class="closeIcons">
 									<CloseBold />
 								</el-icon>
 							</div>
 						</div>
 					</template>
 					<el-collapse-transition>
-						<div class="card_item" v-show="cardTypeList.hiddenmeishixinxiChartType1">
-							<div id="meishixinxicaipinleixingEchart1" class="Echart" style="width: 100%;height: 400px;"></div>
+						<div class="card_item" v-show="cardTypeList.hiddenDishInfoChartType1">
+							<div id="dishInfoDishCategoryEchart1" class="Echart" style="width: 100%;height: 400px;"></div>
 						</div>
 					</el-collapse-transition>
 				</el-card>
@@ -215,11 +190,6 @@
 		if(btnAuth('orders','首页总数')){
 			getordersCount()
 		}
-		countTypeList.value.closecheweiyuyueCountType = true
-		countTypeList.value.hiddencheweiyuyueCountType = true
-		if(btnAuth('cheweiyuyue','首页总数')){
-			getcheweiyuyueCount()
-		}
 	}
 	const ordersCount = ref(0)
 	const getordersCount = () => {
@@ -230,15 +200,6 @@
 			ordersCount.value = res.data.data
 		})
 	}
-	const cheweiyuyueCount = ref(0)
-	const getcheweiyuyueCount = () => {
-		context?.$http({
-			url:'cheweiyuyue/count',
-			method: 'get'
-		}).then(res=>{
-			cheweiyuyueCount.value = res.data.data
-		})
-	}
 	const countTypeClick = (e) => {
 		countTypeList.value[e] = !countTypeList.value[e]
 	}
@@ -246,7 +207,7 @@
 	const btnAuth = (e,a)=>{
 		return context?.$toolUtil.isAuth(e,a)
 	}
-	let echarts = inject("echarts")
+	let echarts = context?.$echarts
 	const cardTypeClick = (e) =>{
 		cardTypeList.value[e] = !cardTypeList.value[e]
 		setTimeout(()=>{
@@ -254,8 +215,8 @@
 		},1000)
 	}
 	const cardTypeList = ref({
-		closemeishixinxiChartType1: true,
-		hiddenmeishixinxiChartType1: true,
+		closeDishInfoChartType1: true,
+		hiddenDishInfoChartType1: true,
 		closeordersChartType1: true,
 		hiddenordersChartType1: true,
 		closeordersChartType2: true,
@@ -263,9 +224,9 @@
 		closeordersChartType3: true,
 		hiddenordersChartType3: true,
 	})
-	const getCardList = () => {
-		if(btnAuth('meishixinxi','首页统计')){
-			getmeishixinxiChart1()
+		const getCardList = () => {
+		if(btnAuth('dish_info','首页统计')){
+			getDishInfoChart1()
 		}
 		if(btnAuth('orders','首页统计')){
 			getordersChart1()
@@ -278,11 +239,11 @@
 		}
 	}
 	import '@/assets/js/echarts-theme'
-	const getmeishixinxiChart1 = () => {
+		const getDishInfoChart1 = () => {
 		nextTick(()=>{
-			var caipinleixingEchart1 = echarts.init(document.getElementById("meishixinxicaipinleixingEchart1"),'theme');
+			var dishCategoryEchart1 = echarts.init(document.getElementById("dishInfoDishCategoryEchart1"),'theme');
 			context?.$http({
-				url: "meishixinxi/group/caipinleixing",
+				url: "dish_info/group/dish_category",
 				method: "get",
 			}).then(obj=>{
 				let res = obj.data.data
@@ -290,11 +251,11 @@
 				let yAxis = [];
 				let dataList = []
 				for(let i=0;i<res.length;i++){
-				    xAxis.push(res[i].caipinleixing);
+				    xAxis.push(res[i].dish_category);
 				    yAxis.push(parseFloat((res[i].total)));
 					dataList.push({
 				        value: parseFloat((res[i].total)),
-				        name: res[i].caipinleixing
+				        name: res[i].dish_category
 				    })
 				}
 				var option = {};
@@ -328,11 +289,11 @@
         }
     ]
 }
-				caipinleixingEchart1.clear()
+				dishCategoryEchart1.clear()
 				// 使用刚指定的配置项和数据显示图表。
-				caipinleixingEchart1.setOption(option);
+				dishCategoryEchart1.setOption(option);
 				//根据窗口的大小变动图表
-				caipinleixingEchart1.resize();
+				dishCategoryEchart1.resize();
 			})
 		})
 	}
@@ -733,7 +694,7 @@
     align-items: center;
     justify-content: center;
     margin: 0px 0px 20px;
-    color: #d3623d;
+    color: #ea580c;
 }
 
 /*总数*/
@@ -754,7 +715,7 @@
     height:auto;
     margin:0px 20px 20px;
     box-sizing:border-box;
-    border:2px solid #d3623d;
+    border:2px solid #ea580c;
     border-radius:0px;
     background:url(http://clfile.zggen.cn/20240917/2626fb5752f24b44bb1d33bdc9100b99.png) no-repeat right top,#fff;
     padding:5px 20px;
@@ -905,7 +866,7 @@
 .home-calendar .header{
   padding: 17px 40px;
   flex-wrap: wrap;
-  background: #d3623d;
+  background: #ea580c;
   display: flex;
   width: 100%;
   justify-content: space-between;
@@ -935,7 +896,6 @@
   width: 100%;
   padding: 0px 0px 0px;
   height: auto;
-
 }
 .home-calendar tbody,thead{
   width: 100%;
@@ -965,7 +925,7 @@
   width: 80%;
   height: 80%;
   padding:5px 0;
-  background: #d3623d !important;
+  background: #ea580c !important;
   color:#fff;
   border-radius:0px;
 }
@@ -973,7 +933,7 @@
   width: 80%;
   height: 80%;
   padding:5px 0;
-  background: #d3623d20;
+  background: #ea580c;
   border-radius:0px;
 }
 

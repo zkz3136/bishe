@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cl.dao.ParkingSpotDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.cl.entity.ParkingSpotEntity" id="cheweixinxiMap">
+        <result property="spotNumber" column="spot_number"/>
+        <result property="spotImage" column="spot_image"/>
+        <result property="area" column="area"/>
+        <result property="spotLocation" column="spot_location"/>
+        <result property="hourlyPrice" column="hourly_price"/>
+        <result property="spotStatus" column="spot_status"/>
+    </resultMap>
+
+    <select id="selectListView"
+		resultType="com.cl.entity.view.ParkingSpotView" >
+
+		SELECT  parking_spot.* FROM parking_info  parking_spot 	        
+        <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	
+	<select id="selectView"
+		resultType="com.cl.entity.view.ParkingSpotView" >
+		SELECT * FROM parking_info  parking_spot <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+
+
+
+</mapper>

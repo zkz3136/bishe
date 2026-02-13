@@ -8,6 +8,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -44,6 +45,15 @@ public class GlobalExceptionHandler {
         String requestURI = request.getRequestURI(); e.printStackTrace();
         String message = e.getBindingResult().getFieldError().getDefaultMessage();
         return R.error("").put("error",String.format("请求地址%s,参数验证失败%s", requestURI, message, e));
+    }
+    
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public R handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e, HttpServletRequest request) {
+        String requestURI = request.getRequestURI(); e.printStackTrace();
+        String requiredType = e.getRequiredType() == null ? "" : e.getRequiredType().getSimpleName();
+        Object value = e.getValue();
+        String valueStr = value == null ? "null" : String.valueOf(value);
+        return R.error(400, "参数类型错误").put("error",String.format("请求地址%s,参数%s值%s无法转换为%s", requestURI, e.getName(), valueStr, requiredType));
     }
 
     /**

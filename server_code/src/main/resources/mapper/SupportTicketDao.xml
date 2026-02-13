@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cl.dao.SupportTicketDao">
+    <resultMap type="com.cl.entity.view.SupportTicketView" id="supportTicketMap">
+        <result property="userId" column="user_id"/>
+        <result property="messages" column="messages"/>
+        <result property="addtime" column="addtime"/>
+    </resultMap>
+
+    <select id="selectListView" resultType="com.cl.entity.view.SupportTicketView">
+        SELECT supportTicket.* FROM message supportTicket
+        <where> 1=1 ${ew.sqlSegment}</where>
+    </select>
+
+    <select id="selectView" resultType="com.cl.entity.view.SupportTicketView">
+        SELECT * FROM message supportTicket <where> 1=1 ${ew.sqlSegment}</where>
+    </select>
+</mapper>

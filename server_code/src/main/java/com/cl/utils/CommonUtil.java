@@ -165,6 +165,10 @@ public static String getRandomNumber(Integer num) {
         return null;
     }
 
+    public static boolean isEmpty(String s) {
+        return StringUtils.isBlank(s);
+    }
+
 
 
 

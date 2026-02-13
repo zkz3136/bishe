@@ -1,0 +1,201 @@
+@startuml
+hide methods
+hide stereotypes
+skinparam classAttributeIconSize 0
+
+entity "users" as users {
+  id : BIGINT
+  login_name : VARCHAR(64)
+  password : VARCHAR(100)
+  role : VARCHAR(20)
+  avatar : VARCHAR(255)
+  name : VARCHAR(100)
+  gender : VARCHAR(10)
+  mobile : VARCHAR(20)
+  security_question : VARCHAR(255)
+  security_answer : VARCHAR(255)
+  max_password_wrong : INT(11)
+  is_locked : TINYINT(1)
+  money : DECIMAL(10,2)
+  position : VARCHAR(50)
+  addtime : DATETIME
+}
+
+entity "orders" as orders {
+  id : BIGINT
+  orderid : VARCHAR(32)
+  tablename : VARCHAR(64)
+  goodid : BIGINT
+  goodname : VARCHAR(200)
+  picture : VARCHAR(255)
+  buynumber : INT(11)
+  price : DECIMAL(10,2)
+  discountprice : DECIMAL(10,2)
+  total : DECIMAL(12,2)
+  discounttotal : DECIMAL(12,2)
+  type : VARCHAR(20)
+  status : VARCHAR(20)
+  tel : VARCHAR(20)
+  remark : VARCHAR(255)
+  role : VARCHAR(20)
+  userid : BIGINT
+  goodtype : VARCHAR(50)
+  seat_name : VARCHAR(50)
+  addtime : DATETIME
+}
+
+entity "dish_info" as dish_info {
+  id : BIGINT
+  dish_name : VARCHAR(200)
+  dish_image : VARCHAR(255)
+  dish_category : VARCHAR(100)
+  dish_description : TEXT
+  flavor : VARCHAR(50)
+  rating : VARCHAR(10)
+  click_time : DATETIME
+  onelimittimes : INT(11)
+  alllimittimes : INT(11)
+  price : DECIMAL(10,2)
+  discountprice : DECIMAL(10,2)
+  storeup_number : INT(11)
+  discuss_number : INT(11)
+  addtime : DATETIME
+}
+
+entity "cart" as cart {
+  id : BIGINT
+  tablename : VARCHAR(64)
+  goodid : BIGINT
+  goodname : VARCHAR(200)
+  picture : VARCHAR(255)
+  buynumber : INT(11)
+  price : DECIMAL(10,2)
+  discountprice : DECIMAL(10,2)
+  userid : BIGINT
+  goodtype : VARCHAR(50)
+  addtime : DATETIME
+}
+
+entity "dish_review" as dish_review {
+  id : BIGINT
+  refid : BIGINT
+  userid : BIGINT
+  avatarurl : VARCHAR(255)
+  nickname : VARCHAR(100)
+  content : TEXT
+  score : INT(11)
+  reply : TEXT
+  addtime : DATETIME
+}
+
+entity "restaurant_info" as restaurant_info {
+  id : BIGINT
+  seat_name : VARCHAR(50)
+  cover_image : VARCHAR(255)
+  table_location : VARCHAR(100)
+  capacity : INT(11)
+  table_status : VARCHAR(20)
+  storeup_number : INT(11)
+  discuss_number : INT(11)
+  addtime : DATETIME
+}
+
+entity "restaurant_reservation" as restaurant_reservation {
+  id : BIGINT
+  seat_name : VARCHAR(50)
+  cover_image : VARCHAR(255)
+  table_location : VARCHAR(100)
+  capacity : INT(11)
+  storeup_number : INT(11)
+  account : VARCHAR(64)
+  name : VARCHAR(100)
+  reservation_time : DATETIME
+  audit_status : VARCHAR(20)
+  audit_reply : VARCHAR(255)
+  deposit : DECIMAL(10,2)
+  payment_status : VARCHAR(20)
+  verification_status : VARCHAR(20)
+  addtime : DATETIME
+}
+
+entity "parking_info" as parking_info {
+  id : BIGINT
+  spot_number : VARCHAR(50)
+  spot_image : VARCHAR(255)
+  area : VARCHAR(50)
+  spot_location : VARCHAR(100)
+  hourly_price : DECIMAL(10,2)
+  spot_status : VARCHAR(20)
+  plate_number : VARCHAR(20)
+  entry_time : DATETIME
+  addtime : DATETIME
+}
+
+entity "message" as message {
+  id : BIGINT
+  user_id : BIGINT
+  messages : MEDIUMTEXT
+  addtime : DATETIME
+}
+
+entity "support_ticket_message" as support_ticket_message {
+  id : BIGINT
+  ticket_id : BIGINT
+  sender_role : VARCHAR(20)
+  sender_id : BIGINT
+  content : TEXT
+  addtime : DATETIME
+}
+
+entity "faq" as faq {
+  id : BIGINT
+  question : VARCHAR(255)
+  keywords : VARCHAR(255)
+  answer : TEXT
+  category : VARCHAR(50)
+  enabled : TINYINT(1)
+  addtime : DATETIME
+}
+
+entity "storeup" as storeup {
+  id : BIGINT
+  refid : BIGINT
+  tablename : VARCHAR(64)
+  name : VARCHAR(200)
+  picture : VARCHAR(255)
+  type : VARCHAR(20)
+  inteltype : VARCHAR(50)
+  remark : VARCHAR(255)
+  userid : BIGINT
+  addtime : DATETIME
+}
+
+entity "menu" as menu {
+  id : BIGINT
+  menujson : TEXT
+  addtime : DATETIME
+}
+
+entity "config" as config {
+  id : BIGINT
+  name : VARCHAR(100)
+  value : VARCHAR(255)
+  url : VARCHAR(255)
+}
+
+entity "system_notice" as system_notice {
+  id : BIGINT
+  content : TEXT
+  addtime : DATETIME
+}
+
+users ||--o{ orders : userid
+users ||--o{ cart : userid
+users ||--o{ dish_review : userid
+dish_info ||--o{ dish_review : refid
+users ||--|| message : user_id
+message ||--o{ support_ticket_message : ticket_id
+users ||--o{ storeup : userid
+dish_info ||--o{ cart : goodid
+
+@enduml

@@ -2,24 +2,23 @@ import {
 	createRouter,
 	createWebHashHistory
 } from 'vue-router'
-import news from '@/views/news/list'
-import cheweiyuyue from '@/views/cheweiyuyue/list'
-import caipinleixing from '@/views/caipinleixing/list'
-import discussmeishixinxi from '@/views/discussmeishixinxi/list'
+import discuss_dish_info from '@/views/discuss_dish_info/list'
 import storeup from '@/views/storeup/list'
-import users from '@/views/users/list'
-import cheweixinxi from '@/views/cheweixinxi/list'
-import discusscantingxinxi from '@/views/discusscantingxinxi/list'
-import cantingxinxi from '@/views/cantingxinxi/list'
-import yonghu from '@/views/yonghu/list'
-import yuangong from '@/views/yuangong/list'
+import admin from '@/views/admin/list'
+import parking_spot from '@/views/parking_spot/list'
+import restaurant_info from '@/views/restaurant_info/list'
+import user from '@/views/user/list'
+import staff from '@/views/staff/list'
 import systemNotice from '@/views/systemNotice/list'
-import cantingyuyue from '@/views/cantingyuyue/list'
-import meishixinxi from '@/views/meishixinxi/list'
-import dianpuhuodong from '@/views/dianpuhuodong/list'
+import restaurant_reservation from '@/views/restaurant_reservation/list'
+import dish_info from '@/views/dish_info/list'
+import restaurant_event from '@/views/restaurant_event/list'
 import orders from '@/views/orders/list'
 import config from '@/views/config/list'
-import usersCenter from '@/views/users/center'
+import menu_manage from '@/views/menu_manage/list'
+import adminCenter from '@/views/admin/center'
+import support_ticket from '@/views/support_ticket/list'
+import support_faq from '@/views/support_faq/list'
 
 export const routes = [{
 	path: '/login',
@@ -27,11 +26,11 @@ export const routes = [{
 	component: () => import('../views/login.vue')
 },{
 	path: '/',
-	name: '首页',
+	name: 'Index',
 	component: () => import('../views/index'),
 	children: [{
 		path: '/',
-		name: '首页',
+		name: 'Home',
 		component: () => import('../views/HomeView.vue'),
 		meta: {
 			affix: true
@@ -43,84 +42,66 @@ export const routes = [{
 	}
 
 		,{
-			path: '/usersCenter',
+			path: '/adminCenter',
 			name: '管理员个人中心',
-			component: usersCenter
+			component: adminCenter
 		}
+
 		,{
-			path: '/news',
-			name: '新闻资讯',
-			component: news
-		}
-		,{
-			path: '/cheweiyuyue',
-			name: '车位预约',
-			component: cheweiyuyue
-		}
-		,{
-			path: '/caipinleixing',
-			name: '菜品类型',
-			component: caipinleixing
-		}
-		,{
-			path: '/discussmeishixinxi',
+			path: '/discuss_dish_info',
 			name: '美食信息评论-评论',
-			component: discussmeishixinxi
+			component: discuss_dish_info
 		}
 	,{
 		path: '/storeup',
 		name: '我的收藏',
 		component: storeup
 	}
-	,{
-		path: '/users',
-		name: '管理员',
-		component: users
-	}
 		,{
-			path: '/cheweixinxi',
+			path: '/admin',
+			name: '管理员',
+			component: admin
+		}
+		,{
+			path: '/parking_spot',
 			name: '车位信息',
-			component: cheweixinxi
+			component: parking_spot
 		}
 		,{
-			path: '/discusscantingxinxi',
-			name: '餐厅信息评论-评论',
-			component: discusscantingxinxi
-		}
-		,{
-			path: '/cantingxinxi',
+			path: '/restaurant_info',
 			name: '餐厅信息',
-			component: cantingxinxi
+			component: restaurant_info
 		}
 		,{
-			path: '/yonghu',
+			path: '/user',
 			name: '用户',
-			component: yonghu
+			component: user
 		}
 		,{
-			path: '/yuangong',
+			path: '/staff',
 			name: '员工',
-			component: yuangong
+			component: staff
 		}
 		,{
-			path: '/systemNotice',
+			path: '/system_notice',
+			alias: ['/systemNotice'],
 			name: '系统公告',
 			component: systemNotice
 		}
 		,{
-			path: '/cantingyuyue',
+			path: '/restaurant_reservation',
 			name: '餐厅预约',
-			component: cantingyuyue
+			component: restaurant_reservation
 		}
 		,{
-			path: '/meishixinxi',
+			path: '/dish_info',
 			name: '美食信息',
-			component: meishixinxi
+			component: dish_info
 		}
 		,{
-			path: '/dianpuhuodong',
-			name: '店铺活动',
-			component: dianpuhuodong
+			path: '/restaurant_event',
+			name: '餐厅活动',
+			component: restaurant_event
 		}
 		,{
 			path: '/orders',
@@ -128,9 +109,24 @@ export const routes = [{
 			component: orders
 		}
 		,{
+			path: '/menu_manage',
+			name: '菜单管理',
+			component: menu_manage
+		}
+		,{
 			path: '/config',
 			name: '轮播图',
 			component: config
+		}
+		,{
+			path: '/support_ticket',
+			name: '人工客服会话',
+			component: support_ticket
+		}
+		,{
+			path: '/support_faq',
+			name: 'FAQ知识库',
+			component: support_faq
 		}
 	]
 },

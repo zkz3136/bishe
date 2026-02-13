@@ -10,9 +10,9 @@
 	</parent>
 	<groupId>com.cl</groupId>
 	<!-- 导入项目的名称 -->
-	<artifactId>cl200442145</artifactId>
+	<artifactId>canteen</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>springboot-schema</name>
+	<name>canteen</name>
 	<description>springboot学习框架</description>
 
 	<properties>
@@ -26,11 +26,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.mybatis.spring.boot</groupId>
 			<artifactId>mybatis-spring-boot-starter</artifactId>
 			<version>2.1.1</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-jdbc</artifactId>
@@ -82,8 +82,13 @@
 		<dependency>
 		    <groupId>cn.hutool</groupId>
 		    <artifactId>hutool-all</artifactId>
-		    <version>4.0.12</version>
+		    <version>5.8.12</version>
 		</dependency>
+        <dependency>
+            <groupId>com.sun.activation</groupId>
+            <artifactId>javax.activation</artifactId>
+            <version>1.2.0</version>
+        </dependency>
 		
 		<!-- FastJson -->
 		<dependency>
@@ -91,20 +96,7 @@
 			<artifactId>fastjson</artifactId>
 			<version>${fastjson.version}</version>
 		</dependency>
-		<!--
-		<dependency>
-		    <groupId>com.microsoft.sqlserver</groupId>
-		    <artifactId>mssql-jdbc</artifactId>
-		    <version>6.2.0.jre8</version>
-		    <scope>runtime</scope>
-		</dependency>
-		-->
-		<!-- 百度人工智能 -->
-		<dependency>
-    		<groupId>com.baidu.aip</groupId>
-    		<artifactId>java-sdk</artifactId>
-    		<version>4.4.1</version>
-		</dependency>
+
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
@@ -122,6 +114,23 @@
             <version>4.5.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>0.11.5</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>0.11.5</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>0.11.5</version>
+            <scope>runtime</scope>
+        </dependency>
 
 		
 		<dependency>

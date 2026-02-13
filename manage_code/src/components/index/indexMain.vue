@@ -40,28 +40,27 @@
 				break;
 			}
 		}
-		let arr = makeMenu(menuList.value)
-
-		router.addRoute(arr)
+		let children = makeMenu(menuList.value)
+		for (let i = 0; i < children.length; i++) {
+			if (!router.hasRoute(children[i].name)) {
+				router.addRoute('Index', children[i])
+			}
+		}
 	}
 	const makeMenu = (menu) => {
-		let brr = {
-			path: '/1',
-			component: () => import('../../views/index'),
-			children: []
-		}
+		let children = []
 		for (let x in menu) {
 			for (let i in menu[x].child) {
-				brr.children.push({
+				children.push({
 					path: '/' + menu[x].child[i].tableName,
 					name: menu[x].child[i].menu,
-					component: () => import(`../../views/${menu[x].child[i].tableName}/list.vue`)
+					component: () => import(`@/views/${menu[x].child[i].tableName}/list.vue`)
 				})
 			}
 		}
-		return brr
+		return children
 	}
-	// init()
+	init()
 </script>
 <style lang="scss" scoped>
 	a:hover {

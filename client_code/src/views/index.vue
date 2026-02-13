@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="home">
     <div class="index_top">
       <div class="index_top_title"><span>餐厅智能服务与预订系统</span></div>
@@ -15,25 +15,10 @@
           登录
         </el-button>
         <div class="user" v-if="Token">
-          <el-dropdown class="avatar-container" trigger="hover">
-            <div class="avatar-wrapper">
-              <img class="user-avatar" :src="store.getters['user/avatar']">
-              <div class="nickname">{{$toolUtil.storageGet("frontName")}}</div>
-              <el-icon class="el-icon-arrow-down">
-                <arrow-down />
-              </el-icon>
-            </div>
-            <template #dropdown>
-              <el-dropdown-menu class="user-dropDown" slot="dropdown">
-                <el-dropdown-item @click="menuHandler('center')" class="center">
-                  <span>个人中心</span>
-                </el-dropdown-item>
-                <el-dropdown-item @click="loginOut" class="loginOut">
-                  <span>退出登录</span>
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
+          <div class="avatar-wrapper" @click="menuHandler('center')" title="进入个人中心">
+            <img class="user-avatar" :src="store.getters['user/avatar']">
+            <div class="nickname">{{userName}}</div>
+          </div>
         </div>
       </div>
     </div>
@@ -102,7 +87,7 @@
         <div class="chat-header">
           <div class="chat-header-info">
             <div class="bot-avatar">
-              <span class="iconfont icon-kefu"></span>
+              <img :src="serviceAvatar" alt="客服" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
             </div>
             <div class="bot-info">
               <div class="bot-name">智能客服</div>
@@ -110,6 +95,12 @@
             </div>
           </div>
           <div class="chat-header-actions">
+            <el-button text @click="openFaqDrawer" title="常见问题">
+              FAQ
+            </el-button>
+            <el-button text @click="goMyTickets" title="人工会话">
+              人工会话
+            </el-button>
             <el-button text @click="clearChat" title="清空聊天">
               <span class="iconfont icon-shanchu"></span>
             </el-button>
@@ -137,12 +128,15 @@
 
             <div :class="['message', message.type === 'user' ? 'user-message' : 'bot-message']">
               <div v-if="message.type === 'bot'" class="message-avatar">
-                <span class="iconfont icon-kefu"></span>
+                <img :src="serviceAvatar" alt="客服" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
               </div>
 
               <div class="message-content">
                 <div class="message-bubble">
                   <div class="message-text">{{ message.content }}</div>
+                  <div v-if="message.type === 'bot' && message.suggestTicket" class="message-actions">
+                    <el-button size="small" type="primary" @click="openTicketDialog(message)">转人工</el-button>
+                  </div>
                 </div>
                 <div class="message-meta">
                   <span class="message-time">{{ formatTime(message.timestamp) }}</span>
@@ -161,9 +155,9 @@
                        class="user-avatar-img"
                        @error="handleAvatarError"
                        @load="handleAvatarLoad" />
-                  <span class="iconfont icon-yonghu fallback-icon" style="display: none;"></span>
+                  <el-icon class="fallback-icon" style="display: none;"><UserFilled /></el-icon>
                 </template>
-                <span v-else class="iconfont icon-yonghu"></span>
+                <el-icon v-else class="fallback-icon"><UserFilled /></el-icon>
               </div>
             </div>
           </div>
@@ -171,7 +165,7 @@
           <!-- 正在输入指示器 -->
           <div v-if="isLoading" class="message bot-message typing-message">
             <div class="message-avatar">
-              <span class="iconfont icon-kefu"></span>
+              <img :src="serviceAvatar" alt="客服" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
             </div>
             <div class="message-content">
               <div class="message-bubble typing-bubble">
@@ -216,12 +210,29 @@
         </div>
       </div>
     </el-dialog>
+
+    <el-drawer v-model="faqDrawerVisible" title="常见问题" size="420px">
+      <div style="display:flex; gap: 10px; align-items: center;">
+        <el-input v-model="faqKeyword" placeholder="搜索问题/关键词" clearable @keyup.enter="fetchFaqList" />
+        <el-button type="primary" :loading="faqLoading" @click="fetchFaqList">搜索</el-button>
+      </div>
+
+      <div style="margin-top: 12px;">
+        <el-empty v-if="!faqLoading && faqList.length === 0" description="暂无匹配的问题" />
+        <el-collapse v-else>
+          <el-collapse-item v-for="item in faqList" :key="item.id" :title="item.question">
+            <div style="white-space: pre-wrap; line-height: 1.7;">{{ item.answer }}</div>
+            <div v-if="item.category" style="margin-top: 10px; color: rgba(0,0,0,0.45);">分类：{{ item.category }}</div>
+          </el-collapse-item>
+        </el-collapse>
+      </div>
+    </el-drawer>
   </div>
 </template>
 <script setup>
 import menu from '@/utils/menu'
-import axios from 'axios'
 import moment from "moment";
+import { UserFilled } from '@element-plus/icons-vue'
 import {
   ref,
   onBeforeUnmount,
@@ -238,11 +249,19 @@ import {
 import {
   useStore
 } from 'vuex';
+import serviceAvatar from '@/assets/service.png'
 const store = useStore()
 const router = useRouter()
 const route = useRoute();
 const context = getCurrentInstance()?.appContext.config.globalProperties;
 const Token = ref('')
+const userName = computed(() => {
+  const s = store.getters['user/session'] || {}
+  const n = s.login_name ?? s.loginName ?? s.name
+  const vRaw = n ?? context?.$toolUtil.storageGet('frontName') ?? ''
+  const v = String(vRaw || '').trim()
+  return v && v.toLowerCase() !== 'undefined' && v.toLowerCase() !== 'null' ? v : ''
+})
 const interval = ref(null)
 const nowDate = ref(new Date())
 // 菜单栏固定状态
@@ -267,15 +286,82 @@ const externalScrollbar = ref(null)
 const scrollbarThumb = ref(null)
 const isOnline = ref(true) // 客服在线状态
 const isTyping = ref(false) // 正在输入状态
-const availableChewei = ref(0) // 当前空闲车位数量
-const caipingList = ref([]) // 菜品列表
+const parking = ref(0) // 当前空闲车位数量
+const dish = ref([])
 
-// Coze API 配置
-const COZE_API_CONFIG = {
-  baseURL: 'https://api.coze.cn',
-  apiKey: 'pat_GGlcZF6EPuDSlQ66ZbRsOd7QFmoUXCBVAC70oRzKqBwTyBO1lBqeAirARBVBb2T8',
-  workflowId: '7551090810286358579',
-  appId: '7551035132703604763'
+const faqDrawerVisible = ref(false)
+const faqKeyword = ref('')
+const faqList = ref([])
+const faqLoading = ref(false)
+
+const activeTicketId = ref(null)
+const activeTicketNo = ref('')
+const ticketPollingTimer = ref(null)
+const ticketSyncing = ref(false)
+const knownTicketMessageIds = new Set()
+const ticketTransferring = ref(false)
+
+const stopTicketPolling = () => {
+  if (ticketPollingTimer.value) {
+    clearInterval(ticketPollingTimer.value)
+    ticketPollingTimer.value = null
+  }
+}
+
+const syncTicketMessages = async (displayStaffMessages = true) => {
+  if (!activeTicketId.value) return
+  if (ticketSyncing.value) return
+  ticketSyncing.value = true
+  try {
+    const res = await context?.$http({
+      url: `support/ticket/${activeTicketId.value}/messages`,
+      method: 'get'
+    })
+    const list = res?.data?.data || []
+    const newMessages = []
+    const sessionUserId = store.getters['user/session']?.id ?? context?.$toolUtil.storageGet('user_id')
+    for (let i = 0; i < list.length; i++) {
+      const msg = list[i]
+      if (!msg) continue
+      const msgId = msg.id ?? msg.messageId ?? msg.message_id ?? msg.ID ?? msg.msgId ?? msg.msg_id
+      if (msgId == null) continue
+      const id = String(msgId)
+      if (knownTicketMessageIds.has(id)) continue
+      knownTicketMessageIds.add(id)
+      if (!displayStaffMessages) continue
+      const senderRole = String((msg.senderRole ?? msg.sender_role ?? msg.senderrole) == null ? '' : (msg.senderRole ?? msg.sender_role ?? msg.senderrole)).trim()
+      const senderRoleLower = senderRole.toLowerCase()
+      const senderIdRaw = msg.senderId ?? msg.sender_id ?? msg.senderID ?? msg.senderid
+      const senderId = senderIdRaw == null ? null : String(senderIdRaw)
+      const isUserMessage =
+        senderRole === '用户' ||
+        senderRoleLower === 'user' ||
+        (sessionUserId != null && senderId != null && String(sessionUserId) === senderId)
+      if (isUserMessage) continue
+      newMessages.push({
+        type: 'bot',
+        content: String(msg.content ?? msg.text ?? msg.message ?? ''),
+        timestamp: msg.addtime ?? msg.addTime ?? msg.add_time ?? msg.timestamp ?? new Date()
+      })
+    }
+    if (newMessages.length) {
+      chatMessages.value.push(...newMessages)
+      nextTick(() => {
+        scrollToBottom()
+      })
+    }
+  } finally {
+    ticketSyncing.value = false
+  }
+}
+
+const startTicketPolling = () => {
+  if (!activeTicketId.value) return
+  if (ticketPollingTimer.value) return
+  syncTicketMessages(true)
+  ticketPollingTimer.value = setInterval(() => {
+    syncTicketMessages(true)
+  }, 3000)
 }
 
 // 初化滚动监听
@@ -289,6 +375,7 @@ onMounted(() => {
 })
 onBeforeUnmount(() => {
   clearInterval(interval.value)
+  stopTicketPolling()
   // 移除滚动监听
   window.removeEventListener('scroll', handleWindowScroll)
   if (scrollbarRef.value) {
@@ -324,15 +411,13 @@ const init = () => {
     nowDate.value = new Date()
     // 每30秒更新一次空闲车位信息
     if (nowDate.value.getSeconds() % 30 === 0) {
-      getAvailableCheweiInfo()
+      getAvailableParkingInfo()
     }
   }, 1000)
   // 轮播图
   getRotationList()
   // 初始化空闲车位信息
-  getAvailableCheweiInfo()
-  // 初始化菜品列表
-  getCaipingList()
+  getAvailableParkingInfo()
   if(Token.value){
     getSession()
   }
@@ -350,7 +435,8 @@ const getRotationList = () => {
     method: 'get',
     params: {
       page: 1,
-      limit: 3
+      limit: 10,
+      name: '%swiper%'
     }
   }).then(res => {
     rotationList.value = res.data.data.list
@@ -421,22 +507,17 @@ const handleWindowScroll = () => {
 const sendMessage = async () => {
   if (!currentMessage.value.trim()) return
 
-  // 发送消息前先获取最新的空闲车位信息和菜品列表
-  await getAvailableCheweiInfo()
-  // 如果菜品列表为空，也获取一次
-  if (caipingList.value.length === 0) {
-    await getCaipingList()
-  }
+  await Promise.allSettled([getAvailableParkingInfo(), getDishList()])
 
+  const messageToSend = currentMessage.value
   const userMessage = {
     type: 'user',
-    content: currentMessage.value,
+    content: messageToSend,
     timestamp: new Date(),
     status: 'sending' // 发送中
   }
 
   chatMessages.value.push(userMessage)
-  const messageToSend = currentMessage.value
   currentMessage.value = ''
   isLoading.value = true
 
@@ -455,19 +536,37 @@ const sendMessage = async () => {
   }, 1000)
 
   try {
-    // 调用Coze API
-    const response = await callCozeAPI(messageToSend)
+    if (activeTicketId.value) {
+      await context?.$http({
+        url: `support/ticket/${activeTicketId.value}/reply`,
+        method: 'post',
+        data: {
+          content: messageToSend
+        }
+      })
+      await syncTicketMessages(true)
+      return
+    }
+
+    const n = (messageToSend || '').trim().toLowerCase()
+    const transfer = ['转人工','人工客服','客服','转接人工','转接客服','人工','真人'].some(k => n.includes(k))
+    if (transfer) {
+      await openTicketDialog({ sourceMessage: messageToSend })
+      return
+    }
+
+    const response = await callSupportChat(messageToSend)
 
     const botMessage = {
       type: 'bot',
-      content: response,
-      timestamp: new Date()
+      content: response.reply,
+      timestamp: new Date(),
+      suggestTicket: response.suggestTicket,
+      sourceMessage: messageToSend
     }
 
     chatMessages.value.push(botMessage)
   } catch (error) {
-    console.error('客服回复失败:', error)
-
     const errorMessage = {
       type: 'bot',
       content: '抱歉，服务暂时不可用，请稍后再试。',
@@ -483,124 +582,119 @@ const sendMessage = async () => {
   }
 }
 
-// 调用Coze API
-const callCozeAPI = async (message) => {
-  try {
-    // 添加详细日志
-    console.log('=== Coze API 调用开始 ===')
-    console.log('API配置:', {
-      baseURL: COZE_API_CONFIG.baseURL,
-      workflowId: COZE_API_CONFIG.workflowId,
-      appId: COZE_API_CONFIG.appId,
-      apiKey: COZE_API_CONFIG.apiKey?.substring(0, 20) + '...' // 只显示前20位
-    })
-    console.log('请求参数:', {
-      chewei: availableChewei.value,
-      input: message,
-      caipingCount: caipingList.value.length
-    })
-
-    const requestBody = {
-      workflow_id: COZE_API_CONFIG.workflowId,
-      app_id: COZE_API_CONFIG.appId,
-      parameters: {
-        chewei: availableChewei.value, // 使用实际空闲车位数量
-        input: message,
-        caiping: JSON.stringify(caipingList.value) // 传递菜品列表
-      }
+const callSupportChat = async (message) => {
+  const response = await context?.$http({
+    url: 'support/chat',
+    method: 'post',
+    data: {
+      message,
+      parking: parking.value,
+      dish: dish.value
     }
-
-    console.log('完整请求体:', JSON.stringify(requestBody, null, 2))
-
-    const response = await fetch(`${COZE_API_CONFIG.baseURL}/v1/workflow/stream_run`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${COZE_API_CONFIG.apiKey}`,
-      },
-      body: JSON.stringify(requestBody)
-    })
-
-    console.log('响应状态:', response.status, response.statusText)
-    console.log('响应头:', Object.fromEntries(response.headers.entries()))
-
-    if (!response.ok) {
-      // 读取错误响应内容
-      let errorText = ''
-      try {
-        errorText = await response.text()
-        console.error('错误响应内容:', errorText)
-      } catch (e) {
-        console.error('无法读取错误响应:', e)
-      }
-      throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`)
-    }
-
-    // 处理流式响应
-    const reader = response.body.getReader()
-    const decoder = new TextDecoder()
-    let result = ''
-
-    while (true) {
-      const { done, value } = await reader.read()
-
-      if (done) break
-
-      const chunk = decoder.decode(value, { stream: true })
-      const lines = chunk.split('\n')
-
-      for (const line of lines) {
-        if (line.trim() && line.startsWith('data: ')) {
-          try {
-            const data = JSON.parse(line.substring(6))
-
-            // 检查是否是结束节点且包含输出
-            console.log('处理流式数据:', data)
-
-            // 根据实际响应格式，End节点使用node_title标识
-            if ((data.node_type === 'End' || data.node_title === 'End') && data.content) {
-              try {
-                const contentData = JSON.parse(data.content)
-                console.log('End节点内容:', contentData)
-                if (contentData.output) {
-                  console.log('找到输出内容:', contentData.output)
-                  result = contentData.output
-                  break
-                }
-              } catch (parseError) {
-                console.warn('解析content失败:', parseError)
-                // 如果content不是JSON格式，直接使用content作为结果
-                if (typeof data.content === 'string') {
-                  result = data.content
-                  break
-                }
-              }
-            }
-          } catch (parseError) {
-            console.warn('解析JSON失败:', parseError)
-          }
-        }
-      }
-    }
-
-    return result || '抱歉，暂时没有获取到回复。'
-
-  } catch (error) {
-    console.error('Coze API 调用失败:', error)
-
-    // 根据错误类型返回不同的错误信息
-    if (error.name === 'TypeError' && error.message.includes('fetch')) {
-      throw new Error('网络连接失败，请检查网络连接。')
-    } else if (error.message.includes('401')) {
-      throw new Error('API 密钥验证失败，请检查配置。')
-    } else if (error.message.includes('403')) {
-      throw new Error('没有权限访问该接口。')
-    } else if (error.message.includes('429')) {
-      throw new Error('请求过于频繁，请稍后再试。')
-    } else {
-      throw new Error('服务器错误，请稍后再试。')
-    }
+  })
+  const d = response?.data?.data || {}
+  return {
+    reply: d.reply || '',
+    suggestTicket: !!(d.suggestTicket || d.suggest_ticket)
   }
+}
+
+const findLastUserMessage = () => {
+  for (let i = chatMessages.value.length - 1; i >= 0; i--) {
+    const m = chatMessages.value[i]
+    if (m && m.type === 'user' && (m.content || '').trim()) return String(m.content)
+  }
+  return ''
+}
+
+const openTicketDialog = async (message) => {
+  if (!Token.value) {
+    context?.$toolUtil.message('请登录后再转人工', 'error')
+    context?.$toolUtil.storageSet('toPath', window.history.state.current)
+    router.push('/login')
+    return
+  }
+
+  if (activeTicketId.value) {
+    chatMessages.value.push({
+      type: 'bot',
+      content: `你已接入人工客服：${activeTicketNo.value || ''}。请直接在这里继续发送消息。`,
+      timestamp: new Date()
+    })
+    nextTick(() => {
+      scrollToBottom()
+    })
+    return
+  }
+
+  if (ticketTransferring.value) return
+  ticketTransferring.value = true
+  try {
+    const userQuestion = ((message?.sourceMessage || '').trim() || findLastUserMessage()).trim()
+    const title = (userQuestion || '人工会话').slice(0, 16)
+    const content = userQuestion || '用户请求转人工'
+
+    const response = await context?.$http({
+      url: 'support/ticket/submit',
+      method: 'post',
+      data: {
+        content,
+        ...(title ? { title } : {}),
+      }
+    })
+    const d = response?.data?.data || {}
+    activeTicketId.value = d.ticketId || d.ticket_id || null
+    activeTicketNo.value = d.ticketNo || d.ticket_no || ''
+    knownTicketMessageIds.clear()
+    if (chatDialogVisible.value) startTicketPolling()
+    chatMessages.value.push({
+      type: 'bot',
+      content: `已为你转接人工客服：${activeTicketNo.value || ''}。你可以继续在这里发送消息，客服回复会显示在这里。`,
+      timestamp: new Date()
+    })
+    nextTick(() => {
+      scrollToBottom()
+    })
+  } finally {
+    ticketTransferring.value = false
+  }
+}
+
+const openFaqDrawer = async () => {
+  faqDrawerVisible.value = true
+  await fetchFaqList()
+}
+
+const fetchFaqList = async () => {
+  try {
+    faqLoading.value = true
+    const response = await context?.$http({
+      url: 'support/faq/search',
+      method: 'get',
+      params: {
+        keyword: faqKeyword.value || ''
+      }
+    })
+    faqList.value = response?.data?.data || []
+  } catch (e) {
+    faqList.value = []
+  } finally {
+    faqLoading.value = false
+  }
+}
+
+const goMyTickets = () => {
+  if (!Token.value) {
+    context?.$toolUtil.message('请登录后再查看会话', 'error')
+    router.push('/login')
+    return
+  }
+  router.push({
+    path: `/index/${context?.$toolUtil.storageGet('frontSessionTable')}Center`,
+    query: {
+      tab: 'myTickets'
+    }
+  })
 }
 
 // 滚动到聊天窗口底部
@@ -746,25 +840,25 @@ const initCustomScrollbar = () => {
 }
 
 // 获取空闲车位信息
-const getAvailableCheweiInfo = async () => {
+const getAvailableParkingInfo = async () => {
   try {
     // 调用实际的空闲车位查询接口
     const response = await context?.$http({
-      url: 'cheweixinxi/list',
+      url: 'parking_spot/list',
       method: 'get',
       params: {
         page: 1,
         limit: 1000, // 获取所有车位
-        cheweizhuangtai: '空闲' // 筛选空闲状态的车位
+        spot_status: '空闲' // 筛选空闲状态的车位
       }
     })
 
     if (response && response.data && response.data.data) {
-      availableChewei.value = response.data.data.total || response.data.data.list?.length || 0
-      console.log('空闲车位数量:', availableChewei.value)
+      parking.value = response.data.data.total || response.data.data.list?.length || 0
+      console.log('空闲车位数量:', parking.value)
     } else {
       // 如果接口返回格式不同，尝试其他方式
-      availableChewei.value = 0
+      parking.value = 0
     }
   } catch (error) {
     console.error('获取空闲车位信息失败:', error)
@@ -773,34 +867,35 @@ const getAvailableCheweiInfo = async () => {
     try {
       // 尝试使用统计接口
       const countResponse = await context?.$http({
-        url: 'cheweixinxi/count',
+        url: 'parking_spot/count',
         method: 'get',
         params: {
-          cheweizhuangtai: '空闲'
+          spot_status: '空闲'
         }
       })
 
       if (countResponse && countResponse.data) {
-        availableChewei.value = countResponse.data.count || 0
+        const d = countResponse.data.data
+        parking.value = typeof d === 'number' ? d : (d && d.count ? d.count : 0)
       } else {
         // 最后的备用方案，使用模拟数据
-        availableChewei.value = Math.floor(Math.random() * 15) + 1 // 1-15随机空闲车位
-        console.log('使用模拟空闲车位数量:', availableChewei.value)
+        parking.value = Math.floor(Math.random() * 15) + 1 // 1-15随机空闲车位
+        console.log('使用模拟空闲车位数量:', parking.value)
       }
     } catch (secondError) {
       console.error('统计接口也失败:', secondError)
       // 使用默认值
-      availableChewei.value = 11 // 根据用户提到的"11个空闲车位"设置默认值
+      parking.value = 11 // 根据用户提到的"11个空闲车位"设置默认值
     }
   }
 }
 
 // 获取菜品列表
-const getCaipingList = async () => {
+const getDishList = async () => {
   try {
     console.log('开始获取菜品列表...')
     const response = await context?.$http({
-      url: 'meishixinxi/list',
+      url: 'dish_info/list',
       method: 'get',
       params: {
         page: 1,
@@ -812,28 +907,28 @@ const getCaipingList = async () => {
 
     if (response && response.data && response.data.data && response.data.data.list) {
       // 提取关键信息，减少数据量（移除image和长描述）
-      caipingList.value = response.data.data.list.map(item => ({
-        name: item.caipinmingcheng || '未知菜品',
+      dish.value = response.data.data.list.map(item => ({
+        name: item.dish_name || '未知菜品',
         price: item.price || item.jiage || 0,
-        category: item.caipinleixing || '其他',
-        taste: item.kouwei || ''
+        category: item.dish_category || '其他',
+        taste: item.flavor || ''
         // 移除description和image，减少数据传输量
       }))
-      console.log('菜品列表获取成功，共', caipingList.value.length, '个菜品')
+      console.log('菜品列表获取成功，共', dish.value.length, '个菜品')
     } else {
-      caipingList.value = []
+      dish.value = []
       console.warn('菜品列表返回格式异常')
     }
   } catch (error) {
     console.error('获取菜品列表失败:', error)
-    caipingList.value = []
+    dish.value = []
   }
 }
 
 // 显示车位详情
 const showParkingDetails = () => {
-  const statusText = availableChewei.value <= 5 ? '紧张' : availableChewei.value > 10 ? '充足' : '正常'
-  const message = `当前空闲车位数量：${availableChewei.value}个\n车位状态：${statusText}\n\n点击右侧刷新按钮可更新信息`
+  const statusText = parking.value <= 5 ? '紧张' : parking.value > 10 ? '充足' : '正常'
+  const message = `当前空闲车位数量：${parking.value}个\n车位状态：${statusText}\n\n点击右侧刷新按钮可更新信息`
   context?.$toolUtil.message(message, 'info')
 }
 
@@ -854,7 +949,8 @@ const initChat = () => {
 watch(chatDialogVisible, (newVal) => {
   if (newVal) {
     // 打开聊天窗口时更新空闲车位信息
-    getAvailableCheweiInfo()
+    getAvailableParkingInfo()
+    getDishList()
 
     if (chatMessages.value.length === 0) {
       initChat()
@@ -865,6 +961,9 @@ watch(chatDialogVisible, (newVal) => {
       // 初始化自定义滚动条
       initCustomScrollbar()
     })
+    if (activeTicketId.value) startTicketPolling()
+  } else {
+    stopTicketPolling()
   }
 })
 // 获取用户信息
@@ -873,25 +972,30 @@ const getSession = () =>{
     url: `${context?.$toolUtil.storageGet('frontSessionTable')}/session`,
     method:'get'
   }).then(res=>{
-    context?.$toolUtil.storageSet('userid',res.data.data.id)
-    if(context?.$toolUtil.storageGet('frontSessionTable') == 'yonghu'){
-      context?.$toolUtil.storageSet("frontName", res.data.data.zhanghao)
+    context?.$toolUtil.storageSet('user_id',res.data.data.id)
+    const displayName = res?.data?.data?.login_name ?? res?.data?.data?.loginName ?? res?.data?.data?.name ?? ''
+    const normalizedRaw = String(displayName || '').trim()
+    const normalized = normalizedRaw && !['undefined','null'].includes(normalizedRaw.toLowerCase()) ? normalizedRaw : ''
+    if(context?.$toolUtil.storageGet('frontSessionTable') == 'user'){
+      context?.$toolUtil.storageSet("frontName", normalized)
     }
-    if(context?.$toolUtil.storageGet('frontSessionTable') == 'yonghu'){
-      context?.$toolUtil.storageSet('headportrait',res.data.data.touxiang)
+    if(context?.$toolUtil.storageGet('frontSessionTable') == 'user'){
+      context?.$toolUtil.storageSet('headportrait',res.data.data.avatar)
     }
-    if(context?.$toolUtil.storageGet('frontSessionTable') == 'users'){
-      context?.$toolUtil.storageSet("frontName", res.data.data.username)
+    if(context?.$toolUtil.storageGet('frontSessionTable') == 'admin'){
+      context?.$toolUtil.storageSet("frontName", normalized)
     }
-    if(context?.$toolUtil.storageGet('frontSessionTable') == 'users'){
-      context?.$toolUtil.storageSet('headportrait',res.data.data.tupian)
+    if(context?.$toolUtil.storageGet('frontSessionTable') == 'admin'){
+      context?.$toolUtil.storageSet('headportrait',res.data.data.avatar)
     }
-    if(context?.$toolUtil.storageGet('frontSessionTable') == 'Yuangong'){
-      context?.$toolUtil.storageSet("frontName", res.data.data.yuangongzhanghao)
+    if(context?.$toolUtil.storageGet('frontSessionTable') == 'staff'){
+      context?.$toolUtil.storageSet("frontName", normalized)
     }
-    if(context?.$toolUtil.storageGet('frontSessionTable') == 'Yuangong'){
-      context?.$toolUtil.storageSet('headportrait',res.data.data.touxiang)
+    if(context?.$toolUtil.storageGet('frontSessionTable') == 'staff'){
+      context?.$toolUtil.storageSet('headportrait',res.data.data.avatar)
     }
+    // 强制更新Token以触发响应式更新
+    Token.value = context?.$toolUtil.storageGet('frontToken')
   })
 }
 
@@ -988,12 +1092,12 @@ init()
     border-radius: 4px;
     padding: 10px;
     color: #fff;
-    background: #d59bf6;
-    border-color: #d59bf6;
+    background: #ea580c;
+    border-color: #ea580c;
   }
   :deep(.el-button--danger:hover) {
-    background: #d59bf699;
-    border-color: #d59bf699;
+    background: rgba(234, 88, 12, 0.6);
+    border-color: rgba(234, 88, 12, 0.6);
   }
 }
 // 轮播盒子
@@ -1056,19 +1160,24 @@ init()
   width: 100%;
   display: flex;
   align-items: center;
-  height: 110px;
-  background:#fff;
+  height: 80px;
+  background: #ffffff !important;
   justify-content: space-between;
-  padding: 0px 16%;
+  padding: 0px 5%;
   box-sizing: border-box;
   z-index: 1002;
-  position: relative;
+  position: sticky;
+  top: 0;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  backdrop-filter: blur(8px);
 }
 
 .index_top .index_top_title{
-  font-size: 20px;
-  color: rgb(0, 0, 0);
-  font-weight: bold;
+  font-size: 24px;
+  color: var(--theme-color);
+  font-weight: 800;
+  letter-spacing: -0.5px;
 }
 
 .index_top .index_top_right{
@@ -1164,22 +1273,26 @@ init()
 }
 
 .index_top .notice-btn{
-  background: none;
-  border: 0px solid #dcdfe6;
-  color: #333;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0,0,0,0.08);
+  color: #374151;
   margin: 0;
-  padding: 8px 12px;
-  font-size: 15px;
-  border-radius: 6px;
+  padding: 10px 16px;
+  font-size: 14px;
+  border-radius: 12px;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
-  gap: 6px;
-  height: 36px;
+  gap: 8px;
+  height: 40px;
+  backdrop-filter: blur(8px);
+  font-weight: 500;
 }
 .index_top .notice-btn:hover{
-  color: var(--theme);
-  background: rgba(0, 0, 0, 0.03);
+  color: var(--theme-color);
+  background: rgba(255, 255, 255, 0.95);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .index_top .notice-btn .iconfont{
@@ -1188,22 +1301,24 @@ init()
 
 /* 智能客服按钮样式 */
 .index_top .chat-btn{
-  background: none;
-  border: 0px solid #dcdfe6;
-  color: #333;
+  background: var(--theme-color);
+  border: none;
+  color: white;
   margin: 0;
-  padding: 8px 12px;
-  font-size: 15px;
-  border-radius: 6px;
+  padding: 10px 16px;
+  font-size: 14px;
+  border-radius: 12px;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
-  gap: 6px;
-  height: 36px;
+  gap: 8px;
+  height: 40px;
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3);
+  font-weight: 600;
 }
 .index_top .chat-btn:hover{
-  color: var(--theme);
-  background: rgba(0, 0, 0, 0.03);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(234, 88, 12, 0.4);
 }
 
 .index_top .chat-btn .iconfont{
@@ -1250,22 +1365,46 @@ init()
 }
 
 
-.index_top .user{
-  margin-left: 5px;
+.index_top .user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.index_top .user .logout-btn {
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #6b7280;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  transition: all 0.3s ease;
+  height: 36px;
+}
+
+.index_top .user .logout-btn:hover {
+  background: #fee2e2;
+  border-color: #ef4444;
+  color: #ef4444;
 }
 
 .index_top .user .avatar-wrapper{
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   cursor: pointer;
-  padding: 4px 12px 4px 4px;
-  border-radius: 50px;
+  padding: 6px 16px 6px 6px;
+  border-radius: 24px;
   transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0,0,0,0.08);
+  backdrop-filter: blur(8px);
 }
 
 .index_top .user .avatar-wrapper:hover{
-  background: rgba(0, 0, 0, 0.03);
+  background: rgba(255, 255, 255, 0.95);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .index_top .user .avatar-wrapper .user-avatar{
@@ -1282,51 +1421,12 @@ init()
 }
 
 .index_top .user .avatar-wrapper .nickname{
-  font-size: 15px;
-  color: #333;
-  font-weight: 500;
+  font-size: 14px;
+  color: #374151;
+  font-weight: 600;
+  letter-spacing: -0.2px;
 }
 
-.index_top .user .avatar-wrapper .el-icon{
-  color: #999;
-  transition: all 0.3s ease;
-}
-
-.index_top .user .avatar-wrapper:hover .el-icon{
-  color: var(--theme);
-}
-
-
-.user-dropDown{
-  padding: 10px 0;
-  margin: 5px 0;
-  background: #fff;
-  border: 1px solid #e6ebf5;
-  border-radius: 4px;
-  -webkit-box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
-  box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
-}
-.user-dropDown li{
-  padding: 0 20px !important;
-  line-height: 36px !important;
-  font-size: 14px !important;
-  color: #606266 !important;
-}
-.user-dropDown li:hover{
-  color: #fff !important;
-  background: var(--theme2-color) !important;
-}
-
-.user-dropDown li.loginOut{
-  background: none !important;
-  border: none !important;
-  color: #666 !important;
-}
-.user-dropDown li.loginOut:hover{
-  border-radius: 0px !important;
-  background: var(--theme2-color) !important;
-  color: #fff !important;
-}
 .bottom_view {
   width: 100%;
   background: #242424;
@@ -1349,11 +1449,12 @@ init()
 .menu_scrollbar {
   width: 100%;
   margin:0 auto 5px;
-  background:var(--theme);
+  background: var(--theme-color);
   border-width: 0px;
   border-style: solid;
   border-color: rgb(239, 239, 239);
-  border-radius:0;
+  border-radius: 0;
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.2);
 }
 .menu_scrollbar .el-scrollbar__view {
   padding-bottom: 0px;
@@ -1384,20 +1485,24 @@ init()
   text-align: center;
 }
 .menu_scrollbar .menu_view .el-menu-item:hover,.menu_scrollbar .menu_view .el-sub-menu:hover{
-  background: var(--theme-color);
+  background: rgba(255, 255, 255, 0.2);
   color: #fff !important;
-  clip-path: polygon(0 0, 100% 0, 95% 100%, 0% 100%);
-  border-radius:10px 10px 0 0;
+  border-radius: 12px;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  backdrop-filter: blur(8px);
 }
 .menu_scrollbar .menu_view .el-menu-item.is-active,.menu_scrollbar .menu_view .el-sub-menu.is-active{
   height: 48px;
   line-height: 48px;
   font-size: 16px;
   border-bottom:none;
-  background: var(--theme-color);
+  background: rgba(255, 255, 255, 0.25);
   color: #fff !important;
-  clip-path: polygon(0 0, 100% 0, 95% 100%, 0% 100%);
-  border-radius:10px 10px 0 0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  backdrop-filter: blur(12px);
+  font-weight: 600;
 }
 
 .menu_scrollbar .menu_view .el-sub-menu .el-sub-menu__title .el-icon-menu,.menu_scrollbar .menu_view .el-sub-menu .el-sub-menu__title .iconfont{
@@ -1455,7 +1560,7 @@ init()
 
 .rotation_view .swiper{
   width: 100% !important;
-  height: 450px;
+  height: 480px;
   border:0px solid #fff;
   border-radius:10px;
 }
@@ -1537,14 +1642,17 @@ init()
 
 /* 聊天窗口样式 */
 .chat-dialog {
-  --el-dialog-border-radius: 12px;
+  --el-dialog-border-radius: 16px;
   --el-dialog-padding-primary: 0;
+  border-radius: 16px !important;
+  overflow: hidden;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15) !important;
 }
 
 .chat-dialog .el-dialog__header {
   padding: 0;
   margin: 0;
-  border-bottom: 1px solid #e5e5ea;
+  display: none;
 }
 
 .chat-dialog .el-dialog__body {
@@ -1553,12 +1661,14 @@ init()
 
 /* 聊天头部 */
 .chat-header {
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
-  background: #f8f9fa;
-  border-radius: 12px 12px 0 0;
+  height: 70px;
+  box-sizing: border-box;
 }
 
 .chat-header-info {
@@ -1576,43 +1686,11 @@ init()
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 18px;
+  box-shadow: 0 4px 12px rgba(118, 75, 162, 0.3);
 }
 
-.user-avatar {
-  width: 32px;
-  height: 32px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 14px;
-  margin-left: 8px;
-  position: relative;
-  overflow: hidden;
-}
-
-/* 用户头像图片样式 */
-.user-avatar-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-/* 当图片加载失败时显示默认图标 */
-.user-avatar .iconfont {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
+.bot-avatar .iconfont {
+  font-size: 20px;
 }
 
 .bot-info {
@@ -1621,18 +1699,35 @@ init()
 }
 
 .bot-name {
-  font-weight: 600;
+  font-weight: 700;
   font-size: 16px;
-  color: #1c1c1e;
+  color: #1a1a1a;
+  margin-bottom: 2px;
 }
 
 .bot-status {
   font-size: 12px;
-  color: #8e8e93;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.bot-status::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #9ca3af;
 }
 
 .bot-status.online {
-  color: #34c759;
+  color: #10b981;
+}
+
+.bot-status.online::before {
+  background: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
 }
 
 .chat-header-actions {
@@ -1644,71 +1739,76 @@ init()
   padding: 8px;
   border: none;
   background: transparent;
-  color: #8e8e93;
-  font-size: 16px;
+  color: #6b7280;
+  font-size: 18px;
+  transition: all 0.3s ease;
+  border-radius: 8px;
 }
 
 .chat-header-actions .el-button:hover {
-  background: rgba(0,0,0,0.05);
-  color: #007aff;
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--theme-color);
+  transform: rotate(90deg);
 }
 
 .chat-container {
-  height: 500px;
+  height: 550px;
   display: flex;
   flex-direction: column;
-  background: white;
+  background: #ffffff;
 }
 
 .chat-messages {
   flex: 1;
   overflow-y: auto;
-  padding: 16px;
-  background: #f8f9fa;
-  max-height: 400px;
-  min-height: 300px;
+  padding: 20px;
+  background: #f9fafb;
+  scroll-behavior: smooth;
 }
 
-/* 空聊天状态 */
 .empty-chat {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 200px;
-  color: #8e8e93;
+  height: 100%;
+  color: #9ca3af;
 }
 
 .empty-icon {
-  font-size: 48px;
-  margin-bottom: 12px;
+  font-size: 64px;
+  margin-bottom: 16px;
   opacity: 0.5;
+  color: var(--theme-color);
 }
 
-/* 时间分隔符 */
 .time-break {
   text-align: center;
-  margin: 16px 0;
+  margin: 24px 0;
 }
 
 .time-break span {
-  background: rgba(0,0,0,0.1);
-  color: #8e8e93;
+  background: rgba(0, 0, 0, 0.04);
+  color: #9ca3af;
   padding: 4px 12px;
   border-radius: 12px;
   font-size: 12px;
 }
 
-/* 消息组 */
 .message-group {
-  margin-bottom: 4px;
+  margin-bottom: 20px;
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .message {
   display: flex;
   align-items: flex-end;
-  margin-bottom: 4px;
-  gap: 8px;
+  gap: 12px;
 }
 
 .user-message {
@@ -1720,92 +1820,110 @@ init()
 }
 
 .message-avatar {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 14px;
   flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-size: 14px;
+}
+
+.user-avatar {
+  background: none;
+  overflow: hidden;
+  border: 2px solid white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-avatar .iconfont {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background: #e5e7eb;
+  color: #9ca3af;
 }
 
 .message-content {
-  max-width: 280px;
+  max-width: 70%;
   display: flex;
   flex-direction: column;
 }
 
 .message-bubble {
   padding: 12px 16px;
-  border-radius: 18px;
+  border-radius: 16px;
   position: relative;
   word-wrap: break-word;
-  line-height: 1.4;
+  line-height: 1.6;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .user-message .message-bubble {
-  background: #007aff;
+  background: linear-gradient(135deg, var(--theme-color) 0%, var(--theme2-color) 100%);
   color: white;
-  border-bottom-right-radius: 6px;
+  border-bottom-right-radius: 4px;
 }
 
 .bot-message .message-bubble {
   background: white;
-  color: #1c1c1e;
-  border: 1px solid #e5e5ea;
-  border-bottom-left-radius: 6px;
+  color: #374151;
+  border-bottom-left-radius: 4px;
 }
 
 .message-text {
-  font-size: 16px;
   margin: 0;
 }
 
 .message-meta {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 4px;
+  gap: 6px;
   margin-top: 4px;
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.user-message .message-meta {
+  justify-content: flex-end;
 }
 
 .bot-message .message-meta {
   justify-content: flex-start;
 }
 
-.message-time {
-  font-size: 11px;
-  color: #8e8e93;
-}
-
 .message-status {
-  font-size: 12px;
-}
-
-.message-status.sending {
-  color: #8e8e93;
-}
-
-.message-status.sent {
-  color: #8e8e93;
+  display: flex;
+  align-items: center;
 }
 
 .message-status.read {
-  color: #007aff;
+  color: var(--theme-color);
 }
 
-/* 打字指示器 */
+/* Typing Indicator */
 .typing-message {
   opacity: 0.8;
 }
 
 .typing-bubble {
+  padding: 16px 20px !important;
   background: white !important;
-  border: 1px solid #e5e5ea !important;
-  padding: 16px !important;
+  border: none !important;
 }
 
 .typing-indicator {
@@ -1815,44 +1933,44 @@ init()
 }
 
 .typing-indicator span {
-  width: 8px;
-  height: 8px;
-  background: #8e8e93;
+  width: 6px;
+  height: 6px;
+  background: #9ca3af;
   border-radius: 50%;
   animation: typing 1.4s infinite ease-in-out;
 }
 
-.typing-indicator span:nth-child(1) {
-  animation-delay: -0.32s;
-}
-
-.typing-indicator span:nth-child(2) {
-  animation-delay: -0.16s;
-}
+.typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+.typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
 
 @keyframes typing {
-  0%, 80%, 100% {
-    transform: scale(0.8);
-    opacity: 0.5;
-  }
-  40% {
-    transform: scale(1.2);
-    opacity: 1;
-  }
+  0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+  40% { transform: scale(1.2); opacity: 1; }
 }
 
-/* 输入区域 */
+/* Input Area */
 .chat-input {
-  border-top: 1px solid #e5e5ea;
+  padding: 16px 20px;
   background: white;
-  padding: 16px;
-  border-radius: 0 0 12px 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.02);
 }
 
 .input-area {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 12px;
+  background: #f3f4f6;
+  padding: 8px;
+  border-radius: 24px;
+  border: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.input-area:focus-within {
+  background: white;
+  border-color: var(--theme-color);
+  box-shadow: 0 0 0 4px rgba(234, 88, 12, 0.1);
 }
 
 .input-wrapper {
@@ -1869,122 +1987,67 @@ init()
 .custom-textarea {
   width: 100%;
   min-height: 40px;
-  max-height: 120px;
-  padding: 10px 16px;
-  border: 1px solid #e5e5ea;
-  border-radius: 20px;
-  font-size: 16px;
-  line-height: 1.4;
+  max-height: 100px;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  font-size: 14px;
   resize: none;
-  background: #f8f9fa;
   outline: none;
-  overflow-y: auto;
+  color: #374151;
+  line-height: 1.5;
   font-family: inherit;
-  transition: border-color 0.2s;
-  /* 隐藏默认滚动条 */
-  scrollbar-width: none;
-  -ms-overflow-style: none;
 }
 
 .custom-textarea::-webkit-scrollbar {
   display: none;
 }
 
-.custom-textarea:focus {
-  border-color: #007aff;
-  background: white;
-}
-
-.custom-textarea:disabled {
-  background: #f5f5f5;
-  color: #999;
-  cursor: not-allowed;
-}
-
-/* 外部滚动条 */
-.external-scrollbar {
-  width: 6px;
-  margin-left: 4px;
-  background: #f0f0f0;
-  border-radius: 3px;
-  position: relative;
-  cursor: pointer;
-  display: none;
-  min-height: 40px;
-  max-height: 120px;
-}
-
-.scrollbar-thumb {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background: #c0c0c0;
-  border-radius: 3px;
-  cursor: grab;
-  transition: background-color 0.2s;
-}
-
-.scrollbar-thumb:hover {
-  background: #999;
-}
-
-.scrollbar-thumb:active {
-  cursor: grabbing;
-  background: #666;
-}
-
-.send-btn {
-  min-width: 60px;
-  height: 40px;
-  border-radius: 20px;
-  padding: 0 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #e5e5ea;
+.send-btn.el-button {
+  height: 36px;
+  border-radius: 18px;
+  padding: 0 20px;
   border: none;
-  color: #8e8e93;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.2s;
-  flex-shrink: 0;
+  background: #e5e7eb;
+  color: #9ca3af;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  min-width: auto;
 }
 
-.send-btn:hover {
-  background: #d1d1d6;
-}
-
-.send-btn.has-content {
-  background: #007aff;
+.send-btn.el-button.has-content {
+  background: linear-gradient(135deg, var(--theme-color) 0%, var(--theme-color) 100%);
   color: white;
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3);
 }
 
-.send-btn.has-content:hover {
-  background: #0056cc;
+.send-btn.el-button:hover {
+  transform: translateY(-1px);
 }
 
-.send-btn:disabled {
-  background: #e5e5ea;
-  color: #8e8e93;
+.send-btn.el-button:disabled {
+  background: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
 }
 
-/* 滚动条样式 */
+/* Scrollbar */
 .chat-messages::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
 }
 
 .chat-messages::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.chat-messages::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,0.2);
-  border-radius: 3px;
-}
-
 .chat-messages::-webkit-scrollbar-thumb:hover {
-  background: rgba(0,0,0,0.3);
+  background: rgba(0,0,0,0.2);
 }
 
 </style>

@@ -1,4 +1,4 @@
-﻿import toolUtil from '@/utils/toolUtil.js'
+import toolUtil from '@/utils/toolUtil.js'
 import config from '@/utils/config.js'
 import http from '@/utils/http.js'
 import default_avatar from "@/assets/avatar.png"
@@ -15,14 +15,14 @@ export default {
         },
         avatar(state){
             let key;
-            if(toolUtil.storageGet('frontSessionTable') == 'yonghu'){
-                key = 'touxiang'
+            if(toolUtil.storageGet('frontSessionTable') == 'user'){
+                key = 'avatar'
             }
-            if(toolUtil.storageGet('frontSessionTable') == 'users'){
-                key = 'tupian'
+            if(toolUtil.storageGet('frontSessionTable') == 'admin'){
+                key = 'avatar'
             }
-            if(toolUtil.storageGet('frontSessionTable') == 'Yuangong'){
-                key = 'touxiang'
+            if(toolUtil.storageGet('frontSessionTable') == 'staff'){
+                key = 'avatar'
             }
             let avatar = state.session[key]
             return avatar?config.get().url+avatar:default_avatar

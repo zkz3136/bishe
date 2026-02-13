@@ -60,7 +60,8 @@
 	const route = useRoute()
 	const router = useRouter()
 	//基础信息
-	const tableName = 'systemnotice'
+	const tableName = 'systemNotice'
+	const apiTableName = 'system_notice'
 	const formName = '系统公告'
 	//基础信息
 	const breadList = ref([{
@@ -92,9 +93,17 @@
 	const title = ref('')
 	const detail = ref({})
     const activeName = ref('first')
-	const getDetail = () => {
+	const getRouteId = () => {
+		const v = route.query.id
+		const id = Array.isArray(v) ? v[0] : v
+		if (id === undefined || id === null) return ''
+		const s = String(id)
+		if (!s || s === 'undefined' || s === 'null') return ''
+		return s
+	}
+	const getDetail = (id) => {
 		context?.$http({
-			url: `${tableName}/detail/${route.query.id}`,
+			url: `${apiTableName}/detail/${id}`,
 			method: 'get'
 		}).then(res => {
 			detail.value = res.data.data
@@ -135,10 +144,17 @@
 	// 判断是否从个人中心跳转
 	const centerType = ref(false)
 	const init = () => {
+		const id = getRouteId()
+		if (!id) {
+			context?.$toolUtil.message('参数错误', 'error', () => {
+				backClick()
+			})
+			return
+		}
 		if(route.query.centerType){
 			centerType.value = true
 		}
-		getDetail()
+		getDetail(id)
 	}
 	//修改
 	const editClick = () => {
@@ -152,7 +168,7 @@
 			type: 'warning',
 		}).then(()=>{
 			context?.$http({
-				url: `${tableName}/delete`,
+				url: `${apiTableName}/delete`,
 				method: 'post',
 				data: [detail.value.id]
 			}).then(res=>{

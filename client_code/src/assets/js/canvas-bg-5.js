@@ -58,7 +58,6 @@ export default function canvasBg() {
             this.radius = Math.random() * 2;
 
             this.color = new Color();
-            // console.log(this);
         }
 
         Dot.prototype = {

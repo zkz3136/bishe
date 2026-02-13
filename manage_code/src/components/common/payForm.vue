@@ -3,35 +3,35 @@
 		<el-dialog v-model="payVisible" :title="'支付'" width="40%" destroy-on-close @close="close">
 			<div class="payList">
 				<div class="payView wx_pay">
-					<el-radio v-model="payType" label="1"><img src="@/assets/img/pay/weixin.png" alt>微信支付</el-radio>
+					<el-radio v-model="payType" value="1"><img src="@/assets/img/pay/weixin.png" alt>微信支付</el-radio>
 				</div>
 				<div class="payView zfb_pay">
-					<el-radio v-model="payType" label="2"><img src="@/assets/img/pay/zhifubao.png" alt>支付宝支付</el-radio>
+					<el-radio v-model="payType" value="2"><img src="@/assets/img/pay/zhifubao.png" alt>支付宝支付</el-radio>
 				</div>
 				<div class="payView yh_pay">
-					<el-radio v-model="payType" label="3"><img src="@/assets/img/pay/yinhangka.png" alt>银行卡支付<el-icon :class="payType==3?'active':''"><ArrowDown /></el-icon></el-radio>
+					<el-radio v-model="payType" value="3"><img src="@/assets/img/pay/yinhangka.png" alt>银行卡支付<el-icon :class="payType==3?'active':''"><ArrowDown /></el-icon></el-radio>
 				</div>
 				<el-collapse-transition>
 					<div class="yinhang_view" v-show="payType==3">
 						<div class="payView">
-							<el-radio v-model="payType1" label="1"><img src="@/assets/img/pay/zhonghang.png" alt>中国银行</el-radio>
+							<el-radio v-model="payType1" value="1"><img src="@/assets/img/pay/zhonghang.png" alt>中国银行</el-radio>
 						</div>
 						<div class="payView">
-							<el-radio v-model="payType1" label="2"><img src="@/assets/img/pay/nongye.png" alt>中国农业银行</el-radio>
+							<el-radio v-model="payType1" value="2"><img src="@/assets/img/pay/nongye.png" alt>中国农业银行</el-radio>
 						</div>
 						<div class="payView">
-							<el-radio v-model="payType1" label="3"><img src="@/assets/img/pay/jianshe.png" alt>中国建设银行</el-radio>
+							<el-radio v-model="payType1" value="3"><img src="@/assets/img/pay/jianshe.png" alt>中国建设银行</el-radio>
 						</div>
 						<div class="payView">
-							<el-radio v-model="payType1" label="4"><img src="@/assets/img/pay/gonghang.png" alt>中国工商银行</el-radio>
+							<el-radio v-model="payType1" value="4"><img src="@/assets/img/pay/gonghang.png" alt>中国工商银行</el-radio>
 						</div>
 						<div class="payView">
-							<el-radio v-model="payType1" label="5"><img src="@/assets/img/pay/jiaotong.png" alt>交通银行</el-radio>
+							<el-radio v-model="payType1" value="5"><img src="@/assets/img/pay/jiaotong.png" alt>交通银行</el-radio>
 						</div>
 					</div>
 				</el-collapse-transition>
 				<div class="payView ysf_pay">
-					<el-radio v-model="payType" label="4"><img src="@/assets/img/pay/yunshanfu.png" alt>云闪付</el-radio>
+					<el-radio v-model="payType" value="4"><img src="@/assets/img/pay/yunshanfu.png" alt>云闪付</el-radio>
 				</div>
 			</div>
 			<template #footer>

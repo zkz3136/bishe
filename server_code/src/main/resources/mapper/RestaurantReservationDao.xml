@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cl.dao.RestaurantReservationDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.cl.entity.RestaurantReservationEntity" id="cantingyuyueMap">
+        <result property="seat_name" column="seat_name"/>
+        <result property="cover_image" column="cover_image"/>
+        <result property="table_location" column="table_location"/>
+        <result property="capacity" column="capacity"/>
+        <result property="storeupNumber" column="storeup_number"/>
+        <result property="account" column="account"/>
+        <result property="name" column="name"/>
+        <result property="reservation_time" column="reservation_time"/>
+        <result property="deposit" column="deposit"/>
+        <result property="payment_status" column="payment_status"/>
+        <result property="verification_status" column="verification_status"/>
+    </resultMap>
+
+    <select id="selectListView"
+		resultType="com.cl.entity.view.RestaurantReservationView" >
+
+		SELECT  restaurantReservation.* FROM restaurant_reservation  restaurantReservation 	        
+        <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	
+	<select id="selectView"
+		resultType="com.cl.entity.view.RestaurantReservationView" >
+		SELECT * FROM restaurant_reservation  restaurantReservation <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+
+
+
+</mapper>

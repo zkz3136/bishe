@@ -18,11 +18,36 @@ body .el-pagination{
 .el-select .el-input__wrapper.is-focus{
   box-shadow: none!important;
 }
+.el-select .el-input__wrapper{
+  box-shadow: none!important;
+  outline: none!important;
+}
 .el-select:hover .el-input__wrapper {
   box-shadow: none!important;
 }
 .el-input__wrapper.is-focus {
-  box-shadow: none
+  box-shadow: none!important;
+  outline: none!important;
+}
+.el-input.is-focus .el-input__wrapper {
+  box-shadow: none!important;
+  outline: none!important;
+}
+.el-input__wrapper:focus-within{
+  box-shadow: none!important;
+  outline: none!important;
+}
+.el-select__wrapper{
+  box-shadow: none!important;
+  outline: none!important;
+}
+.el-select__wrapper.is-focused{
+  box-shadow: none!important;
+  outline: none!important;
+}
+.el-select__wrapper:focus-within{
+  box-shadow: none!important;
+  outline: none!important;
 }
 textarea {
   box-shadow: none!important;
@@ -51,7 +76,7 @@ body .el-form-item.is-error .el-input__wrapper {
   border: 1px solid #dcdfe6;
 }
 .el-select,.el-input {
-  border: 1px solid #eee;
+  border: none;
 }
 
 .el-select .el-input {
@@ -110,14 +135,14 @@ body{
     border-color: rgba(220, 220, 220,1) !important;
 }
 .center_view .el-tabs__header .el-tabs__nav .el-tabs__item:hover {
-    background:rgba(211, 98, 61,1) !important;
+    background:rgba(234, 88, 12,1) !important;
     color: #fff !important;
-    border-color:rgba(211, 98, 61,1) !important;
+    border-color:rgba(234, 88, 12,1) !important;
 }
 .center_view .el-tabs__header .el-tabs__nav .el-tabs__item.is-active {
-    background:rgba(211, 98, 61,1) !important;
+    background:rgba(234, 88, 12,1) !important;
     color: #fff !important;
-    border-color: rgba(211, 98, 61,1) !important;
+    border-color: rgba(234, 88, 12,1) !important;
 }
 
 /* form*/
@@ -205,7 +230,7 @@ body{
     border: 0px solid #339933;
     min-width: 80px;
     margin: 0px 0px 0px 10px;
-    background: #d3623d;
+    background: #ea580c;
     color: #ffffff;
 }
 .center_view .list_search_view .search_form .search_btn_view .search_btn:hover {
@@ -608,9 +633,12 @@ body{
 /* form盒子 */
 .edit_form {
     margin: 20px auto;
-    padding: 0 40px 0 0;
+    padding: 50px 0 50px 0;
     border-radius: 4px;
     border: 0px solid rgb(221, 221, 221);
+}
+.edit_form .el-dialog__header{
+    text-align: center;
 }
 .edit_form .el-dialog__body{
     padding: 0 20px;
@@ -646,7 +674,7 @@ body{
     box-sizing: border-box;
     border-radius: 4px;
     border: 1px solid rgb(99, 99, 99);
-    box-shadow: 0px 4px 0px #d3623d;
+    box-shadow: 0px 4px 0px #ea580c;
 }
 
 /* inputGroup 盒子 */
@@ -660,7 +688,7 @@ body{
     background: rgb(255, 255, 255);
     border-radius: 4px;
     border: 1px solid rgb(99, 99, 99);
-    box-shadow: 0px 4px 0px #d3623d;
+    box-shadow: 0px 4px 0px #ea580c;
 }
 /* 前缀 */
 .edit_form  .el-form-item .el-form-item__content .el-input-group .el-input-group__prepend{
@@ -713,7 +741,7 @@ body{
     background: rgb(255, 255, 255);
     border-radius: 4px;
     border: 1px solid rgb(99, 99, 99);
-    box-shadow: 0px 4px 0px #d3623d;
+    box-shadow: 0px 4px 0px #ea580c;
 }
 .edit_form .el-form-item .el-form-item__content .list_sel .el-input__inner{
     width: 100%;
@@ -727,6 +755,10 @@ body{
     background: none !important;
     box-shadow: none !important;
 }
+.edit_form .el-form-item .el-form-item__content .list_sel .el-select__wrapper{
+    background: none !important;
+    box-shadow: none !important;
+}
 
 .edit_form .el-form-item .el-form-item__content .el-date-editor{
     line-height: 36px;
@@ -736,7 +768,7 @@ body{
     background: rgb(255, 255, 255);
     border-radius: 4px;
     border: 1px solid rgb(99, 99, 99);
-    box-shadow: 0px 4px 0px #d3623d;
+    box-shadow: 0px 4px 0px #ea580c;
 }
 .edit_form .el-form-item .el-form-item__content .el-input__inner{
     background: rgb(255, 255, 255);
@@ -855,7 +887,7 @@ body{
     color: rgb(51, 51, 51);
     border-radius: 4px;
     border: 1px solid rgb(99, 99, 99);
-    box-shadow: 0px 4px 0px #d3623d !important;
+    box-shadow: 0px 4px 0px #ea580c !important;
 }
 /* 图片上传 盒子*/
 .edit_form  .el-form-item .el-form-item__content .img-uploader .el-upload{
@@ -867,7 +899,7 @@ body{
     cursor: pointer;
     border-radius: 4px;
     border: 1px solid rgb(99, 99, 99);
-    box-shadow: 0px 4px 0px #d3623d;
+    box-shadow: 0px 4px 0px #ea580c;
 }
 /* 图标*/
 .edit_form  .el-form-item .el-form-item__content .el-upload .el-icon-plus{
@@ -951,7 +983,7 @@ body{
     color: #fff;
     border-radius: 4px;
     border: 0px;
-    background: #d3623d;
+    background: #ea580c;
     cursor: pointer;
     min-width: 100px;
 }
@@ -1078,11 +1110,11 @@ body{
     border: 0px solid rgb(238, 238, 238);
 }
 .el-pagination.is-background .el-pager li:not(.disabled):hover {
-    background: #d3623d !important;
+    background: #ea580c !important;
     color: #fff !important;
 }
 .el-pagination.is-background .el-pager li:not(.disabled).is-active {
-    background: #d3623d !important;
+    background: #ea580c !important;
     color: #fff !important;
 }
 /* sizes 盒子*/
@@ -1141,4 +1173,21 @@ body{
 .el-pagination .el-pagination__jump .el-input .el-input__inner{
     height: 28px;
     line-height: 28px;
+}
+
+/* Fix for double borders in form inputs and selects */
+.edit_form .el-form-item .el-form-item__content .list_sel .el-input,
+.edit_form .el-form-item .el-form-item__content .list_sel .el-input__wrapper {
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.edit_form .el-form-item .el-form-item__content .list_inp .el-input__wrapper {
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.edit_form .el-form-item .el-form-item__content .el-date-editor .el-input__wrapper {
+    border: none !important;
+    box-shadow: none !important;
 }

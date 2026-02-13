@@ -52,6 +52,8 @@ const toolUtil = {
 		localStorage.removeItem('frontRole');
 		localStorage.removeItem('frontSessionTable');
 		localStorage.removeItem('frontName');
+		localStorage.removeItem('user_id');
+		localStorage.removeItem('headportrait');
 		localStorage.removeItem('toPath');
 	},
 	/**

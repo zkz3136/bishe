@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cl.dao.RestaurantInfoDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.cl.entity.RestaurantInfoEntity" id="cantingxinxiMap">
+        <result property="seatName" column="seat_name"/>
+        <result property="coverImage" column="cover_image"/>
+        <result property="tableLocation" column="table_location"/>
+        <result property="capacity" column="capacity"/>
+        <result property="tableStatus" column="table_status"/>
+        <result property="storeupNumber" column="storeup_number"/>
+    </resultMap>
+
+    <select id="selectListView"
+		resultType="com.cl.entity.view.RestaurantInfoView" >
+
+		SELECT  restaurantInfo.* FROM restaurant_info  restaurantInfo 	        
+        <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	
+	<select id="selectView"
+		resultType="com.cl.entity.view.RestaurantInfoView" >
+		SELECT * FROM restaurant_info  restaurantInfo <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+
+
+
+</mapper>

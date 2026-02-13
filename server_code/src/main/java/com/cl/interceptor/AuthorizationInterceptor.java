@@ -1,13 +1,11 @@
 package com.cl.interceptor;
 
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
 import com.alibaba.fastjson.JSONObject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import io.jsonwebtoken.Claims;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,9 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.http.HttpStatus;
 
 import com.cl.annotation.IgnoreAuth;
-import com.cl.entity.EIException;
-import com.cl.entity.TokenEntity;
-import com.cl.service.TokenService;
+import com.cl.utils.JwtUtils;
 import com.cl.utils.R;
 
 /**
@@ -31,7 +27,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
     public static final String LOGIN_TOKEN_KEY = "Token";
 
     @Autowired
-    private TokenService tokenService;
+    private JwtUtils jwtUtils;
     
 	@Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -64,18 +60,31 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
         if(annotation!=null) {
         	return true;
         }
-        
-        TokenEntity tokenEntity = null;
-        if(StringUtils.isNotBlank(token)) {
-        	tokenEntity = tokenService.getTokenEntity(token);
-        }
-        
-        if(tokenEntity != null) {
-        	request.getSession().setAttribute("userId", tokenEntity.getUserid());
-        	request.getSession().setAttribute("role", tokenEntity.getRole());
-        	request.getSession().setAttribute("tableName", tokenEntity.getTablename());
-        	request.getSession().setAttribute("username", tokenEntity.getUsername());
-        	return true;
+
+        Claims claims = jwtUtils.parseClaims(token);
+        if (claims != null) {
+            Long userId = toLong(claims.get("userId"));
+            String username = toStringOrNull(claims.get("username"));
+            String role = toStringOrNull(claims.get("role"));
+            String tableName = toStringOrNull(claims.get("tableName"));
+
+            if (userId != null && StringUtils.isNotBlank(role)) {
+                String normalizedTableName;
+                if ("管理员".equals(role)) {
+                    normalizedTableName = "admin";
+                } else if ("用户".equals(role)) {
+                    normalizedTableName = "user";
+                } else if ("员工".equals(role)) {
+                    normalizedTableName = "staff";
+                } else {
+                    normalizedTableName = tableName;
+                }
+                request.getSession().setAttribute("userId", userId);
+                request.getSession().setAttribute("role", role);
+                request.getSession().setAttribute("tableName", normalizedTableName);
+                request.getSession().setAttribute("username", username);
+                return true;
+            }
         }
         
 		PrintWriter writer = null;
@@ -91,5 +100,27 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
 		}
 //				throw new EIException("登录状态失效，请重新登录！", 401);
 		return false;
+    }
+
+    private static Long toLong(Object value) {
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof Number) {
+            return ((Number) value).longValue();
+        }
+        try {
+            return Long.parseLong(String.valueOf(value));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static String toStringOrNull(Object value) {
+        if (value == null) {
+            return null;
+        }
+        String str = String.valueOf(value);
+        return StringUtils.isBlank(str) ? null : str;
     }
 }

@@ -43,7 +43,7 @@
 		</el-button>
 		<el-dialog v-model="noticeDialogVisible" title="系统公告">
 			<div>
-				<div v-html="store.state.system.notice.content"></div>
+				<div v-html="notice.content"></div>
 			</div>
 		</el-dialog>
 	</div>
@@ -57,11 +57,11 @@
 	} from 'element-plus'
 	import {
 		toRefs,
-		defineEmits,
 		getCurrentInstance,
 		ref,
 		onBeforeUnmount,
 		computed,
+		watch,
 	} from 'vue';
 
 	import {
@@ -89,6 +89,12 @@
 	}
 	//获取通知公告
 	const noticeDialogVisible = ref(false)
+	const notice = computed(()=>store.state.system.notice)
+	watch(noticeDialogVisible, (newVal) => {
+		if (newVal) {
+			store.dispatch('system/getSystemNotice')
+		}
+	})
 	store.dispatch('system/getSystemNotice')
 	const toggleClick = () => {
 		emit('collapseChange')
@@ -107,6 +113,7 @@
 	// 跳转前台
 	const frontClick = () => {
         window.open(`${context.$config.url}client/index.html#/index/home`,'_blank')
+        // window.open(`http://localhost:8082/#/index/home`,'_blank')
 	}
 	// 个人中心
 	const centerClick = () => {
@@ -173,7 +180,7 @@
 <style>
 /*总盒子*/
 .top_view{ 
-    background: #d3623d;
+    background: #ea580c;
     height: 80px;
     width: 100% !important;
     margin: 0 auto 20px;

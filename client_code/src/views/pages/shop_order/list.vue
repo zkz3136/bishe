@@ -9,7 +9,7 @@
             </div>
             </div>
         <div class="back_view" style="width: 100%; margin-top: 10px; text-align: right;">
-            <el-button class="back_btn" @click="goToHome" type="primary">返回首页</el-button>
+            <el-button class="back_btn" @click="goToHome" type="primary">返回</el-button>
         </div>
 		<el-tabs v-model="orderStatus" type="card" class="demo-tabs" @tab-change="statusChange" style="width: 100%;">
 			<el-tab-pane label="全部" :name="''"></el-tab-pane>
@@ -27,7 +27,7 @@
 			</el-table-column>
 			<el-table-column label="订单编号" :resizable='true' align="left" header-align="left">
 				<template #default="scope">
-					{{scope.row.orderid}}
+					{{scope.row.order_id}}
 				</template>
 			</el-table-column>
 			<el-table-column label="商品" width="200px" :resizable='true' align="left" header-align="left">
@@ -43,13 +43,13 @@
 							</el-image>
 						</div>
 						<div v-else>无图片</div>
-						<span style="margin-left: 10px;">{{scope.row.goodname}}</span>
+						<span style="margin-left: 10px;">{{scope.row.good_name}}</span>
 					</div>
 				</template>
 			</el-table-column>
 			<el-table-column label="购买数量" :resizable='true' align="left" header-align="left">
 				<template #default="scope">
-					{{scope.row.buynumber}}
+					{{scope.row.buy_number}}
 				</template>
 			</el-table-column>
 			<el-table-column label="价格" :resizable='true' align="left" header-align="left">
@@ -58,10 +58,22 @@
 						v-if="scope.row.type==2">积分</span>
 				</template>
 			</el-table-column>
+			<el-table-column label="折扣价" :resizable='true' align="left" header-align="left">
+				<template #default="scope">
+					<span v-if="scope.row.type!=2" style="font-size: 12px;">￥</span>{{ scope.row.discount_price ?? scope.row.discountprice ?? scope.row.discountPrice ?? '-' }}
+					<span v-if="scope.row.type==2">积分</span>
+				</template>
+			</el-table-column>
 			<el-table-column label="总价" :resizable='true' align="left" header-align="left">
 				<template #default="scope">
 					<span v-if="scope.row.type!=2" style="font-size: 12px;">￥</span>{{scope.row.total}} <span
 						v-if="scope.row.type==2">积分</span>
+				</template>
+			</el-table-column>
+			<el-table-column label="折扣总价" :resizable='true' align="left" header-align="left">
+				<template #default="scope">
+					<span v-if="scope.row.type!=2" style="font-size: 12px;">￥</span>{{ scope.row.discount_total ?? scope.row.discounttotal ?? scope.row.discountTotal ?? '-' }}
+					<span v-if="scope.row.type==2">积分</span>
 				</template>
 			</el-table-column>
 			<el-table-column label="备注" :resizable='true' align="left" header-align="left">
@@ -71,7 +83,7 @@
 			</el-table-column>
 			<el-table-column label="餐桌名称" :resizable='true' align="left" header-align="left">
 				<template #default="scope">
-					{{scope.row.canzhuomingcheng || '未选择'}}
+					{{scope.row.seat_name || '未选择'}}
 				</template>
 			</el-table-column>
 			<el-table-column label="下单时间" :resizable='true' align="left" header-align="left">
@@ -90,12 +102,7 @@
 					<el-button class="refundPrice_btn" v-if="scope.row.status=='已支付'" type="danger" @click="refundPriceClick(scope.row)">
 						退款
 					</el-button>
-					<el-button class="refundGood_btn" v-if="scope.row.status=='已完成'" type="danger" @click="refundGoodClick(scope.row)">
-						退货
-					</el-button>
-					<el-button class="logistics_btn" v-if="scope.row.logistics" type="primary" @click="logisticsClick(scope.row)">
-						物流
-					</el-button>
+
 					<el-button class="confirm_btn" v-if="scope.row.status=='已发货'" type="success" @click="confirmGoodClick(scope.row)">
 						确认收货
 					</el-button>
@@ -117,8 +124,21 @@
 			:style='{}'
 			@size-change="sizeChange"
 			@current-change="currentChange" />
-		<el-dialog v-model="logisticsVisible" title="物流信息" width="70%">
-			<div v-html="logisticsText"></div>
+		<el-dialog v-model="commentVisible" title="评论" width="50%">
+			<el-form :model="commentForm" label-width="80px">
+				<el-form-item label="评分">
+					<el-rate v-model="commentForm.score" />
+				</el-form-item>
+				<el-form-item label="评论内容">
+					<el-input v-model="commentForm.content" type="textarea" :rows="5" placeholder="请输入评论内容"></el-input>
+				</el-form-item>
+			</el-form>
+			<template #footer>
+				<span class="dialog-footer">
+					<el-button @click="commentVisible = false">取消</el-button>
+					<el-button type="primary" @click="commentSave">提交</el-button>
+				</span>
+			</template>
 		</el-dialog>
 	</div>
 </template>
@@ -149,7 +169,7 @@
 	const listQuery = ref({
 		page: 1,
 		limit: 20,
-		userid: context?.$toolUtil.storageGet('userid'),
+		user_id: context?.$toolUtil.storageGet('user_id'),
 		sort:'id',
 		order:'desc'
 	})
@@ -171,7 +191,11 @@
     }
     //返回首页
     const goToHome = () => {
-        router.push('/index/home')
+        if(centerType.value){
+            router.push(`/index/${context?.$toolUtil.storageGet('frontSessionTable')}Center`)
+        }else{
+            router.push('/index/home')
+        }
     }
     //返回个人中心
     const backClick = () => {
@@ -195,7 +219,16 @@
 			params: params
 		}).then(res => {
 			listLoading.value = false
-			list.value = res.data.data.list
+			list.value = (res.data.data.list || []).map((raw) => {
+				const item = raw || {}
+				item.source_table = item.source_table ?? item.tablename ?? ''
+				item.good_name = item.good_name ?? item.goodname ?? ''
+				item.good_id = item.good_id ?? item.goodid
+				item.buy_number = Number(item.buy_number ?? item.buynumber ?? 1)
+				item.discount_price = item.discount_price ?? item.discountprice
+				item.seat_name = item.seat_name ?? item.seatName
+				return item
+			})
 			total.value = Number(res.data.data.total)
 		})
 	}
@@ -224,27 +257,26 @@
 			cancelButtonText: '否',
 			type: 'warning',
 		}).then(() => {
+			const sourceTable = row.source_table ?? row.tablename ?? ''
 			context?.$http({
-				url: `${row.tablename}/info/${row.goodid}`,
+				url: `${sourceTable}/info/${row.good_id}`,
 				method: 'get'
 			}).then(res => {
 				let data = res.data.data
-				if (userinfo.value.money < row.total) {
+				const payAmount = parseFloat(row.discount_total ?? row.discounttotal ?? row.discountTotal ?? row.total ?? 0)
+				if (userinfo.value.balance < payAmount) {
 					context?.$toolUtil.message('余额不足', 'error')
 					return
 				}
-				//如果商品存在积分，则累加用户积分
-				if (data.jf) {
-					userinfo.value.jf = parseInt(userinfo.value.jf) + parseInt(row.total)
-				}
 				//减去用户余额
-				userinfo.value.money = (parseFloat(userinfo.value.money) - parseFloat(row.total)).toFixed(2)
+				const currentBalance = parseFloat(userinfo.value.balance ?? 0)
+				userinfo.value.balance = Number((currentBalance - payAmount).toFixed(2))
 				//如果商品存在库存，则减去商品库存
-				if (data.alllimittimes) {
-					data.alllimittimes = parseInt(data.alllimittimes) - parseInt(row.buynumber)
+				if (data.stock) {
+					data.stock = parseInt(data.stock) - parseInt(row.buy_number)
 				}
                 //更新商品信息
-                context?.$http.post(`${row.tablename}/update`,data)
+                context?.$http.post(`${sourceTable}/update`,data)
 
 				//更新用户信息
 				context?.$http({
@@ -290,116 +322,32 @@
 	}
     //返回商品对象，如果商品存在库存,则返还库存
     const returnLimit = async (order)=>{
-        let res = await context.$http.get(`${order.tablename}/info/${order.goodid}`)
+        const sourceTable = order.source_table ?? order.tablename ?? ''
+        let res = await context.$http.get(`${sourceTable}/info/${order.good_id}`)
         let data = res.data.data
-        if(data.alllimittimes){ //如果商品存在库存，则加回去
-            data.alllimittimes = parseInt(data.alllimittimes) + parseInt(order.buynumber)
-            context.$http.post(`${order.tablename}/update`,data)
+        if(data.stock){ //如果商品存在库存，则加回去
+            data.stock = parseInt(data.stock) + parseInt(order.buy_number)
+            context.$http.post(`${sourceTable}/update`,data)
         }
         return data
     }
 	// 退款
 	const refundPriceClick = (row) => {
-		ElMessageBox.confirm(`是否对该订单进行退款操作？`, '提示', {
+		ElMessageBox.confirm(`是否对该订单申请退款？`, '提示', {
 			confirmButtonText: '是',
 			cancelButtonText: '否',
 			type: 'warning',
 		}).then(async () => {
-            let data = await returnLimit(row)
-            row.status = '已退款'
-            if (row.type == 2) {
-                // 如果是积分兑换，则把减去的积分加回去
-                userinfo.value.jf = parseInt(userinfo.value.jf) + parseInt(row.total)
-            } else {
-                // 如果是购物或者团购模式，且商品存在积分，则把加上的积分减去
-                if (data.jf) {
-                    userinfo.value.jf = parseInt(userinfo.value.jf) - parseInt(row.total)
-                }
-                // 把减去的余额加回去
-                userinfo.value.money = (parseFloat(userinfo.value.money) + parseFloat(row.total)).toFixed(2)
-            }
+            row.status = '申请退款'
             // 修改订单状态
-            context.$http.post('orders/update',row)
-            // 更新用户信息
-            context.$http.post(`${context.$toolUtil.storageGet('frontSessionTable')}/update`,userinfo.value).then(res=>{
-                context.$message.success("退款成功")
+            context.$http.post('orders/update',row).then(res=>{
+                context.$message.success("已申请退款，等待审核")
                 getSession()
                 statusChange()
             })
 		}).catch(_ => {})
 	}
-	// 退货
-	const refundGoodClick = (row) => {
-		ElMessageBox.confirm(`是否对该订单进行退货操作？`, '提示', {
-			confirmButtonText: '是',
-			cancelButtonText: '否',
-			type: 'warning',
-		}).then(() => {
-			context?.$http({
-				url: `${row.tablename}/info/${row.goodid}`,
-				method: 'get'
-			}).then(res => {
-				let data = res.data.data
-				// 如果商品存在库存，则加回去
-				if (data.alllimittimes) {
-					data.alllimittimes = parseInt(data.alllimittimes) + parseInt(row.buynumber)
-					// 更新商品库存
-					context?.$http({
-						url: `${row.tablename}/update`,
-						method: 'post',
-						data: data
-					}).then(obj1 => {})
-				}
-				if (row.type == 2) {
-					// 如果是积分兑换，则把减去的积分加回去
-					userinfo.value.jf = parseInt(userinfo.value.jf) + parseInt(row.total)
-					// 更新用户信息
-					context?.$http({
-						url: `${context?.$toolUtil.storageGet('frontSessionTable')}/update`,
-						method: 'post',
-						data: userinfo.value
-					}).then(obj => {
-						row.status = '已退款'
-						// 修改订单状态
-						context?.$http({
-							url: 'orders/update',
-							method: 'post',
-							data: row
-						}).then(res1 => {
-                            context.$message.success('退款成功')
-                            getSession()
-                            statusChange()
-						})
-					})
-				} else {
-					// 如果是购物或者团购模式，且商品存在积分，则把加上的积分减去
-					if (data.jf) {
-						userinfo.value.jf = parseInt(userinfo.value.jf) - parseInt(row.total)
-					}
-					// 把减去的余额加回去
-					userinfo.value.money = (parseFloat(userinfo.value.money) + parseFloat(row.total)).toFixed(2)
-					// 更新用户信息
-					context?.$http({
-						url: `${context?.$toolUtil.storageGet('frontSessionTable')}/update`,
-						method: 'post',
-						data: userinfo.value
-					}).then(obj => {
-						row.status = '已退款'
-						// 修改订单状态
-						context?.$http({
-							url: 'orders/update',
-							method: 'post',
-							data: row
-						}).then(res1 => {
-                            context.$message.success('退货成功')
-                            getSession()
-                            statusChange()
-						})
-					})
-				}
-			})
-		}).catch(_ => {})
-	}
+
 	//确认收货
 	const confirmGoodClick = (row) => {
 		ElMessageBox.confirm(`是否确认收货？`, '提示', {
@@ -421,16 +369,65 @@
 			})
 		}).catch(_ => {})
 	}
-	//物流
-	const logisticsVisible = ref(false)
-	const logisticsText = ref('')
-	const logisticsClick = (row) => {
-		logisticsText.value = row.logistics
-		logisticsVisible.value = true
-	}
-	//去评论
+	//评论
+	const commentVisible = ref(false)
+	const commentForm = ref({
+		content: '',
+		score: 0,
+		ref_id: '',
+		user_id: '',
+		nickname: '',
+		avatar_url: '',
+	})
+    const currentOrder = ref({})
+
 	const toDetailClick = (row) => {
-		router.push(`/index/${row.tablename}Detail?id=${row.goodid}`)
+        currentOrder.value = row
+		commentForm.value = {
+			content: '',
+			score: 0,
+			ref_id: row.good_id,
+			user_id: context?.$toolUtil.storageGet('user_id'),
+			nickname: context?.$toolUtil.storageGet('frontName'),
+			avatar_url: context?.$toolUtil.storageGet('headportrait') ? context?.$toolUtil.storageGet('headportrait') : '',
+		}
+		commentVisible.value = true
+	}
+
+	const commentSave = () => {
+        if(!commentForm.value.content){
+            context?.$toolUtil.message('请输入评论内容','error')
+            return
+        }
+		if(!commentForm.value.score){
+			context?.$toolUtil.message('请选择评分','error')
+			return
+		}
+		let sensitiveWords = "妈的;妈逼;碧莲";
+		let sensitiveWordsArr = [];
+		if(sensitiveWords) {
+		    sensitiveWordsArr = sensitiveWords.split(",");
+		}
+		for(var i=0; i<sensitiveWordsArr.length; i++){
+		    var reg = new RegExp(sensitiveWordsArr[i],"g");
+		    if (commentForm.value.content.indexOf(sensitiveWordsArr[i]) > -1) {
+		        commentForm.value.content = commentForm.value.content.replace(reg,"**");
+		    }
+		}
+		context?.$http({
+			url: `discuss${currentOrder.value.source_table}/add`,
+			method: 'post',
+			data: commentForm.value
+		}).then(res => {
+            context.$http.get(`${currentOrder.value.source_table}/info/${currentOrder.value.good_id}`).then(res=>{
+                let detail = res.data.data
+                detail.discussNumber++
+                context.$http.post(`${currentOrder.value.source_table}/update`,detail)
+            })
+
+			context?.$toolUtil.message('评论成功', 'success')
+			commentVisible.value = false
+		})
 	}
 	const userinfo = ref({})
 	const getSession = () => {
@@ -700,24 +697,6 @@
 							// 退货-悬浮
 							.refundGood_btn:hover {
 								background: rgba(240, 160, 140, .8);
-							}
-							// 物流
-							.logistics_btn {
-								border: 0;
-								cursor: pointer;
-								border-radius: 4px;
-								padding: 0 5px;
-								margin: 0 5px 10px 0;
-								outline: none;
-								color: #fff;
-								background: rgba(80, 180, 220, 1);
-								width: auto;
-								font-size: 14px;
-								height: 32px;
-							}
-							// 物流-悬浮
-							.logistics_btn:hover {
-								background: rgba(80, 180, 220, .8);
 							}
 							// 确认收货
 							.confirm_btn {
