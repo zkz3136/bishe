@@ -31,6 +31,13 @@
 				<div class="btn_view">
 					<el-button class="add_btn" type="primary" v-if="btnAuth(tableName,'新增')" @click="addClick">新增</el-button>
 					<el-button class="del_btn" type="danger" :disabled="selRows.length?false:true" v-if="btnAuth(tableName,'删除')" @click="delClick(null)">删除</el-button>
+					<div class="switch_view" v-if="(context?.$toolUtil.storageGet('role')==='管理员' || context?.$toolUtil.storageGet('role')==='员工')" style="display:inline-flex;align-items:center;margin-left:auto;float:right;">
+						<div class="switch_label" style="margin-right:8px;">工作流启用：</div>
+						<el-switch
+							:loading="cozeLoading"
+							v-model="cozeEnabledSwitch"
+							@change="cozeSwitchChange" />
+					</div>
 				</div>
 			</div>
 
@@ -138,6 +145,9 @@
 		order: 'desc'
 	})
 	const searchQuery = ref({})
+	const cozeEnabledSwitch = ref(false)
+	const cozeEnabledId = ref(null)
+	const cozeLoading = ref(false)
 
 	const listChange = (row) => {
 		nextTick(() => {
@@ -173,6 +183,58 @@
 			total.value = Number(page.total || 0)
 		}).finally(() => {
 			listLoading.value = false
+		})
+	}
+
+	const loadCozeEnabled = () => {
+		cozeLoading.value = true
+		context.$http({
+			url: 'config/page',
+			method: 'get',
+			params: {
+				page: 1,
+				limit: 1,
+				name: 'coze.enabled'
+			}
+		}).then(res => {
+			const page = res?.data?.data || {}
+			const arr = page.list || []
+			if (Array.isArray(arr) && arr.length) {
+				const item = arr[0]
+				cozeEnabledId.value = item.id
+				const v = String(item.value||'').trim().toLowerCase()
+				cozeEnabledSwitch.value = (v==='true'||v==='1'||v==='yes'||v==='on')
+			} else {
+				cozeEnabledSwitch.value = false
+				cozeEnabledId.value = null
+			}
+		}).finally(() => {
+			cozeLoading.value = false
+		})
+	}
+
+	const cozeSwitchChange = (val) => {
+		const role = String(context?.$toolUtil.storageGet('role')||'')
+		if (!(role==='管理员' || role==='员工')) return
+		cozeLoading.value = true
+		const payload = {
+			id: cozeEnabledId.value,
+			name: 'coze.enabled',
+			value: val ? 'true' : 'false'
+		}
+		const url = cozeEnabledId.value ? 'config/update' : 'config/save'
+		context.$http({
+			url,
+			method: 'post',
+			data: payload
+		}).then(() => {
+			if (!cozeEnabledId.value) {
+			 // 记录新ID，避免后续更新失败
+				loadCozeEnabled()
+			}
+			context?.$toolUtil.message('已更新工作流开关','success')
+		}).finally(()=> {
+			cozeLoading.value = false
 		})
 	}
 
@@ -297,4 +359,7 @@
 	}
 
 	getList()
+	if (context?.$toolUtil.storageGet('role')==='管理员' || context?.$toolUtil.storageGet('role')==='员工') {
+		loadCozeEnabled()
+	}
 </script>

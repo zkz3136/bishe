@@ -15,10 +15,10 @@ import dish_info from '@/views/dish_info/list'
 import restaurant_event from '@/views/restaurant_event/list'
 import orders from '@/views/orders/list'
 import config from '@/views/config/list'
-import menu_manage from '@/views/menu_manage/list'
 import adminCenter from '@/views/admin/center'
 import support_ticket from '@/views/support_ticket/list'
 import support_faq from '@/views/support_faq/list'
+import menu from '@/views/menu/list'
 
 export const routes = [{
 	path: '/login',
@@ -48,8 +48,8 @@ export const routes = [{
 		}
 
 		,{
-			path: '/discuss_dish_info',
-			name: '美食信息评论-评论',
+			path: '/dish_review',
+			name: '美食信息评价',
 			component: discuss_dish_info
 		}
 	,{
@@ -109,11 +109,6 @@ export const routes = [{
 			component: orders
 		}
 		,{
-			path: '/menu_manage',
-			name: '菜单管理',
-			component: menu_manage
-		}
-		,{
 			path: '/config',
 			name: '轮播图',
 			component: config
@@ -127,6 +122,11 @@ export const routes = [{
 			path: '/support_faq',
 			name: 'FAQ知识库',
 			component: support_faq
+		}
+		,{
+			path: '/menu',
+			name: '菜单管理',
+			component: menu
 		}
 	]
 },

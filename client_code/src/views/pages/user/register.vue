@@ -119,7 +119,7 @@
 	// 多级联动参数
 	//注册按钮
 	const handleRegister = () => {
-		let url = tableName.value +"/register";
+		let url = `/${tableName.value}/register`;
 		if((!registerForm.value.login_name)){
 			context?.$toolUtil.message(`账号不能为空`,'error')
 			return false
@@ -135,7 +135,15 @@
 			context?.$toolUtil.message('两次密码输入不一致','error')
 			return false
 		}
-		if(registerForm.value.mobile&&(!context?.$toolUtil.isMobile(registerForm.value.mobile))){
+		if(!registerForm.value.name){
+			context?.$toolUtil.message(`姓名不能为空`,'error')
+			return false
+		}
+		if(!registerForm.value.mobile){
+			context?.$toolUtil.message(`手机号码不能为空`,'error')
+			return false
+		}
+		if(!context?.$toolUtil.isMobile(registerForm.value.mobile)){
 			context?.$toolUtil.message(`手机号码应输入手机格式`,'error')
 			return false
 		}
@@ -151,10 +159,14 @@
 			context?.$toolUtil.message(`余额应输入数字`,'error')
 			return false
 		}
+		const payload = { ...registerForm.value }
+		payload.loginName = payload.loginName || payload.login_name
+		payload.securityQuestion = payload.securityQuestion || payload.security_question
+		payload.securityAnswer = payload.securityAnswer || payload.security_answer
 		context?.$http({
 			url:url,
 			method:'post',
-			data:registerForm.value
+			data:payload
 		}).then(res=>{
 			context?.$toolUtil.message('注册成功','success', obj=>{
 				context?.$router.push({

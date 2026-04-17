@@ -171,12 +171,109 @@ public class AdminController {
 	@RequestMapping("/update")
 	@Transactional
 	public R update(@RequestBody AdminEntity admin, HttpServletRequest request) {
+		Object roleObj = request.getSession().getAttribute("role");
+		Object uidObj = request.getSession().getAttribute("userId");
+		if (roleObj == null || uidObj == null) {
+			return R.error(401, "登录状态失效，请重新登录！");
+		}
+		String roleStr = String.valueOf(roleObj);
+		if (!"管理员".equals(roleStr)) {
+			return R.error(403, "无权限操作");
+		}
+		if (admin == null || admin.getId() == null) {
+			return R.error("参数错误");
+		}
+		Long currentId = (Long) uidObj;
+		Long targetId = admin.getId();
+		// 计算超级管理员（按最早创建的管理员判定，addtime 优先，缺失则按最小 id）
+		Long superAdminId = null;
+		try {
+			java.util.List<AdminEntity> admins = adminService.selectList(
+					new EntityWrapper<AdminEntity>()
+							.eq("role", "管理员")
+							.orderBy("addtime", true)
+			);
+			if (admins != null && !admins.isEmpty()) {
+				superAdminId = admins.get(0).getId();
+			}
+			if (superAdminId == null) {
+				AdminEntity minIdAdmin = adminService.selectOne(
+						new EntityWrapper<AdminEntity>()
+								.eq("role", "管理员")
+								.orderBy("id", true)
+				);
+				if (minIdAdmin != null) {
+					superAdminId = minIdAdmin.getId();
+				}
+			}
+		} catch (Exception ignored) {}
+		if (superAdminId == null) {
+			return R.error(500, "管理员数据异常");
+		}
+		// 非超级管理员的限制：只能修改本人，不可修改超级管理员
+		if (!currentId.equals(superAdminId)) {
+			if (targetId != null && targetId.equals(superAdminId)) {
+				return R.error(403, "不可修改超级管理员信息");
+			}
+			if (targetId != null && !targetId.equals(currentId)) {
+				return R.error(403, "不可修改其他管理员信息");
+			}
+		}
+		AdminEntity exist = adminService.selectById(targetId);
+		if (exist == null) {
+			return R.error("管理员不存在");
+		}
+		admin.setRole("管理员");
 		adminService.updateById(admin);
 		return R.ok();
 	}
 
 	@RequestMapping("/delete")
-	public R delete(@RequestBody Long[] ids) {
+	public R delete(@RequestBody Long[] ids, HttpServletRequest request) {
+		Object roleObj = request.getSession().getAttribute("role");
+		Object uidObj = request.getSession().getAttribute("userId");
+		if (roleObj == null || uidObj == null) {
+			return R.error(401, "登录状态失效，请重新登录！");
+		}
+		if (ids == null || ids.length == 0) {
+			return R.error("参数错误");
+		}
+		String roleStr = String.valueOf(roleObj);
+		if (!"管理员".equals(roleStr)) {
+			return R.error(403, "无权限操作");
+		}
+		Long currentId = (Long) uidObj;
+		// 仅允许“超级管理员”（按最早创建的管理员判定）删除其他管理员
+		Long superAdminId = null;
+		try {
+			java.util.List<AdminEntity> admins = adminService.selectList(
+					new EntityWrapper<AdminEntity>()
+							.eq("role", "管理员")
+							.orderBy("addtime", true)
+			);
+			if (admins != null && !admins.isEmpty()) {
+				superAdminId = admins.get(0).getId();
+			}
+		} catch (Exception ignored) {}
+		if (superAdminId == null) {
+			return R.error(500, "管理员数据异常");
+		}
+		if (!currentId.equals(superAdminId)) {
+			return R.error(403, "仅超级管理员可删除其他管理员");
+		}
+		for (Long id : ids) {
+			if (id != null && id.equals(currentId)) {
+				return R.error(400, "不可删除当前登录的管理员账号");
+			}
+		}
+		int remain = adminService.selectCount(
+				new EntityWrapper<AdminEntity>()
+						.eq("role", "管理员")
+						.notIn("id", Arrays.asList(ids))
+		);
+		if (remain <= 0) {
+			return R.error(400, "必须至少保留一个管理员账号");
+		}
 		adminService.deleteBatchIds(Arrays.asList(ids));
 		return R.ok();
 	}

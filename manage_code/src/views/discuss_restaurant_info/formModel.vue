@@ -20,8 +20,8 @@
 					</el-col>
 
 					<el-col :span="24">
-						<el-form-item label="评论内容" prop="content">
-                            <editor :value="form.content||''" placeholder="请输入评论内容" :readonly="true"
+						<el-form-item label="评价内容" prop="content">
+                            <editor :value="form.content||''" placeholder="请输入评价内容" :readonly="true"
                                     class="list_editor" @change="(e)=>editorChange(e,'content')"></editor>
 						</el-form-item>
 					</el-col>
@@ -62,7 +62,7 @@
 	const emit = defineEmits(['formModelChange'])
 	//基础信息
 	const tableName = 'restaurant_review'
-	const formName = '餐厅信息评论表'
+		const formName = '餐厅信息评价表'
 	//基础信息
 	//form表单
 	const form = ref({})
@@ -133,6 +133,7 @@
 		}).then(res => {
 			let reg=new RegExp('../../../file','g')
 			form.value = res.data.data
+			form.value.reply = stripReplyPrefix(form.value.reply)
 			formVisible.value = true
 		})
 	}
@@ -205,7 +206,7 @@
 					continue;
 				}
 				if(x=='reply'){
-					form.value.reply = row[x];
+					form.value.reply = stripReplyPrefix(row[x]);
 					disabledForm.value.reply = true;
 					continue;
 				}
@@ -241,6 +242,10 @@
 	//富文本
 	const editorChange = (e,name) =>{
 		form.value[name] = e
+	}
+	const stripReplyPrefix = (h) => {
+		let s = String(h ?? '')
+		return s.replace(/^\s*(管理员：|员工：|餐厅回复：)\s*/, '')
 	}
 	//提交
 	const save= async ()=>{

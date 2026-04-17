@@ -39,7 +39,7 @@
 	const context = getCurrentInstance()?.appContext.config.globalProperties;	
 	const emit = defineEmits(['formModelChange'])
 	//基础信息
-	const tableName = 'systemnotice'
+	const tableName = 'system_notice'
 	const formName = '系统公告'
 	//基础信息
 	//form表单

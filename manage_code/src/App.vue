@@ -21,10 +21,20 @@
 	}
 	
 	const _ResizeObserver = window.ResizeObserver;
-	window.ResizeObserver = class ResizeObserver extends _ResizeObserver {
-		constructor(callback) {
-			callback = debounce(callback, 16);
-			super(callback);
+	if (_ResizeObserver) {
+		window.ResizeObserver = class ResizeObserver extends _ResizeObserver {
+			constructor(callback) {
+				const safeCb = (entries, observer) => {
+					if (!Array.isArray(entries)) return;
+					const valid = entries.filter(e => {
+						const t = e && e.target;
+						return t && t.nodeType === 1 && document.body.contains(t);
+					});
+					if (!valid.length) return;
+					callback(valid, observer);
+				};
+				super(debounce(safeCb, 16));
+			}
 		}
 	}
 </script>

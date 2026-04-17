@@ -38,12 +38,15 @@
                 <span>{{ menu.name }}</span>
               </template>
               <el-menu-item class="second-item" v-for=" (child,index1) in menu.child" :key="index1"
-                            :index="child.url" @click="menuHandler(child.url)">{{ child.name }}
+                            :index="child.url" @click="menuHandler(child.url)">
+                {{ child.name }}
+                <span v-if="child.name==='餐厅活动' && hasNewEvent" class="badge-new">新</span>
               </el-menu-item>
             </el-sub-menu>
             <el-menu-item v-else :index="menu.child[0].url" class="first-item" @click="menuHandler(menu.child[0].url)">
               <template #title>
                 <span>{{menu.child[0].name}}</span>
+                <span v-if="menu.child[0].name==='餐厅活动' && hasNewEvent" class="badge-new">新</span>
               </template>
             </el-menu-item>
           </template>
@@ -80,8 +83,16 @@
         <div v-html="store.state.system.notice.content"></div>
       </div>
     </el-dialog>
-    <!-- 智能客服聊天窗口 -->
-    <el-dialog v-model="chatDialogVisible" title="" width="420px" class="chat-dialog" :show-close="false">
+    <!-- 智能客服聊天窗口（右侧半屏抽屉） -->
+    <el-drawer
+      v-model="chatDialogVisible"
+      size="50%"
+      class="chat-drawer"
+      :modal="true"
+      modal-class="chat-drawer-modal"
+      :close-on-click-modal="true"
+      @opened="onChatOpened"
+    >
       <!-- 自定义头部 -->
       <template #header>
         <div class="chat-header">
@@ -95,12 +106,6 @@
             </div>
           </div>
           <div class="chat-header-actions">
-            <el-button text @click="openFaqDrawer" title="常见问题">
-              FAQ
-            </el-button>
-            <el-button text @click="goMyTickets" title="人工会话">
-              人工会话
-            </el-button>
             <el-button text @click="clearChat" title="清空聊天">
               <span class="iconfont icon-shanchu"></span>
             </el-button>
@@ -187,7 +192,6 @@
                     @keyup.enter="sendMessage"
                     @keydown="handleKeyDown"
                     placeholder="输入消息..."
-                    :disabled="isLoading"
                     class="custom-textarea"
                     @input="handleTyping"
                     ref="textareaRef"
@@ -209,7 +213,7 @@
           </div>
         </div>
       </div>
-    </el-dialog>
+    </el-drawer>
 
     <el-drawer v-model="faqDrawerVisible" title="常见问题" size="420px">
       <div style="display:flex; gap: 10px; align-items: center;">
@@ -272,6 +276,23 @@ if(localStorage.getItem('frontToken') && !store.getters['user/session'].id){
 }
 //获取通知公告
 const noticeDialogVisible = ref(false)
+const noticePollingTimer = ref(null)
+const eventPollingTimer = ref(null)
+const systemNotice = computed(() => store.state.system.notice || {})
+const noticeStorageKey = 'frontLastNoticeId'
+const getNoticeId = (notice) => {
+  const raw = notice?.id ?? notice?.noticeId ?? notice?.notice_id
+  return raw == null ? '' : String(raw)
+}
+watch(systemNotice, (val) => {
+  const id = getNoticeId(val)
+  if (!id) return
+  const lastId = context?.$toolUtil.storageGet(noticeStorageKey)
+  if (String(lastId || '') !== id) {
+    noticeDialogVisible.value = true
+    context?.$toolUtil.storageSet(noticeStorageKey, id)
+  }
+})
 store.dispatch('system/getSystemNotice')
 
 // 智能客服相关
@@ -300,6 +321,7 @@ const ticketPollingTimer = ref(null)
 const ticketSyncing = ref(false)
 const knownTicketMessageIds = new Set()
 const ticketTransferring = ref(false)
+const lastNonTransferQuestion = ref({ text: '', ts: 0 })
 
 const stopTicketPolling = () => {
   if (ticketPollingTimer.value) {
@@ -375,6 +397,10 @@ onMounted(() => {
 })
 onBeforeUnmount(() => {
   clearInterval(interval.value)
+  if (noticePollingTimer.value) {
+    clearInterval(noticePollingTimer.value)
+    noticePollingTimer.value = null
+  }
   stopTicketPolling()
   // 移除滚动监听
   window.removeEventListener('scroll', handleWindowScroll)
@@ -418,6 +444,11 @@ const init = () => {
   getRotationList()
   // 初始化空闲车位信息
   getAvailableParkingInfo()
+  if (!noticePollingTimer.value) {
+    noticePollingTimer.value = setInterval(() => {
+      store.dispatch('system/getSystemNotice')
+    }, 60000)
+  }
   if(Token.value){
     getSession()
   }
@@ -455,6 +486,42 @@ const carouselClick = (url)=>{
 }
 const menuList = ref([])
 const role = ref('')
+const hasNewEvent = ref(false)
+const latestEventPublish = ref('')
+const lastEventStorageKey = 'frontLastEventPublishTime'
+const fetchLatestEventPublish = async () => {
+  try {
+    const res = await context?.$http({
+      url: 'restaurant_event/list',
+      method: 'get',
+      params: {
+        page: 1,
+        limit: 1,
+        sort: 'publish_time',
+        order: 'desc'
+      }
+    })
+    const item = res?.data?.data?.list?.[0] || null
+    const latest = item?.publish_time || item?.publishTime || item?.addtime || ''
+    latestEventPublish.value = latest || ''
+    const lastSeen = context?.$toolUtil.storageGet(lastEventStorageKey) || ''
+    if (latest && (!lastSeen || String(lastSeen) < String(latest))) {
+      hasNewEvent.value = true
+    } else {
+      hasNewEvent.value = false
+    }
+  } catch (e) {
+    hasNewEvent.value = false
+  }
+}
+const clearEventBadge = () => {
+  if (latestEventPublish.value) {
+    context?.$toolUtil.storageSet(lastEventStorageKey, latestEventPublish.value)
+  } else {
+    context?.$toolUtil.storageSet(lastEventStorageKey, new Date().toISOString())
+  }
+  hasNewEvent.value = false
+}
 const getMenu = () => {
   let params = {
     page: 1,
@@ -469,7 +536,26 @@ const getMenu = () => {
     context?.$toolUtil.storageSet("menus", res.data.data.list[0].menujson);
   })
   menuList.value = context?.$config.menuList
+  fetchLatestEventPublish()
 }
+// 初始化时开启轮询，每60秒检查一次最新活动
+onMounted(()=>{
+  if(!eventPollingTimer.value){
+    eventPollingTimer.value = setInterval(()=>fetchLatestEventPublish(), 60000)
+  }
+})
+onBeforeUnmount(()=>{
+  if(eventPollingTimer.value){
+    clearInterval(eventPollingTimer.value)
+    eventPollingTimer.value = null
+  }
+})
+// 进入餐厅活动列表或详情后，清除“新”活动提示
+watch(()=>route.path,(p)=>{
+  if(p==='/index/restaurant_eventList' || p==='/index/restaurant_eventDetail'){
+    clearEventBadge()
+  }
+})
 const loginClick = () => {
   context?.$toolUtil.storageSet('toPath',window.history.state.current)
   router.push('/login')
@@ -505,11 +591,22 @@ const handleWindowScroll = () => {
 // 智能客服功能
 // 发送消息
 const sendMessage = async () => {
+  if (isLoading.value) return
   if (!currentMessage.value.trim()) return
 
   await Promise.allSettled([getAvailableParkingInfo(), getDishList()])
 
   const messageToSend = currentMessage.value
+  if (!activeTicketId.value && isTransferCommand(messageToSend)) {
+    currentMessage.value = ''
+    isLoading.value = true
+    try {
+      await openTicketDialog({ sourceMessage: messageToSend })
+    } finally {
+      isLoading.value = false
+    }
+    return
+  }
   const userMessage = {
     type: 'user',
     content: messageToSend,
@@ -548,12 +645,7 @@ const sendMessage = async () => {
       return
     }
 
-    const n = (messageToSend || '').trim().toLowerCase()
-    const transfer = ['转人工','人工客服','客服','转接人工','转接客服','人工','真人'].some(k => n.includes(k))
-    if (transfer) {
-      await openTicketDialog({ sourceMessage: messageToSend })
-      return
-    }
+    lastNonTransferQuestion.value = { text: String(messageToSend || '').trim(), ts: Date.now() }
 
     const response = await callSupportChat(messageToSend)
 
@@ -578,6 +670,9 @@ const sendMessage = async () => {
     isLoading.value = false
     nextTick(() => {
       scrollToBottom()
+      if (textareaRef.value) {
+        textareaRef.value.focus()
+      }
     })
   }
 }
@@ -599,10 +694,46 @@ const callSupportChat = async (message) => {
   }
 }
 
+const transferKeywords = ['转人工','人工客服','客服','转接人工','转接客服','人工','真人']
+const isTransferCommand = (text) => {
+  const n = String(text || '').trim().toLowerCase()
+  if (!n) return false
+  if (transferKeywords.some(k => n === String(k).toLowerCase())) return true
+  if (n.length <= 6 && transferKeywords.some(k => n.includes(String(k).toLowerCase()))) return true
+  return false
+}
+
+const primeTicketMessageIds = async (ticketId) => {
+  if (!ticketId) return
+  const res = await context?.$http({
+    url: `support/ticket/${ticketId}/messages`,
+    method: 'get'
+  })
+  const list = res?.data?.data || []
+  for (let i = 0; i < list.length; i++) {
+    const msg = list[i]
+    const msgId = msg?.id ?? msg?.messageId ?? msg?.message_id ?? msg?.ID ?? msg?.msgId ?? msg?.msg_id
+    if (msgId == null) continue
+    knownTicketMessageIds.add(String(msgId))
+  }
+}
+
 const findLastUserMessage = () => {
   for (let i = chatMessages.value.length - 1; i >= 0; i--) {
     const m = chatMessages.value[i]
     if (m && m.type === 'user' && (m.content || '').trim()) return String(m.content)
+  }
+  return ''
+}
+
+const findLastUserMessageIgnoreTransfer = () => {
+  for (let i = chatMessages.value.length - 1; i >= 0; i--) {
+    const m = chatMessages.value[i]
+    if (!m || m.type !== 'user') continue
+    const c = String(m.content || '').trim()
+    if (!c) continue
+    if (isTransferCommand(c)) continue
+    return c
   }
   return ''
 }
@@ -623,6 +754,7 @@ const openTicketDialog = async (message) => {
     })
     nextTick(() => {
       scrollToBottom()
+      if (textareaRef.value) textareaRef.value.focus()
     })
     return
   }
@@ -630,9 +762,24 @@ const openTicketDialog = async (message) => {
   if (ticketTransferring.value) return
   ticketTransferring.value = true
   try {
-    const userQuestion = ((message?.sourceMessage || '').trim() || findLastUserMessage()).trim()
+    let userQuestion = String((message?.sourceMessage || '')).trim()
+    if (!userQuestion || isTransferCommand(userQuestion)) {
+      const last = lastNonTransferQuestion.value
+      const ok = last && last.text && (Date.now() - (last.ts || 0) <= 5 * 60 * 1000)
+      userQuestion = ok ? String(last.text) : ''
+    }
     const title = (userQuestion || '人工会话').slice(0, 16)
     const content = userQuestion || '用户请求转人工'
+
+    chatMessages.value.push({
+      type: 'bot',
+      content: '正在为你转接人工客服，请稍候…',
+      timestamp: new Date()
+    })
+    nextTick(() => {
+      scrollToBottom()
+      if (textareaRef.value) textareaRef.value.focus()
+    })
 
     const response = await context?.$http({
       url: 'support/ticket/submit',
@@ -646,18 +793,26 @@ const openTicketDialog = async (message) => {
     activeTicketId.value = d.ticketId || d.ticket_id || null
     activeTicketNo.value = d.ticketNo || d.ticket_no || ''
     knownTicketMessageIds.clear()
+    await primeTicketMessageIds(activeTicketId.value)
     if (chatDialogVisible.value) startTicketPolling()
     chatMessages.value.push({
       type: 'bot',
-      content: `已为你转接人工客服：${activeTicketNo.value || ''}。你可以继续在这里发送消息，客服回复会显示在这里。`,
+      content: '已转接至人工客服',
       timestamp: new Date()
     })
     nextTick(() => {
       scrollToBottom()
+      if (textareaRef.value) textareaRef.value.focus()
     })
   } finally {
     ticketTransferring.value = false
   }
+}
+
+const onChatOpened = () => {
+  nextTick(() => {
+    if (textareaRef.value) textareaRef.value.focus()
+  })
 }
 
 const openFaqDrawer = async () => {
@@ -901,7 +1056,8 @@ const getDishList = async () => {
         page: 1,
         limit: 20, // 只获取20个热门菜品，提升响应速度
         sort: 'id',
-        order: 'desc'
+        order: 'desc',
+        dish_status: '上架'
       }
     })
 
@@ -960,6 +1116,9 @@ watch(chatDialogVisible, (newVal) => {
       scrollToBottom()
       // 初始化自定义滚动条
       initCustomScrollbar()
+      if (textareaRef.value) {
+        textareaRef.value.focus()
+      }
     })
     if (activeTicketId.value) startTicketPolling()
   } else {
@@ -1528,6 +1687,19 @@ init()
   color: inherit;
 }
 
+.badge-new{
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 6px;
+  font-size: 12px;
+  line-height: 16px;
+  color: #e53935;
+  background: #ffffff;
+  border: 1px solid #e53935;
+  border-radius: 8px;
+  vertical-align: middle;
+}
+
 
 .el-menu--horizontal .el-menu{
   border: none;
@@ -1752,10 +1924,12 @@ init()
 }
 
 .chat-container {
-  height: 550px;
   display: flex;
   flex-direction: column;
-  background: #ffffff;
+  background: #f9fafb;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
 }
 
 .chat-messages {
@@ -1764,6 +1938,20 @@ init()
   padding: 20px;
   background: #f9fafb;
   scroll-behavior: smooth;
+}
+
+.chat-drawer :deep(.el-drawer__body) {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  height: 100%;
+  background: #f9fafb;
+}
+
+/* 取消固定定位，保持在容器底部 */
+
+.chat-drawer-modal {
+  background: rgba(0,0,0,0.12) !important;
 }
 
 .empty-chat {
@@ -1950,28 +2138,23 @@ init()
 
 /* Input Area */
 .chat-input {
-  padding: 16px 20px;
-  background: white;
+  padding: 12px 16px;
+  background: #f9fafb;
   border-top: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.02);
+  box-shadow: none;
 }
 
 .input-area {
   display: flex;
-  align-items: flex-end;
-  gap: 12px;
-  background: #f3f4f6;
-  padding: 8px;
-  border-radius: 24px;
-  border: 1px solid transparent;
-  transition: all 0.3s ease;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  padding: 0;
+  border-radius: 10px;
+  border: none;
 }
 
-.input-area:focus-within {
-  background: white;
-  border-color: var(--theme-color);
-  box-shadow: 0 0 0 4px rgba(234, 88, 12, 0.1);
-}
+.input-area:focus-within { }
 
 .input-wrapper {
   flex: 1;
@@ -1986,11 +2169,12 @@ init()
 
 .custom-textarea {
   width: 100%;
-  min-height: 40px;
-  max-height: 100px;
+  min-height: 36px;
+  max-height: 72px;
   padding: 8px 12px;
-  border: none;
-  background: transparent;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  border-radius: 8px;
   font-size: 14px;
   resize: none;
   outline: none;
@@ -2001,6 +2185,10 @@ init()
 
 .custom-textarea::-webkit-scrollbar {
   display: none;
+}
+
+.external-scrollbar {
+  display: none !important;
 }
 
 .send-btn.el-button {

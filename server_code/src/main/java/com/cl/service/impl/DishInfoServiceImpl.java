@@ -70,6 +70,16 @@ public class DishInfoServiceImpl extends ServiceImpl<DishInfoDao, DishInfoEntity
 		return baseMapper.renameDishCategory(oldCategory, newCategory);
 	}
 
+	@Override
+	public int renameFlavor(String oldFlavor, String newFlavor) {
+		return baseMapper.renameFlavor(oldFlavor, newFlavor);
+	}
+
+	@Override
+	public int deleteFlavor(String oldFlavor) {
+		return baseMapper.deleteFlavor(oldFlavor);
+	}
+
 
 
 

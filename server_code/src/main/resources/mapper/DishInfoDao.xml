@@ -17,7 +17,7 @@
         <result property="price" column="price"/>
         <result property="discountprice" column="discountprice"/>
         <result property="favoritesNumber" column="storeup_number"/>
-        <result property="discussNumber" column="discuss_number"/>
+        <result property="dishStatus" column="dish_status"/>
     </resultMap>
 
     <select id="selectListView"
@@ -70,6 +70,18 @@
         UPDATE dish_info
         SET dish_category = #{newCategory}
         WHERE dish_category = #{oldCategory}
+    </update>
+
+    <update id="renameFlavor">
+        UPDATE dish_info
+        SET flavor = #{newFlavor}
+        WHERE flavor = #{oldFlavor}
+    </update>
+
+    <update id="deleteFlavor">
+        UPDATE dish_info
+        SET flavor = NULL
+        WHERE flavor = #{oldFlavor}
     </update>
 
 

@@ -85,11 +85,12 @@
 				<div  class="info_text" >{{discussCount}}</div>
 			</div>
 			<div class="btn_view">
-					<el-input-number class="inputNumber" v-model="buyNumber" :min="1" :disabled="stockValue <= 0"></el-input-number>
+					<el-input-number class="inputNumber" v-model="buyNumber" :min="1" :disabled="stockValue <= 0 || isOffShelf"></el-input-number>
                     <div class="break"></div>
-					<el-button class="addCart_btn" type="primary" @click="addCart">加入购物车</el-button>
-					<el-button class="buyNow_btn" :disabled="stockValue <= 0" type="primary" @click="buyNow">立即购买</el-button>
+					<el-button class="addCart_btn" type="primary" :disabled="isOffShelf" @click="addCart">加入购物车</el-button>
+					<el-button class="buyNow_btn" :disabled="stockValue <= 0 || isOffShelf" type="primary" @click="buyNow">立即购买</el-button>
 					<div v-if="stockValue <= 0" style="margin-left: 12px;color:#999;font-size:14px;">已售罄</div>
+					<div v-if="isOffShelf" style="margin-left: 12px;color:#999;font-size:14px;">已下架</div>
 				</div>
 				<div class="btn_view">
 					<el-button class="edit_btn" v-if="centerType&&btnAuth('dish_info','修改')" type="primary" @click="editClick">修改</el-button>
@@ -101,18 +102,18 @@
 			<el-tab-pane label="菜品详情" name="first">
 				<div v-html="descHtml"></div>
 			</el-tab-pane>
-			<el-tab-pane label="评论" name="commentActive">
-				<div class="my_comment_view">
+			<el-tab-pane label="评价" name="commentActive">
+				<div v-if="centerType" class="my_comment_view">
 					<el-form class="my_comment_form" ref="commentFormRef" :model="commentForm" :rules="commentRules" label-width="80px">
 						<el-form-item label="评分" prop="score">
 							<el-rate v-model="commentForm.score" />
 						</el-form-item>
-						<el-form-item label="评论内容" prop="content">
-							<editor class="list_editor" :value="commentForm.content" placeholder="请输入评论内容" @change="contentChange"></editor>
+						<el-form-item label="评价内容" prop="content">
+							<editor class="list_editor" :value="commentForm.content" placeholder="请输入评价内容" @change="contentChange"></editor>
 						</el-form-item>
 					</el-form>
 					<div class="comment_btn">
-						<el-button class="add_btn" type="primary" @click="commentSave">评论</el-button>
+						<el-button class="add_btn" type="primary" @click="commentSave">评价</el-button>
 						<el-button class="reset_btn" @click="resetForm">重置</el-button>
 					</div>
 				</div>
@@ -138,7 +139,7 @@
                                 <span class="del" @click="commentDel(item)" style="cursor: pointer">删除</span>
                             </div>
 							<div class="comment_reply" v-if="item.reply">
-								回复：<span v-html="item.reply"></span>
+								餐厅回复：<span>{{ sanitizeReply(item.reply) }}</span>
 							</div>
 						</div>
 					</div>
@@ -188,7 +189,7 @@
 	const router = useRouter()
 	//基础信息
 	const tableName = 'dish_info'
-	const formName = '美食信息'
+	const formName = '菜品信息'
 	//基础信息
 	const breadList = ref([{
 		name: formName
@@ -224,8 +225,7 @@
 		return (d.storeupNumber ?? d.favoritesNumber ?? d.storeup_number ?? d.favorites_number ?? 0)
 	})
 	const discussCount = computed(()=>{
-		const d = detail.value || {}
-		return (d.discussNumber ?? d.discuss_number ?? 0)
+		return Number(commentTotal.value || 0)
 	})
 	const dishNameText = computed(()=>{
 		const d = detail.value || {}
@@ -275,6 +275,10 @@
 		const d = detail.value || {}
 		return (d.rating ?? '')
 	})
+	const isOffShelf = computed(()=>{
+		const d = detail.value || {}
+		return (d.dish_status ?? d.dishStatus ?? '') === '下架'
+	})
 	const descHtml = computed(()=>{
 		const d = detail.value || {}
 		return (d.dish_description ?? d.dishDescription ?? '')
@@ -295,6 +299,9 @@
             bannerList.value = res.data.data.dish_image?res.data.data.dish_image.split(','):[]
             title.value = res.data.data.dish_name
 			detail.value = res.data.data
+			if (!centerType.value && isOffShelf.value) {
+				context?.$toolUtil.message('该菜品已下架', 'warning')
+			}
 			getInCartList();
 		})
 	}
@@ -348,7 +355,7 @@
 		getDetail(id)
 		// 收藏
 		getCollect(id)
-		// 评论
+		// 评价
 		getCommentList()
 	}
 	// 收藏
@@ -424,7 +431,7 @@
     const contentChange = (e)=>{
         commentForm.value.content = e
     }
-	//评论
+	//评价
 	const commentForm = ref({
 		content: '',
 		score: 0,
@@ -455,6 +462,14 @@
 	const layouts = ref(["total","prev","pager","next","sizes","jumper"])
 	const commentList = ref([])
 	const commentTotal = ref(0)
+	const sanitizeReply = (h) => {
+		let s = String(h ?? '').trim()
+		s = s.replace(/^(管理员：|员工：|餐厅回复：)\s*/, '')
+		s = s.replace(/<br\s*\/?>/gi, '\n')
+		s = s.replace(/<\/p>/gi, '\n')
+		s = s.replace(/<[^>]+>/g, '')
+		return s.trim()
+	}
 	const commentFormRef = ref(null)
 	const commentSizeChange = (size) =>{
 		commentQuery.value.limit = size
@@ -475,10 +490,14 @@
 
 		})
 	}
-	//提交评论
+	//提交评价
 	const commentSave = async () => {
+        if(!centerType.value){
+            context?.$toolUtil.message('请到个人中心的订单管理中进行评价','error')
+            return
+        }
         if(!commentForm.value.content ||commentForm.value.content=='<p><br></p>'){
-            return context.$message.error("请输入评论内容")
+            return context.$message.error("请输入评价内容")
         }
 		if(!commentForm.value.score){
 			return context.$message.error("评分不能为空")
@@ -509,15 +528,6 @@
 						method: 'post',
 						data: commentForm.value
 					}).then(res => {
-
-                    context.$http.get(`${tableName}/info/${detail.value.id}`).then(res=>{
-                        let detail = res.data.data
-                        detail.discussNumber++
-                        context.$http.post(`${tableName}/update`,detail).then(()=>{
-                            getDetail()
-                        })
-                    })
-
 						context?.$toolUtil.message('评论成功', 'success')
                         resetForm()
                         getCommentList()
@@ -538,13 +548,7 @@
             context.$http.post(`discuss${tableName}/delete`,[item.id]).then(res=>{
                 if(res.data.code==0){
                     context.$message.success("删除成功")
-                    context.$http.get(`${tableName}/info/${detail.value.id}`).then(res=>{
-                        let detail = res.data.data
-                        detail.discussNumber--
-                        context.$http.post(`${tableName}/update`,detail).then(()=>{
-                            getDetail()
-                        })
-                    })
+                    // 删除后刷新评价列表
                     getCommentList()
                 }
             })
@@ -577,6 +581,10 @@
 		userid:context?.$toolUtil.storageGet('user_id')
 	})
 	const addCart = () => {
+		if (isOffShelf.value) {
+			context?.$toolUtil.message('该菜品已下架', 'warning')
+			return
+		}
 		if(isInCart.value){
 			const current = Number(inCartItem.value.buy_number ?? inCartItem.value.buynumber ?? 0)
 			const add = Number(buyNumber.value || 0)
@@ -630,6 +638,10 @@
 	const buyNumber = ref(1)
 	//立即购买
 	const buyNow = () => {
+		if (isOffShelf.value) {
+			context?.$toolUtil.message('该菜品已下架', 'warning')
+			return
+		}
 		//单次购买限制
 		if(purchaseLimitValue.value > 0 && purchaseLimitValue.value < buyNumber.value){
 			context?.$toolUtil.message(`每人只能购买${purchaseLimitValue.value}件商品`,'error')
@@ -703,7 +715,7 @@
 		margin: 10px auto;
 		background: none;
 		width: 100%;
-		text-align: right;
+		text-align: left;
 		// 返回按钮
 		.back_btn {
 			border: 1px solid var(--theme-color);
@@ -872,8 +884,8 @@
 		// 内容区
 		:deep(.el-tabs__content) {
 		}
-		//评论
-		//我的评论
+		//评价
+		//我的评价
 		.my_comment_view {
 
 			.my_comment_form {
@@ -883,7 +895,7 @@
 			}
 			// 按钮盒子
 			.comment_btn {
-				// 评论按钮
+				// 评价按钮
 				.add_btn {
 				}
 				// 悬浮
@@ -898,7 +910,7 @@
 			}
 		}
 
-		//评论列表
+		//评价列表
 		.comment_list {
 
 			.comment {
@@ -936,6 +948,14 @@
 						}
 					}
 					.comment_reply {
+						margin-top: 6px;
+						padding: 8px 10px;
+						border-left: 3px solid var(--theme-color);
+						background: #fafafa;
+						border-radius: 4px;
+						font-size: 14px;
+						line-height: 1.6;
+						color: #333;
 					}
 				}
 			}

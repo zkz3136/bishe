@@ -14,10 +14,10 @@
 		<el-form :inline="true" :model="searchQuery" class="list_search">
 			<div class="search_view">
 				<div class="search_label">
-					餐桌名称：
+					餐位名称：
 				</div>
 				<div class="search_box">
-					<el-input class="search_inp" v-model="searchQuery.seat_name" placeholder="餐桌名称"
+					<el-input class="search_inp" v-model="searchQuery.seat_name" placeholder="餐位名称"
 						clearable>
 					</el-input>
 				</div>
@@ -44,7 +44,7 @@
 						<el-table-column label="序号" width="120" :resizable='true' align="left" header-align="left">
 							<template #default="scope">{{ (listQuery.page-1)*listQuery.limit+scope.$index + 1}}</template>
 						</el-table-column>
-						<el-table-column label="餐桌名称" :resizable='true' align="left" header-align="left">
+						<el-table-column label="餐位名称" :resizable='true' align="left" header-align="left">
 							<template #default="scope">
 								{{scope.row.seat_name}}
 							</template>
@@ -63,7 +63,7 @@
 								<div v-else>无图片</div>
 							</template>
 						</el-table-column>
-						<el-table-column label="餐桌位置" :resizable='true' align="left" header-align="left">
+						<el-table-column label="餐位位置" :resizable='true' align="left" header-align="left">
 							<template #default="scope">
 								{{scope.row.table_location}}
 							</template>
@@ -85,7 +85,7 @@
 						</el-table-column>
 						<el-table-column label="预约时间" :resizable='true' align="left" header-align="left">
 							<template #default="scope">
-								{{scope.row.reservation_time}}
+								{{formatReservationTime(scope.row.reservation_time)}}
 							</template>
 						</el-table-column>
 						
@@ -182,6 +182,26 @@
 		listQuery.value.page = page
 		getList()
 	}
+	const pad2 = (n) => String(n).padStart(2, '0')
+	const formatDateTime = (d) => {
+		return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`
+	}
+	const formatReservationTime = (value) => {
+		if (value === null || value === undefined || value === '') return ''
+		const raw = String(value).trim()
+		if (!raw) return ''
+		if (raw.includes('-') || raw.includes(':')) return raw
+		const num = Number(raw)
+		if (Number.isFinite(num)) {
+			const isSeconds = raw.length <= 10
+			const ts = isSeconds ? num * 1000 : num
+			const d = new Date(ts)
+			if (!Number.isNaN(d.getTime())) return formatDateTime(d)
+		}
+		const d = new Date(raw)
+		if (!Number.isNaN(d.getTime())) return formatDateTime(d)
+		return raw
+	}
 	//分页
     const sortType = ref('')
     const sortOrder = ref('')
@@ -262,7 +282,7 @@
 		margin: 10px auto;
 		background: none;
 		width: 100%;
-		text-align: right;
+		text-align: left;
 		// 返回按钮
 		.back_btn {
 			border: 1px solid var(--theme-color);

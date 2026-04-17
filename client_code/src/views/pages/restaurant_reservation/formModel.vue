@@ -49,7 +49,7 @@
 					</div>
 				</div>
 				<div class="info_item">
-					<div class="info_label">餐桌位置</div>
+					<div class="info_label">餐位位置</div>
 					<div  class="info_text" >{{detail.table_location}}</div>
 				</div>
 			<div class="info_item">
@@ -70,7 +70,7 @@
 				</div>
 				<div class="info_item">
 					<div class="info_label">预约时间</div>
-					<div  class="info_text" >{{detail.reservation_time}}</div>
+					<div  class="info_text" >{{formatReservationTime(detail.reservation_time)}}</div>
 				</div>
 				<div class="btn_view">
 					<el-button class="edit_btn" v-if="centerType&&btnAuth('restaurant_reservation','修改')" type="primary" @click="editClick">修改</el-button>
@@ -144,6 +144,26 @@
 	const title = ref('')
 	const detail = ref({})
     const activeName = ref('false')
+	const pad2 = (n) => String(n).padStart(2, '0')
+	const formatDateTime = (d) => {
+		return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`
+	}
+	const formatReservationTime = (value) => {
+		if (value === null || value === undefined || value === '') return ''
+		const raw = String(value).trim()
+		if (!raw) return ''
+		if (raw.includes('-') || raw.includes(':')) return raw
+		const num = Number(raw)
+		if (Number.isFinite(num)) {
+			const isSeconds = raw.length <= 10
+			const ts = isSeconds ? num * 1000 : num
+			const d = new Date(ts)
+			if (!Number.isNaN(d.getTime())) return formatDateTime(d)
+		}
+		const d = new Date(raw)
+		if (!Number.isNaN(d.getTime())) return formatDateTime(d)
+		return raw
+	}
 	const getRouteId = () => {
 		const v = route.query.id
 		const id = Array.isArray(v) ? v[0] : v
@@ -317,7 +337,7 @@
 		margin: 10px auto;
 		background: none;
 		width: 100%;
-		text-align: right;
+		text-align: left;
 		// 返回按钮
 		.back_btn {
 			border: 1px solid var(--theme-color);

@@ -223,6 +223,7 @@
 		hiddenordersChartType2: true,
 		closeordersChartType3: true,
 		hiddenordersChartType3: true,
+		
 	})
 		const getCardList = () => {
 		if(btnAuth('dish_info','首页统计')){
@@ -300,116 +301,76 @@
 	const getordersChart1 = () => {
 		nextTick(()=>{
 			var totalEchart1 = echarts.init(document.getElementById("orderstotalEchart1"),'theme');
-			context?.$http({
-				url: `orders/value/addtime/total/月`,
-				method: "get",
-			}).then(obj=>{
-				let res = obj.data.data
-				let xAxis = [];
-				let yAxis = [];
-				let dataList = []
-				for(let i=0;i<res.length;i++){
-				    xAxis.push(res[i].addtime);
-				    yAxis.push(parseFloat((res[i].total)));
-					dataList.push({
-				        value: parseFloat((res[i].total)),
-				        name: res[i].addtime
-				    })
+			Promise.all([
+				context?.$http({ url: `orders/value/addtime/discounttotal/月`, method: "get" }),
+				context?.$http({ url: `restaurant_reservation/stats/deposit/month`, method: "get" })
+			]).then(([ordersObj, depObj])=>{
+				const orders = ordersObj?.data?.data || []
+				const deposits = depObj?.data?.data || []
+				const map = new Map()
+				for(let i=0;i<orders.length;i++){
+					const k = String(orders[i].addtime)
+					const v = Number(parseFloat(orders[i].total).toFixed(2))
+					map.set(k, (map.get(k)||0) + v)
 				}
-				var option = {};
-				option = {
-    title: {
-        text: '月销额',
-        left: 'center'
-    },
-    tooltip: {
-        trigger: 'item',
-        formatter: '{b} : {c}'
-    },
-    xAxis: {
-        data: xAxis,
-        type: 'category',
-        axisLabel: {
-        "interval": 0,
-        "rotate": 30
-        }
-    },
-    yAxis: {
-        type: 'value',
-        "minInterval": 1
-    },
-    series:{
-        data: yAxis,
-        type: 'bar'
-    }
-}
-
+				for(let i=0;i<deposits.length;i++){
+					const k = String(deposits[i].addtime)
+					const v = Number(parseFloat(deposits[i].total).toFixed(2))
+					map.set(k, (map.get(k)||0) + v)
+				}
+				const keys = Array.from(map.keys()).sort()
+				const xAxis = keys
+				const yAxis = keys.map(k => Number(parseFloat(map.get(k)).toFixed(2)))
+				var option = {
+					title: { text: '月销额', left: 'center' },
+					tooltip: { trigger: 'item', formatter: '{b} : {c}' },
+					xAxis: { data: xAxis, type: 'category', axisLabel: { "interval": 0, "rotate": 30 } },
+					yAxis: { type: 'value', "minInterval": 1 },
+					series: { data: yAxis, type: 'bar' }
+				}
 				totalEchart1.clear()
-				// 使用刚指定的配置项和数据显示图表。
-				totalEchart1.setOption(option);
-				//根据窗口的大小变动图表
-				totalEchart1.resize();
+				totalEchart1.setOption(option)
+				totalEchart1.resize()
 			})
 		})
 	}
 	const getordersChart2 = () => {
 		nextTick(()=>{
 			var totalEchart2 = echarts.init(document.getElementById("orderstotalEchart2"),'theme');
-			context?.$http({
-				url: `orders/value/addtime/total/年`,
-				method: "get",
-			}).then(obj=>{
-				let res = obj.data.data
-				let xAxis = [];
-				let yAxis = [];
-				let dataList = []
-				for(let i=0;i<res.length;i++){
-				    xAxis.push(res[i].addtime);
-				    yAxis.push(parseFloat((res[i].total)));
-					dataList.push({
-				        value: parseFloat((res[i].total)),
-				        name: res[i].addtime
-				    })
+			Promise.all([
+				context?.$http({ url: `orders/value/addtime/discounttotal/年`, method: "get" }),
+				context?.$http({ url: `restaurant_reservation/stats/deposit/year`, method: "get" })
+			]).then(([ordersObj, depObj])=>{
+				const orders = ordersObj?.data?.data || []
+				const deposits = depObj?.data?.data || []
+				const map = new Map()
+				for(let i=0;i<orders.length;i++){
+					const k = String(orders[i].addtime)
+					const v = Number(parseFloat(orders[i].total).toFixed(2))
+					map.set(k, (map.get(k)||0) + v)
 				}
-				var option = {};
-				option = {
-    grid: {
-    left: '10%',
-    right: '10%',
-    bottom: '10%',
-    containLabel: true
-  },
-    title: {
-        text: '年销额',
-        left: 'center'
-    },
-    tooltip: {
-        trigger: 'item',
-        formatter: '{b} : {c}'
-    },
-    xAxis: {
-        type: 'value',
-        "minInterval": 1
-    },
-    yAxis: {
-        data: xAxis,
-        type: 'category',
-        "minInterval": 1
-    },
-    series:{
-        data: yAxis,
-        type: 'bar'
-    }
-}
-                var middle = option.xAxis
-                option.xAxis = option.yAxis
-                option.yAxis = middle
-
+				for(let i=0;i<deposits.length;i++){
+					const k = String(deposits[i].addtime)
+					const v = Number(parseFloat(deposits[i].total).toFixed(2))
+					map.set(k, (map.get(k)||0) + v)
+				}
+				const keys = Array.from(map.keys()).sort()
+				const xAxis = keys
+				const yAxis = keys.map(k => Number(parseFloat(map.get(k)).toFixed(2)))
+				var option = {
+					grid: { left: '10%', right: '10%', bottom: '10%', containLabel: true },
+					title: { text: '年销额', left: 'center' },
+					tooltip: { trigger: 'item', formatter: '{b} : {c}' },
+					xAxis: { type: 'value', "minInterval": 1 },
+					yAxis: { data: xAxis, type: 'category', "minInterval": 1 },
+					series: { data: yAxis, type: 'bar' }
+				}
+				var middle = option.xAxis
+				option.xAxis = option.yAxis
+				option.yAxis = middle
 				totalEchart2.clear()
-				// 使用刚指定的配置项和数据显示图表。
-				totalEchart2.setOption(option);
-				//根据窗口的大小变动图表
-				totalEchart2.resize();
+				totalEchart2.setOption(option)
+				totalEchart2.resize()
 			})
 		})
 	}

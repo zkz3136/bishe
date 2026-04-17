@@ -11,7 +11,7 @@ import com.cl.entity.view.DishReviewView;
 
 
 /**
- * 美食信息评论表
+ * 美食信息评价表
  *
  * @author 
  * @email 

@@ -211,7 +211,7 @@
 		margin: 10px auto;
 		background: none;
 		width: 100%;
-		text-align: right;
+		text-align: left;
 		// 返回按钮
 		.back_btn {
 			border: 1px solid var(--theme-color);

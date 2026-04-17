@@ -1,10 +1,10 @@
 <template>
 	<div>
 		<div class="home_box">
-			<!-- 美食信息推荐 -->
+			<!-- 菜品信息推荐 -->
 			<div class="recomList_view">
 				<div class="recomList_title">
-                    <span>美食信息推荐</span>
+                    <span>菜品信息推荐</span>
                 </div>
 				<div class="categoryList">
 					<div class="item" @click="dishInfoRecomCategoryChange(-1)" style="cursor: pointer" :class="{active:dishInfoRecomIndex==-1}">全部</div>
@@ -23,7 +23,8 @@
 								{{item.dish_name}}
 							</div>
 							<div class="price">
-								￥{{item.price}}
+								￥{{getDisplayPrice(item)}}
+								<span v-if="hasDiscount(item)" style="margin-left: 6px; text-decoration: line-through; color: #999;">￥{{getOriginalPrice(item)}}</span>
 							</div>
 							<div class="statistic">
 								<div class="collect">
@@ -159,6 +160,20 @@
 	const isHttp = (str) => {
         return str && str.substr(0,4)=='http';
     }
+	const getOriginalPrice = (item) => {
+		return Number(item?.price ?? item?.jiage ?? 0) || 0
+	}
+	const getDiscountPrice = (item) => {
+		return Number(item?.discountprice ?? item?.discount_price ?? item?.discountPrice ?? 0) || 0
+	}
+	const hasDiscount = (item) => {
+		const original = getOriginalPrice(item)
+		const discount = getDiscountPrice(item)
+		return discount > 0 && discount < original
+	}
+	const getDisplayPrice = (item) => {
+		return hasDiscount(item) ? getDiscountPrice(item) : getOriginalPrice(item)
+	}
 	//跳转详情
 	const detailClick = (table,id) => {
 		router.push(`/index/${table}Detail?id=${id}`)

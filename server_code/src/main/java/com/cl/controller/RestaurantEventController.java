@@ -54,9 +54,17 @@ public class RestaurantEventController {
     public R page(@RequestParam Map<String, Object> params,RestaurantEventEntity restaurantEvent,
                                                                                                                     HttpServletRequest request){
                                     EntityWrapper<RestaurantEventEntity> ew = new EntityWrapper<RestaurantEventEntity>();
-                                                                                                                                                                                
-        
-        
+        Object eventNameObj = params.get("eventName");
+        if(eventNameObj == null) {
+            eventNameObj = params.get("event_name");
+        }
+        if(eventNameObj != null && StringUtils.isNotBlank(String.valueOf(eventNameObj))) {
+            String keyword = String.valueOf(eventNameObj).trim();
+            if(StringUtils.isNotBlank(keyword)) {
+                ew.like("event_name", keyword);
+                restaurantEvent.setEventName(null);
+            }
+        }
         PageUtils page = restaurantEventService.queryPage(params, MPUtil.sort(MPUtil.between(MPUtil.likeOrEq(ew, restaurantEvent), params), params));
         return R.ok().put("data", page);
     }
@@ -122,7 +130,9 @@ public class RestaurantEventController {
      */
     @RequestMapping("/save")
     public R save(@RequestBody RestaurantEventEntity restaurantEvent, HttpServletRequest request){
-    	//ValidatorUtils.validateEntity(restaurantEvent);
+        if(restaurantEvent.getEventName() == null || StringUtils.isBlank(restaurantEvent.getEventName())) {
+            restaurantEvent.setEventName("未命名活动");
+        }
         restaurantEventService.insert(restaurantEvent);
         return R.ok();
     }
@@ -132,7 +142,9 @@ public class RestaurantEventController {
      */
     @RequestMapping("/add")
     public R add(@RequestBody RestaurantEventEntity restaurantEvent, HttpServletRequest request){
-    	//ValidatorUtils.validateEntity(restaurantEvent);
+        if(restaurantEvent.getEventName() == null || StringUtils.isBlank(restaurantEvent.getEventName())) {
+            restaurantEvent.setEventName("未命名活动");
+        }
         restaurantEventService.insert(restaurantEvent);
         return R.ok();
     }

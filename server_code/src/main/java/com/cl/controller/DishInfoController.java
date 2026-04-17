@@ -97,6 +97,7 @@ public class DishInfoController {
     public R list(@RequestParam Map<String, Object> params,DishInfoEntity dishInfo,
 		HttpServletRequest request){
         EntityWrapper<DishInfoEntity> ew = new EntityWrapper<DishInfoEntity>();
+        ew.eq("dish_status", "上架");
 
 		PageUtils page = dishInfoService.queryPage(params, MPUtil.sort(MPUtil.between(MPUtil.likeOrEq(ew, dishInfo), params), params));
         return R.ok().put("data", page);
@@ -142,6 +143,12 @@ public class DishInfoController {
     @RequestMapping("/detail/{id}")
     public R detail(@PathVariable("id") Long id){
         DishInfoEntity dishInfo = dishInfoService.selectById(id);
+        if (dishInfo == null) {
+            return R.error("菜品不存在");
+        }
+        if ("下架".equals(dishInfo.getDishStatus())) {
+            return R.error("菜品已下架");
+        }
 		dishInfo.setClickTime(new Date());
 		dishInfoService.updateById(dishInfo);
 		dishInfo = dishInfoService.selectView(new EntityWrapper<DishInfoEntity>().eq("id", id));
@@ -156,7 +163,39 @@ public class DishInfoController {
      */
     @RequestMapping("/save")
     public R save(@RequestBody DishInfoEntity dishInfo, HttpServletRequest request){
-    	//ValidatorUtils.validateEntity(dishInfo);
+        if (dishInfo == null) {
+            return R.error("参数错误");
+        }
+        if (dishInfo.getDishName() != null) {
+            dishInfo.setDishName(dishInfo.getDishName().trim());
+        }
+        if (dishInfo.getDishImage() != null) {
+            dishInfo.setDishImage(dishInfo.getDishImage().trim());
+        }
+        if (dishInfo.getDishCategory() != null) {
+            dishInfo.setDishCategory(dishInfo.getDishCategory().trim());
+        }
+        if (StringUtils.isBlank(dishInfo.getDishName())) {
+            return R.error("菜品名称不能为空");
+        }
+        if (StringUtils.isBlank(dishInfo.getDishImage())) {
+            return R.error("请上传菜品图片");
+        }
+        if (StringUtils.isBlank(dishInfo.getDishCategory())) {
+            return R.error("请选择菜品类型");
+        }
+        if (dishInfo.getPurchaseLimit() == null) {
+            return R.error("单限不能为空");
+        }
+        if (dishInfo.getStock() == null) {
+            return R.error("库存不能为空");
+        }
+        if (dishInfo.getPrice() == null) {
+            return R.error("价格不能为空");
+        }
+        if (dishInfo.getDishStatus() == null || dishInfo.getDishStatus().trim().isEmpty()) {
+            dishInfo.setDishStatus("上架");
+        }
         dishInfoService.insert(dishInfo);
         return R.ok();
     }
@@ -166,7 +205,39 @@ public class DishInfoController {
      */
     @RequestMapping("/add")
     public R add(@RequestBody DishInfoEntity dishInfo, HttpServletRequest request){
-    	//ValidatorUtils.validateEntity(dishInfo);
+        if (dishInfo == null) {
+            return R.error("参数错误");
+        }
+        if (dishInfo.getDishName() != null) {
+            dishInfo.setDishName(dishInfo.getDishName().trim());
+        }
+        if (dishInfo.getDishImage() != null) {
+            dishInfo.setDishImage(dishInfo.getDishImage().trim());
+        }
+        if (dishInfo.getDishCategory() != null) {
+            dishInfo.setDishCategory(dishInfo.getDishCategory().trim());
+        }
+        if (StringUtils.isBlank(dishInfo.getDishName())) {
+            return R.error("菜品名称不能为空");
+        }
+        if (StringUtils.isBlank(dishInfo.getDishImage())) {
+            return R.error("请上传菜品图片");
+        }
+        if (StringUtils.isBlank(dishInfo.getDishCategory())) {
+            return R.error("请选择菜品类型");
+        }
+        if (dishInfo.getPurchaseLimit() == null) {
+            return R.error("单限不能为空");
+        }
+        if (dishInfo.getStock() == null) {
+            return R.error("库存不能为空");
+        }
+        if (dishInfo.getPrice() == null) {
+            return R.error("价格不能为空");
+        }
+        if (dishInfo.getDishStatus() == null || dishInfo.getDishStatus().trim().isEmpty()) {
+            dishInfo.setDishStatus("上架");
+        }
         dishInfoService.insert(dishInfo);
         return R.ok();
     }
@@ -181,6 +252,21 @@ public class DishInfoController {
     public R update(@RequestBody DishInfoEntity dishInfo, HttpServletRequest request){
         //ValidatorUtils.validateEntity(dishInfo);
         dishInfoService.updateById(dishInfo);//全部更新
+        return R.ok();
+    }
+
+    @RequestMapping("/status/{id}")
+    @Transactional
+    public R status(@PathVariable("id") Long id, @RequestParam("dish_status") String dishStatus){
+        if (id == null) {
+            return R.error("菜品不存在");
+        }
+        if (StringUtils.isBlank(dishStatus)) {
+            return R.error("状态不能为空");
+        }
+        DishInfoEntity update = new DishInfoEntity();
+        update.setDishStatus(dishStatus);
+        dishInfoService.update(update, new EntityWrapper<DishInfoEntity>().eq("id", id));
         return R.ok();
     }
 
@@ -205,6 +291,68 @@ public class DishInfoController {
 		return R.ok().put("data", updated);
 	}
 
+	@PostMapping("/dish_category/delete")
+	@Transactional
+	public R deleteDishCategory(@RequestBody Map<String, Object> body, HttpServletRequest request) {
+		Object tableObj = request.getSession().getAttribute("tableName");
+		if (tableObj == null) {
+			return R.error(401, "未登录或登录过期");
+		}
+		String oldCategory = body == null ? null : String.valueOf(body.get("oldCategory"));
+		String target = body == null ? null : String.valueOf(body.get("targetCategory"));
+		oldCategory = oldCategory == null ? null : oldCategory.trim();
+		if (oldCategory == null || oldCategory.isEmpty()) {
+			return R.error("参数不能为空");
+		}
+		if (target == null || target.trim().isEmpty()) {
+			target = "未分类";
+		} else {
+			target = target.trim();
+		}
+		if (oldCategory.equals(target)) {
+			return R.error("新旧类型相同");
+		}
+		int updated = dishInfoService.renameDishCategory(oldCategory, target);
+		return R.ok().put("data", updated);
+	}
+
+	@PostMapping("/flavor/rename")
+	@Transactional
+	public R renameFlavor(@RequestBody Map<String, Object> body, HttpServletRequest request) {
+		Object tableObj = request.getSession().getAttribute("tableName");
+		if (tableObj == null) {
+			return R.error(401, "未登录或登录过期");
+		}
+		String oldFlavor = body == null ? null : String.valueOf(body.get("oldFlavor"));
+		String newFlavor = body == null ? null : String.valueOf(body.get("newFlavor"));
+		oldFlavor = oldFlavor == null ? null : oldFlavor.trim();
+		newFlavor = newFlavor == null ? null : newFlavor.trim();
+		if (oldFlavor == null || oldFlavor.isEmpty() || newFlavor == null || newFlavor.isEmpty()) {
+			return R.error("参数不能为空");
+		}
+		if (oldFlavor.equals(newFlavor)) {
+			return R.error("新旧口味相同");
+		}
+		int updated = dishInfoService.renameFlavor(oldFlavor, newFlavor);
+		return R.ok().put("data", updated);
+	}
+
+	@PostMapping("/flavor/delete")
+	@Transactional
+	public R deleteFlavor(@RequestBody Map<String, Object> body, HttpServletRequest request) {
+		Object tableObj = request.getSession().getAttribute("tableName");
+		if (tableObj == null) {
+			return R.error(401, "未登录或登录过期");
+		}
+		String oldFlavor = body == null ? null : String.valueOf(body.get("oldFlavor"));
+		oldFlavor = oldFlavor == null ? null : oldFlavor.trim();
+		if (oldFlavor == null || oldFlavor.isEmpty()) {
+			return R.error("参数不能为空");
+		}
+		int updated = dishInfoService.deleteFlavor(oldFlavor);
+		return R.ok().put("data", updated);
+	}
+
 
 
 
@@ -212,6 +360,7 @@ public class DishInfoController {
 
     /**
      * 删除
+     */
     @RequestMapping("/delete")
     public R delete(@RequestBody Long[] ids){
         dishInfoService.deleteBatchIds(Arrays.asList(ids));
@@ -226,6 +375,7 @@ public class DishInfoController {
     @RequestMapping("/autoSort")
     public R autoSort(@RequestParam Map<String, Object> params,DishInfoEntity dishInfo, HttpServletRequest request,String pre){
         EntityWrapper<DishInfoEntity> ew = new EntityWrapper<DishInfoEntity>();
+        ew.eq("dish_status", "上架");
         Map<String, Object> newMap = new HashMap<String, Object>();
         Map<String, Object> param = new HashMap<String, Object>();
 		Iterator<Map.Entry<String, Object>> it = param.entrySet().iterator();
@@ -276,10 +426,11 @@ public class DishInfoController {
     	}
         if(ordersDist!=null && ordersDist.size()>0) {
                 for(OrdersEntity o : ordersDist) {
-                        dishInfoList.addAll(dishInfoService.selectList(new EntityWrapper<DishInfoEntity>().eq(goodtypeColumn, o.getGoodtype())));
+                        dishInfoList.addAll(dishInfoService.selectList(new EntityWrapper<DishInfoEntity>().eq("dish_status", "上架").eq(goodtypeColumn, o.getGoodtype())));
                 }
         }
         EntityWrapper<DishInfoEntity> ew = new EntityWrapper<DishInfoEntity>();
+        ew.eq("dish_status", "上架");
         params.put("sort", "id");
         params.put("order", "desc");
         PageUtils page = dishInfoService.queryPage(params, MPUtil.sort(MPUtil.between(MPUtil.likeOrEq(ew, dishInfo), params), params));

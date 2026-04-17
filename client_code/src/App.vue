@@ -4,7 +4,7 @@
 <script>
 	const debounce = (fn, delay) => {
 		let timer = null;
-		return function() {
+		const wrapped = function() {
 			let context = this;
 			let args = arguments;
 			clearTimeout(timer);
@@ -12,13 +12,33 @@
         fn.apply(context, args);
       }, delay);
 		}
+		wrapped.cancel = () => {
+			clearTimeout(timer);
+			timer = null;
+		}
+		return wrapped
 	}
 
 	const _ResizeObserver = window.ResizeObserver;
-	window.ResizeObserver = class ResizeObserver extends _ResizeObserver {
-		constructor(callback) {
-			callback = debounce(callback, 16);
-			super(callback);
+	if (_ResizeObserver) {
+		window.ResizeObserver = class ResizeObserver extends _ResizeObserver {
+			constructor(callback) {
+				const wrapped = debounce(callback, 16);
+				super(wrapped);
+				this.__debouncedCallback = wrapped;
+			}
+			disconnect() {
+				if (this.__debouncedCallback && this.__debouncedCallback.cancel) {
+					this.__debouncedCallback.cancel();
+				}
+				return super.disconnect();
+			}
+			unobserve(target) {
+				if (this.__debouncedCallback && this.__debouncedCallback.cancel) {
+					this.__debouncedCallback.cancel();
+				}
+				return super.unobserve(target);
+			}
 		}
 	}
 </script>

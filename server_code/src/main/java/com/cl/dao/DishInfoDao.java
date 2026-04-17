@@ -35,5 +35,9 @@ public interface DishInfoDao extends BaseMapper<DishInfoEntity> {
 
     int renameDishCategory(@Param("oldCategory") String oldCategory, @Param("newCategory") String newCategory);
 
+    int renameFlavor(@Param("oldFlavor") String oldFlavor, @Param("newFlavor") String newFlavor);
+
+    int deleteFlavor(@Param("oldFlavor") String oldFlavor);
+
 }
 

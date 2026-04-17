@@ -4,8 +4,8 @@
 			<el-form class="formModel_form" ref="formRef" :model="form" :rules="rules">
 				<el-row >
 					<el-col :span="24">
-						<el-form-item label="餐桌名称" prop="seat_name">
-							<el-input class="list_inp" v-model="form.seat_name" placeholder="餐桌名称"
+						<el-form-item label="餐位名称" prop="seat_name">
+							<el-input class="list_inp" v-model="form.seat_name" placeholder="餐位名称"
                                 type="text"
 								:readonly="!isAdd||disabledForm.seat_name?true:false" />
 						</el-form-item>
@@ -26,8 +26,8 @@
 						</el-form-item>
 					</el-col>
 					<el-col :span="24">
-						<el-form-item label="餐桌位置" prop="table_location">
-							<el-input class="list_inp" v-model="form.table_location" placeholder="餐桌位置"
+						<el-form-item label="餐位位置" prop="table_location">
+							<el-input class="list_inp" v-model="form.table_location" placeholder="餐位位置"
                                 type="text"
 								:readonly="!isAdd||disabledForm.table_location?true:false" />
 						</el-form-item>
@@ -57,6 +57,14 @@
 						</el-form-item>
 					</el-col>
 
+				<el-col :span="24">
+					<el-form-item label="订金金额" prop="deposit">
+						<el-input class="list_inp" v-model.number="form.deposit" placeholder="订金金额"
+							type="number"
+							:readonly="true" />
+					</el-form-item>
+				</el-col>
+
 					<el-col :span="24">
 						<el-form-item label="预约时间" prop="reservation_time">
 							<el-date-picker
@@ -70,6 +78,22 @@
 								placeholder="请选择预约时间" />
 						</el-form-item>
 					</el-col>
+                    <el-col :span="24">
+                        <el-form-item label="核销状态" prop="verification_status">
+                            <el-input class="list_inp" :model-value="verifyStatus" placeholder="核销状态"
+                                      type="text"
+                                      :readonly="true" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="24">
+                        <el-form-item label="核销人员">
+                            <el-input class="list_inp"
+                                      :model-value="verifyOperator"
+                                      placeholder="核销人员"
+                                      type="text"
+                                      :readonly="true" />
+                        </el-form-item>
+                    </el-col>
 				</el-row>
 			</el-form>
 			<template #footer v-if="isAdd||type=='logistics'||type=='reply'">
@@ -114,10 +138,31 @@
         storeupNumber : false,
         login_name : false,
         name : false,
+        deposit : false,
         reservation_time : false,
 	})
 	const formVisible = ref(false)
 	const isAdd = ref(false)
+	const pad2 = (n) => String(n).padStart(2, '0')
+	const formatDateTime = (d) => {
+		return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`
+	}
+	const formatReservationTime = (value) => {
+		if (value === null || value === undefined || value === '') return ''
+		const raw = String(value).trim()
+		if (!raw) return ''
+		if (raw.includes('-') || raw.includes(':')) return raw
+		const num = Number(raw)
+		if (Number.isFinite(num)) {
+			const isSeconds = raw.length <= 10
+			const ts = isSeconds ? num * 1000 : num
+			const d = new Date(ts)
+			if (!Number.isNaN(d.getTime())) return formatDateTime(d)
+		}
+		const d = new Date(raw)
+		if (!Number.isNaN(d.getTime())) return formatDateTime(d)
+		return raw
+	}
 	const formTitle = ref('')
     
 	const rules = ref({
@@ -139,6 +184,9 @@
 		],
 		name: [
 		],
+		deposit: [
+			{ validator: context.$toolUtil.validator.number, trigger: 'blur' },
+		],
 		reservation_time: [
 		],
 	})
@@ -155,6 +203,21 @@
 	const reservation_timeDisabledDate = (date) => {
 		return date.getTime() < Date.now() - 8.64e7;
 	}
+    const verifyOperator = computed(() => {
+        const s = String(form.value.verification_status || '')
+        if (!s) return ''
+        // 支持中文/英文括号两种格式
+        const m1 = s.match(/（核销人：([^）]+)）/)
+        if (m1 && m1[1]) return m1[1].trim()
+        const m2 = s.match(/\(核销人：([^\)]+)\)/)
+        if (m2 && m2[1]) return m2[1].trim()
+        return ''
+    })
+    const verifyStatus = computed(() => {
+        const s = String(form.value.verification_status || '')
+        if (!s) return ''
+        return s.replace(/（核销人：[^）]+）/, '').replace(/\(核销人：[^\)]+\)/, '').trim()
+    })
 
 	//获取唯一标识
 	const getUUID =()=> {
@@ -171,6 +234,7 @@
 			storeupNumber: '',
 			login_name: '',
 			name: '',
+			deposit: '',
 			reservation_time: '',
 		}
 	}
@@ -180,8 +244,16 @@
 			url: `${tableName}/info/${id.value}`,
 			method: 'get'
 		}).then(res => {
-			let reg=new RegExp('../../../file','g')
-			form.value = res.data.data
+			if(res?.data?.code !== 0){
+				context?.$toolUtil.message(res?.data?.msg || '获取详情失败','error')
+				return
+			}
+			const data = res?.data?.data || {}
+			form.value = {
+				...data,
+				login_name: data.login_name ?? data.loginName ?? data.account ?? data.username ?? '',
+				reservation_time: formatReservationTime(data.reservation_time)
+			}
 			formVisible.value = true
 		})
 	}
@@ -256,7 +328,7 @@
 					continue;
 				}
 				if(x=='reservation_time'){
-					form.value.reservation_time = row[x];
+					form.value.reservation_time = formatReservationTime(row[x]);
 					disabledForm.value.reservation_time = true;
 					continue;
 				}
@@ -292,6 +364,12 @@
 		if(json.hasOwnProperty('name')&& context?.$toolUtil.storageGet("role")!="管理员"){
 			form.value.name = json.name
 			disabledForm.value.name = true;
+		}
+		// 订金仅管理员可改
+		if (context?.$toolUtil.storageGet("role")!="管理员") {
+			disabledForm.value.deposit = true;
+		} else {
+			disabledForm.value.deposit = false;
 		}
 	})
 	}

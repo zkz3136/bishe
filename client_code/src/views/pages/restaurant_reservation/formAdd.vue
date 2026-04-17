@@ -11,8 +11,8 @@
 		<el-form ref="formRef" :model="form" class="add_form" label-width="120px" :rules="rules">
 			<el-row>
 				<el-col :span="12">
-					<el-form-item label="餐桌名称" prop="seat_name">
-						<el-input class="list_inp" v-model="form.seat_name" placeholder="餐桌名称"
+					<el-form-item label="餐位名称" prop="seat_name">
+						<el-input class="list_inp" v-model="form.seat_name" placeholder="餐位名称"
 							 type="text" 							:readonly="!isAdd||disabledForm.seat_name?true:false" />
 					</el-form-item>
 				</el-col>
@@ -22,7 +22,7 @@
 						<uploads
 							:disabled="true"
 							action="file/upload" 
-							tip="封面由餐桌信息自动带出"
+							tip="封面由餐位信息自动带出"
 							style="width: 100%;text-align: left;"
 							:fileUrls="form.cover_image?form.cover_image:''" 
 							@change="cover_imageUploadSuccess">
@@ -30,8 +30,8 @@
 					</el-form-item>
 				</el-col>
 				<el-col :span="12">
-					<el-form-item label="餐桌位置" prop="table_location">
-						<el-input class="list_inp" v-model="form.table_location" placeholder="餐桌位置"
+					<el-form-item label="餐位位置" prop="table_location">
+						<el-input class="list_inp" v-model="form.table_location" placeholder="餐位位置"
 							 type="text" 							:readonly="!isAdd||disabledForm.table_location?true:false" />
 					</el-form-item>
 				</el-col>
@@ -100,7 +100,7 @@
 				</el-button>
 				<div class="deposit_tip">
 					<i class="el-icon-info-filled"></i>
-					预约将扣除50元定金，到店后可核销退费
+					预约将扣除{{ Number(seatDeposit) }}元订金，到店后可核销退费
 				</div>
 			</div>
 		</el-form>
@@ -117,6 +117,7 @@
 		nextTick,
 		computed
 	} from 'vue';
+	import { ElMessageBox } from 'element-plus';
 	import {
 		useRoute,
 		useRouter
@@ -145,53 +146,58 @@
 	// 已被预约的时段列表
 	const bookedTimeSlots = ref([])
 	let seatInfoTimer = null
+	const seatDeposit = ref(50)
 
 	const fetchAllowedSlotHours = (date) => {
+		const dateStr = typeof date === 'string'
+			? date
+			: (date ? moment(date).format('YYYY-MM-DD') : '')
 		return context?.$http({
 			url: `${tableName}/time_slots`,
 			method: 'get',
-			params: date ? { date } : {}
+			params: dateStr ? { date: dateStr } : {}
 		}).then(res => {
 			const data = res?.data?.data
 			if (Array.isArray(data)) {
-				allowedSlotHours.value = data.map(v => String(v)).filter(v => v !== '')
+				allowedSlotHours.value = data.map(v => String(v).padStart(2, '0')).filter(v => v !== '')
 				allowedSlotHoursLoaded.value = true
 				return
 			}
-			allowedSlotHoursLoaded.value = false
-			allowedSlotHours.value = ['09','10','11','12','13','14','15','16','17','18','19']
+			allowedSlotHoursLoaded.value = true
+			allowedSlotHours.value = []
 		}).catch(() => {
 			allowedSlotHoursLoaded.value = false
-			allowedSlotHours.value = ['09','10','11','12','13','14','15','16','17','18','19']
+			allowedSlotHours.value = []
 		})
 	}
 	
 	// 查询已被预约的时段
 	const checkBookedTimeSlots = (date, tableNameParam) => {
-		context?.$http({
-			url: `${tableName}/list`,
+		const dateStr = typeof date === 'string'
+			? date
+			: (date ? moment(date).format('YYYY-MM-DD') : '')
+		const seatNameStr = tableNameParam ? String(tableNameParam).trim() : ''
+		if (!dateStr || !seatNameStr) {
+			bookedTimeSlots.value = []
+			return Promise.resolve()
+		}
+
+		return context?.$http({
+			url: `${tableName}/booked_hours`,
 			method: 'get',
 			params: {
-				page: 1,
-				limit: 10000,
-				seat_name: tableNameParam
+				date: dateStr,
+				seatName: seatNameStr
 			}
 		}).then(res => {
-			bookedTimeSlots.value = []
-			if (res.data && res.data.data && res.data.data.list) {
-				res.data.data.list.forEach(item => {
-					if (item?.verification_status === '已核销' || item?.payment_status === '已退款') {
-						return
-					}
-					if (item.reservation_time && item.reservation_time.startsWith(date)) {
-						// 提取时段（小时）
-						const timeStr = item.reservation_time.split(' ')[1]
-						if (timeStr) {
-							const hour = timeStr.split(':')[0]
-							bookedTimeSlots.value.push(hour)
-						}
-					}
-				})
+			const data = res?.data?.data
+			if (Array.isArray(data)) {
+				bookedTimeSlots.value = data.map(v => String(v).padStart(2, '0')).filter(v => v !== '')
+			} else {
+				bookedTimeSlots.value = []
+			}
+			if (reservationSlotHour.value && isTimeSlotBooked(reservationSlotHour.value)) {
+				reservationSlotHour.value = ''
 			}
 		}).catch(err => {
 			console.error('查询已预约时段失败:', err)
@@ -215,16 +221,14 @@
 	
 	// 定义时段选项列表（使用计算属性以便响应式更新）
 	const timeSlotOptions = computed(() => {
-		const list = allowedSlotHoursLoaded.value
-			? (allowedSlotHours.value || [])
-			: ['09','10','11','12','13','14','15','16','17','18','19']
+		const list = allowedSlotHours.value || []
 		return list.map(hour => {
 			const startLabel = String(hour).padStart(2, '0')
 			const label = `${startLabel}:00`
 			const booked = isTimeSlotBooked(hour)
 			return {
 				label: booked ? `${label}（已被预约）` : label,
-				value: hour,
+				value: String(hour).padStart(2, '0'),
 				disabled: booked
 			}
 		})
@@ -277,7 +281,7 @@
 		})
 	})
 	
-	// 监听餐桌名称变化，如果有日期也查询已预约时段
+	// 监听餐位名称变化，如果有日期也查询已预约时段
 	watch(() => form.value.seat_name, (newTableName) => {
 		const v = newTableName ? String(newTableName).trim() : ''
 		if (reservationDate.value && v) {
@@ -291,14 +295,16 @@
 		}
 		clearTimeout(seatInfoTimer)
 		seatInfoTimer = setTimeout(() => {
+			const params = {
+				page: 1,
+				limit: 1,
+				seatName: v,
+				seat_name: v
+			}
 			context?.$http({
 				url: `restaurant_info/list`,
 				method: 'get',
-				params: {
-					page: 1,
-					limit: 1,
-					seat_name: v
-				}
+				params
 			}).then(res => {
 				const first = res?.data?.data?.list?.[0]
 				if (!first) return
@@ -307,6 +313,11 @@
 				if (first.capacity !== undefined && first.capacity !== null && first.capacity !== '') {
 					form.value.capacity = first.capacity
 				}
+				const depRaw = first.deposit
+				const depNum = parseFloat(depRaw ?? '')
+				if (Number.isFinite(depNum)) {
+					seatDeposit.value = depNum
+				}
 			}).catch(() => {})
 		}, 250)
 	})
@@ -314,7 +325,7 @@
 	//表单验证
 	const rules = ref({
 		seat_name: [
-			{ required: true, message: '餐桌名称不能为空', trigger: ['blur', 'change'] }
+			{ required: true, message: '餐位名称不能为空', trigger: ['blur', 'change'] }
 		],
 		cover_image: [
 		],
@@ -468,6 +479,11 @@
 						form.value.capacity = d.capacity
 						disabledForm.value.capacity = true
 					}
+					const depRaw = d.deposit
+					const depNum = parseFloat(depRaw ?? '')
+					if (Number.isFinite(depNum)) {
+						seatDeposit.value = depNum
+					}
 				})
 			}
 			if(row){
@@ -512,7 +528,7 @@
 	const payRef = ref(null)
 	const showPayDialog = () => {
 		// 设置定金金额
-		form.value.deposit = 50
+		form.value.deposit = Number(seatDeposit.value || 50)
 		form.value.payment_status = '未支付'
 		if (payRef.value) {
 		payRef.value.payClick('restaurant_reservation', form.value)
@@ -526,6 +542,34 @@
 		// 提交表单
 		submitForm()
 	}
+	// 直接使用余额支付定金并提交
+	const autoPayAndSubmit = async () => {
+		const deposit = Number(seatDeposit.value || 50)
+		try {
+			const res = await context?.$http({
+				url: `${context?.$toolUtil.storageGet('frontSessionTable')}/session`,
+				method: 'get'
+			})
+			const userBalance = parseFloat(res?.data?.data?.balance ?? res?.data?.data?.money ?? 0)
+			if (!Number.isFinite(userBalance) || userBalance < deposit) {
+				context?.$toolUtil.message(`余额不足，请先充值（需${deposit}元订金）`, 'error')
+				return
+			}
+		} catch (e) {
+			// 获取余额失败时，交由后端校验
+		}
+		ElMessageBox.confirm(`是否确认使用余额支付订金（¥${deposit}）？`, '提示', {
+			confirmButtonText: '是',
+			cancelButtonText: '否',
+			type: 'warning',
+		}).then(() => {
+			form.value.deposit = deposit
+			form.value.payment_status = '已支付'
+			context?.$toolUtil.message('已使用余额支付订金', 'success', () => {
+				submitForm()
+			})
+		}).catch(() => {})
+	}
 	const isSubmitting = ref(false)
 	//提交
 	const save=()=>{
@@ -533,7 +577,7 @@
 			form.value.cover_image = form.value.cover_image.replace(new RegExp(context?.$config.url,"g"),"");
 		}
 		if(!form.value.seat_name || String(form.value.seat_name).trim() === '') {
-			context?.$toolUtil.message('餐桌名称不能为空', 'error')
+			context?.$toolUtil.message('餐位名称不能为空', 'error')
 			return
 		}
 		
@@ -549,13 +593,10 @@
 		form.value.reservation_time = `${reservationDate.value} ${reservationSlotHour.value}:00:00`
 		
 		// 检查是否选择了已被预约的时段
-		// 暂时注释掉，先确保基本功能正常
-		/*
 		if(isTimeSlotBooked(reservationSlotHour.value)) {
 			context?.$toolUtil.message('该时段已被预约，请选择其他时段', 'error')
 			return
 		}
-		*/
 		
 		var table = crossTable.value
 		var objcross = JSON.parse(JSON.stringify(crossRow.value))
@@ -584,7 +625,7 @@
 		if(!form.value.id) {
 			formRef.value.validate((valid)=>{
 				if(valid){
-					showPayDialog()
+					autoPayAndSubmit()
 				}
 			})
 			return
@@ -603,7 +644,7 @@
 		isSubmitting.value = true
 		const seatName = form.value?.seat_name ? String(form.value.seat_name).trim() : ''
 		if(!seatName){
-			context?.$toolUtil.message('餐桌名称不能为空', 'error')
+			context?.$toolUtil.message('餐位名称不能为空', 'error')
 			isSubmitting.value = false
 			return
 		}

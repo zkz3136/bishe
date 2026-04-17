@@ -49,7 +49,7 @@
 					</div>
 				</div>
 				<div class="info_item">
-					<div class="info_label">餐桌位置</div>
+					<div class="info_label">餐位位置</div>
 					<div  class="info_text" >{{detail.table_location}}</div>
 				</div>
 				<div class="info_item">
@@ -57,12 +57,12 @@
 					<div  class="info_text" >{{detail.capacity}}</div>
 				</div>
 			<div class="info_item">
-				<div class="info_label">餐桌状态</div>
+				<div class="info_label">餐位状态</div>
 				<div  class="info_text" >{{detail.table_status}}</div>
 			</div>
 			<div class="info_item">
 				<div class="info_label">收藏数</div>
-				<div  class="info_text" >{{detail.storeupNumber}}</div>
+				<div  class="info_text" >{{detail.storeup_number}}</div>
 			</div>
 				<div class="btn_view">
 					<el-button class="cross_btn" :disabled="reservationDisabled" @click="restaurantReservationOnAcross" type="warning">预约</el-button>
@@ -241,7 +241,7 @@
 				method: 'post',
 				data: params
 			}).then(res => {
-				detail.value.storeupNumber += 1
+				detail.value.storeup_number = Number(detail.value.storeup_number || 0) + 1
 				context?.$http({
 					url: `${tableName}/update`,
 					method: 'post',
@@ -260,7 +260,8 @@
 				method: 'post',
 				data: ids
 			}).then(res => {
-				detail.value.storeupNumber -= 1
+				const n = Number(detail.value.storeup_number || 0) - 1
+				detail.value.storeup_number = n > 0 ? n : 0
 				context?.$http({
 					url: `${tableName}/update`,
 					method: 'post',
@@ -301,7 +302,7 @@
 			return false
 		}
 		if(reservationDisabled.value){
-			context?.$toolUtil.message('该餐桌已禁止预约','error')
+			context?.$toolUtil.message('该餐位已禁止预约','error')
 			return false
 		}
 		if(!btnAuth('restaurant_info','预约')){
@@ -329,7 +330,7 @@
 		margin: 10px auto;
 		background: none;
 		width: 100%;
-		text-align: right;
+		text-align: left;
 		// 返回按钮
 		.back_btn {
 			border: 1px solid var(--theme-color);
@@ -458,8 +459,8 @@
 		// 内容区
 		:deep(.el-tabs__content) {
 		}
-		//评论
-		//我的评论
+		//评价
+		//我的评价
 		.my_comment_view {
 
 			.my_comment_form {
@@ -469,7 +470,7 @@
 			}
 			// 按钮盒子
 			.comment_btn {
-				// 评论按钮
+				// 评价按钮
 				.add_btn {
 				}
 				// 悬浮
@@ -484,7 +485,7 @@
 			}
 		}
 
-		//评论列表
+		//评价列表
 		.comment_list {
 
 			.comment {

@@ -1,0 +1,419 @@
+[
+  {
+    "roleName": "管理员",
+    "tableName": "admin",
+    "pathName": "admin",
+    "hasBackLogin": "是",
+    "hasFrontLogin": "否",
+    "hasBackRegister": "否",
+    "hasFrontRegister": "否",
+    "backMenu": [
+      {
+        "menu": "车位管理",
+        "child": [
+          {
+            "menu": "车位信息",
+            "buttons": ["新增", "查看", "修改", "删除"],
+            "menuJump": "列表",
+            "classname": "parking_spot",
+            "tableName": "parking_spot",
+            "allButtons": ["新增", "查看", "修改", "删除"],
+            "appFrontIcon": "cuIcon-goods"
+          }
+        ],
+        "unicode": "&#xeebb;",
+        "fontClass": "icon-common40"
+      },
+      {
+        "menu": "餐厅管理",
+        "child": [
+          {
+            "menu": "餐厅信息",
+            "buttons": ["新增", "查看", "修改", "删除", "查看评价"],
+            "menuJump": "列表",
+            "classname": "restaurant_info",
+            "tableName": "restaurant_info",
+            "allButtons": ["新增", "查看", "修改", "删除", "查看评价", "预约"],
+            "appFrontIcon": "cuIcon-present"
+          },
+          {
+            "menu": "餐厅预约",
+            "buttons": ["查看", "修改", "删除", "审核"],
+            "menuJump": "列表",
+            "classname": "restaurant_reservation",
+            "tableName": "restaurant_reservation",
+            "allButtons": ["新增", "查看", "修改", "删除", "审核"],
+            "appFrontIcon": "cuIcon-time"
+          }
+        ],
+        "unicode": "&#xee05;",
+        "fontClass": "icon-common23"
+      },
+      
+      {
+        "menu": "菜品管理",
+        "child": [
+          {
+            "menu": "菜品信息",
+            "buttons": ["新增", "查看", "修改", "删除", "菜品类型", "查看评价", "首页统计", "下架", "上架"],
+            "menuJump": "列表",
+            "classname": "dish_info",
+            "tableName": "dish_info",
+            "allButtons": ["新增", "查看", "修改", "删除", "菜品类型", "查看评价", "首页统计", "下架", "上架"],
+            "appFrontIcon": "cuIcon-taxi"
+          },
+          {
+            "menu": "菜品评价",
+            "buttons": ["查看", "修改", "删除", "回复"],
+            "menuJump": "列表",
+            "classname": "dish_review",
+            "tableName": "dish_review",
+            "allButtons": ["查看", "修改", "删除", "回复"]
+          }
+        ],
+        "unicode": "&#xeeb2;",
+        "fontClass": "icon-common38"
+      },
+      {
+        "menu": "订单管理",
+        "child": [
+          {
+            "menu": "订单",
+            "buttons": ["查看", "修改", "删除", "月销额", "年销额", "品销量", "导出", "首页总数", "首页统计", "发货", "物流", "核销"],
+            "tableName": "orders",
+            "classname": "orders",
+            "allButtons": ["新增", "查看", "修改", "删除", "月销额", "年销额", "品销量", "导出", "首页总数", "首页统计", "发货", "物流", "核销"],
+            "appFrontIcon": "cuIcon-skin",
+            "menuJump": ""
+          }
+        ],
+        "unicode": "&#xee6a;",
+        "fontClass": "icon-common33"
+      },
+      {
+        "menu": "人员管理",
+        "child": [
+          {
+            "menu": "管理员",
+            "buttons": ["新增", "查看", "修改", "删除"],
+            "menuJump": "列表",
+            "classname": "admin",
+            "tableName": "admin",
+            "allButtons": ["新增", "查看", "修改", "删除"],
+            "appFrontIcon": "cuIcon-newshot"
+          },
+          {
+            "menu": "用户",
+            "buttons": ["新增", "查看", "修改", "删除"],
+            "menuJump": "列表",
+            "classname": "user",
+            "tableName": "user",
+            "allButtons": ["新增", "查看", "修改", "删除"],
+            "appFrontIcon": "cuIcon-paint"
+          },
+          {
+            "menu": "员工",
+            "buttons": ["新增", "查看", "修改", "删除"],
+            "menuJump": "列表",
+            "classname": "staff",
+            "tableName": "staff",
+            "allButtons": ["新增", "查看", "修改", "删除"],
+            "appFrontIcon": "cuIcon-service"
+          }
+        ],
+        "unicode": "&#xef98;",
+        "fontClass": "icon-user2"
+      },
+      {
+        "menu": "客服管理",
+        "child": [
+          {
+            "menu": "客服会话",
+            "buttons": ["查看", "修改"],
+            "menuJump": "列表",
+            "classname": "support_ticket",
+            "tableName": "support_ticket",
+            "allButtons": ["查看", "修改"]
+          },
+          {
+            "menu": "FAQ知识库",
+            "buttons": ["新增", "查看", "修改", "删除"],
+            "menuJump": "列表",
+            "classname": "support_faq",
+            "tableName": "support_faq",
+            "allButtons": ["新增", "查看", "修改", "删除"]
+          }
+        ],
+        "fontClass": "icon-kefu"
+      },
+      {
+        "menu": "内容运营",
+        "child": [
+          {
+            "menu": "餐厅活动",
+            "buttons": ["新增", "查看", "修改", "删除"],
+            "menuJump": "列表",
+            "classname": "restaurant_event",
+            "tableName": "restaurant_event",
+            "allButtons": ["新增", "查看", "修改", "删除"],
+            "appFrontIcon": "cuIcon-medal"
+          },
+          {
+            "menu": "系统公告",
+            "buttons": ["新增", "查看", "修改", "删除"],
+            "menuJump": "列表",
+            "classname": "system_notice",
+            "tableName": "system_notice",
+            "allButtons": ["新增", "查看", "修改", "删除"],
+            "appFrontIcon": "cuIcon-flashlightopen"
+          },
+          {
+            "menu": "轮播图",
+            "buttons": ["新增", "查看", "修改", "删除"],
+            "menuJump": "列表",
+            "classname": "config",
+            "tableName": "config",
+            "allButtons": ["新增", "查看", "修改", "删除"],
+            "appFrontIcon": "cuIcon-addressbook"
+          }
+        ],
+        "unicode": "&#xee30;",
+        "fontClass": "icon-common30"
+      }
+    ],
+    "frontMenu": []
+  },
+  {
+    "roleName": "用户",
+    "tableName": "user",
+    "pathName": "user",
+    "hasBackLogin": "否",
+    "hasFrontLogin": "是",
+    "hasBackRegister": "否",
+    "hasFrontRegister": "是",
+    "backMenu": [],
+    "frontMenu": [
+      {
+        "menu": "信息管理",
+        "child": [
+          {
+            "menu": "菜品信息",
+            "buttons": ["查看", "查看评价"],
+            "menuJump": "列表",
+            "classname": "dish_info",
+            "tableName": "dish_info",
+            "appFrontIcon": "cuIcon-send"
+          }
+        ]
+      },
+      {
+        "menu": "活动管理",
+        "child": [
+          {
+            "menu": "餐厅活动",
+            "buttons": ["查看"],
+            "menuJump": "列表",
+            "classname": "restaurant_event",
+            "tableName": "restaurant_event",
+            "appFrontIcon": "cuIcon-explore"
+          }
+        ]
+      },
+      {
+        "menu": "购物车管理",
+        "child": [
+          {
+            "menu": "购物车",
+            "buttons": ["查看"],
+            "menuJump": "列表",
+            "classname": "cart",
+            "tableName": "cart",
+            "appFrontIcon": "cuIcon-goods"
+          }
+        ]
+      },
+      {
+        "menu": "订单管理",
+        "child": [
+          {
+            "menu": "订单",
+            "buttons": ["查看"],
+            "menuJump": "列表",
+            "classname": "orders",
+            "tableName": "orders",
+            "appFrontIcon": "cuIcon-skin"
+          }
+        ]
+      },
+      {
+        "menu": "预约管理",
+        "child": [
+          {
+            "menu": "餐厅预约",
+            "buttons": ["查看", "新增", "修改", "删除"],
+            "menuJump": "列表",
+            "classname": "restaurant_reservation",
+            "tableName": "restaurant_reservation",
+            "appFrontIcon": "cuIcon-time"
+          }
+        ]
+      },
+      {
+        "menu": "车位信息管理",
+        "child": [
+          {
+            "menu": "车位信息",
+            "buttons": ["查看", "预约"],
+            "menuJump": "列表",
+            "classname": "parking_spot",
+            "tableName": "parking_spot",
+            "appFrontIcon": "cuIcon-circle"
+          }
+        ]
+      },
+      {
+        "menu": "餐厅信息管理",
+        "child": [
+          {
+            "menu": "餐厅信息",
+            "buttons": ["查看", "查看评价", "预约"],
+            "menuJump": "列表",
+            "classname": "restaurant_info",
+            "tableName": "restaurant_info",
+            "appFrontIcon": "cuIcon-discover"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "roleName": "员工",
+    "tableName": "staff",
+    "pathName": "staff",
+    "hasBackLogin": "是",
+    "hasFrontLogin": "否",
+    "hasBackRegister": "否",
+    "hasFrontRegister": "否",
+    "backMenu": [
+      {
+        "menu": "订单管理",
+        "child": [
+          {
+            "menu": "订单",
+            "buttons": ["查看"],
+            "tableName": "orders",
+            "classname": "orders",
+            "allButtons": ["新增", "查看", "修改"],
+            "appFrontIcon": "cuIcon-skin",
+            "menuJump": ""
+          }
+        ],
+        "unicode": "&#xee6a;",
+        "fontClass": "icon-common33"
+      },
+      {
+        "menu": "预约管理",
+        "child": [
+          {
+            "menu": "餐厅预约",
+            "buttons": ["查看", "审核"],
+            "menuJump": "列表",
+            "classname": "restaurant_reservation",
+            "tableName": "restaurant_reservation",
+            "allButtons": ["新增", "查看", "修改", "删除", "审核"],
+            "appFrontIcon": "cuIcon-time"
+          }
+        ],
+        "unicode": "&#xeebb;",
+        "fontClass": "icon-common40"
+      },
+      {
+        "menu": "信息查看",
+        "child": [
+          {
+            "menu": "餐厅信息",
+            "buttons": ["查看"],
+            "menuJump": "列表",
+            "classname": "restaurant_info",
+            "tableName": "restaurant_info",
+            "allButtons": ["新增", "查看", "修改", "删除", "查看评价"],
+            "appFrontIcon": "cuIcon-present"
+          },
+          {
+            "menu": "菜品信息",
+            "buttons": ["查看"],
+            "menuJump": "列表",
+            "classname": "dish_info",
+            "tableName": "dish_info",
+            "allButtons": ["新增", "查看", "修改", "删除", "查看评价"],
+            "appFrontIcon": "cuIcon-goods"
+          },
+          {
+            "menu": "菜品评价",
+            "buttons": ["查看", "回复"],
+            "menuJump": "列表",
+            "classname": "dish_review",
+            "tableName": "dish_review",
+            "allButtons": ["查看", "回复"]
+          }
+        ],
+        "unicode": "&#xee14;",
+        "fontClass": "icon-common14"
+      },
+      {
+        "menu": "客服管理",
+        "child": [
+          {
+            "menu": "我的会话",
+            "buttons": ["查看", "修改"],
+            "menuJump": "列表",
+            "classname": "support_ticket",
+            "tableName": "support_ticket",
+            "allButtons": ["查看", "修改"]
+          },
+          {
+            "menu": "FAQ知识库",
+            "buttons": ["新增", "查看", "修改", "删除"],
+            "menuJump": "列表",
+            "classname": "support_faq",
+            "tableName": "support_faq",
+            "allButtons": ["新增", "查看", "修改", "删除"]
+          }
+        ],
+        "fontClass": "icon-kefu"
+      },
+      {
+        "menu": "内容运营",
+        "child": [
+          {
+            "menu": "餐厅活动",
+            "buttons": ["新增", "查看", "修改", "删除"],
+            "menuJump": "列表",
+            "classname": "restaurant_event",
+            "tableName": "restaurant_event",
+            "allButtons": ["新增", "查看", "修改", "删除"]
+          },
+          {
+            "menu": "系统公告",
+            "buttons": ["新增", "查看", "修改", "删除"],
+            "menuJump": "列表",
+            "classname": "system_notice",
+            "tableName": "system_notice",
+            "allButtons": ["新增", "查看", "修改", "删除"]
+          },
+          {
+            "menu": "轮播图",
+            "buttons": ["新增", "查看", "修改", "删除"],
+            "menuJump": "列表",
+            "classname": "config",
+            "tableName": "config",
+            "allButtons": ["新增", "查看", "修改", "删除"]
+          }
+        ],
+        "unicode": "&#xee30;",
+        "fontClass": "icon-common30"
+      }
+    ],
+    "frontMenu": []
+  }
+]

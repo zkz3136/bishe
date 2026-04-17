@@ -52,6 +52,10 @@
 					<div class="info_label">车位状态</div>
 					<div  class="info_text" >{{detail.spot_status}}</div>
 				</div>
+				<div class="info_item">
+					<div class="info_label">小时价格</div>
+					<div class="info_text">{{ (detail.hourly_price && Number(detail.hourly_price)>0) ? detail.hourly_price : 10 }} 元/小时</div>
+				</div>
 				<div class="btn_view">
 
 					<el-button class="edit_btn" v-if="centerType&&btnAuth('parking_spot','修改')" type="primary" @click="editClick">修改</el-button>
@@ -224,7 +228,7 @@
 		margin: 10px auto;
 		background: none;
 		width: 100%;
-		text-align: right;
+		text-align: left;
 		// 返回按钮
 		.back_btn {
 			border: 1px solid var(--theme-color);

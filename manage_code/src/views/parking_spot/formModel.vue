@@ -47,20 +47,37 @@
 								:readonly="!isAdd||disabledForm.spot_location?true:false" />
 						</el-form-item>
 					</el-col>
+					<el-col :span="24">
+						<el-form-item label="小时价格" prop="hourly_price">
+							<el-input class="list_inp" v-model="form.hourly_price" placeholder="小时价格"
+                                type="number"
+								:readonly="!isAdd||disabledForm.hourly_price?true:false" />
+						</el-form-item>
+					</el-col>
 
 					<el-col :span="24">
 						<el-form-item label="车位状态" prop="spot_status">
-							<el-select
-								class="list_sel"
-								:disabled="!isAdd||disabledForm.spot_status?true:false"
-								v-model="form.spot_status" 
-								placeholder="请选择车位状态"
-								>
-								<el-option v-for="(item,index) in spot_statusLists" :label="item"
-									:value="item"
+							<template v-if="type==='add'">
+								<el-input class="list_inp" v-model="form.spot_status" readonly />
+							</template>
+							<template v-else>
+								<el-select
+									class="list_sel"
+									:disabled="!isAdd||disabledForm.spot_status?true:false"
+									v-model="form.spot_status" 
+									placeholder="请选择车位状态"
 									>
-								</el-option>
-							</el-select>
+									<el-option v-for="(item,index) in spot_statusLists" :label="item"
+										:value="item"
+										>
+									</el-option>
+								</el-select>
+							</template>
+						</el-form-item>
+					</el-col>
+					<el-col :span="24">
+						<el-form-item label="车牌号" prop="plate_number">
+							<el-input class="list_inp" v-model="form.plate_number" placeholder="车牌号" :readonly="true" />
 						</el-form-item>
 					</el-col>
 
@@ -104,6 +121,7 @@
         spot_image : false,
         area : false,
         spot_location : false,
+        hourly_price : false,
         spot_status : false,
 	})
 	const formVisible = ref(false)
@@ -118,6 +136,8 @@
 		area: [
 		],
 		spot_location: [
+		],
+		hourly_price: [
 		],
 		spot_status: [
 		],
@@ -147,6 +167,7 @@
 			spot_image: '',
 			area: '',
 			spot_location: '',
+			hourly_price: 10,
 			spot_status: '空闲',
 		}
 	}
@@ -158,6 +179,9 @@
 		}).then(res => {
 			let reg=new RegExp('../../../file','g')
 			form.value = res.data.data
+			if(form.value.hourly_price===undefined||form.value.hourly_price===null||String(form.value.hourly_price)===''||Number(form.value.hourly_price)<=0){
+				form.value.hourly_price = 10
+			}
 			formVisible.value = true
 		})
 	}
@@ -169,9 +193,9 @@
 	//初始化
 	const init=(formId=null,formType='add',formNames='',row=null,table=null,statusColumnName=null,tips=null,statusColumnValue=null)=>{
 		resetForm()
+		type.value = formType
 		if(formId){
 			id.value = formId
-			type.value = formType
 		}
 		if(formType == 'add'){
 			isAdd.value = true
@@ -211,6 +235,11 @@
 					disabledForm.value.spot_location = true;
 					continue;
 				}
+				if(x=='hourly_price'){
+					form.value.hourly_price = row[x];
+					disabledForm.value.hourly_price = true;
+					continue;
+				}
 				if(x=='spot_status'){
 					form.value.spot_status = row[x];
 					disabledForm.value.spot_status = true;
@@ -241,8 +270,18 @@
 			method: 'get'
 		}).then(res => {
 			var json = res.data.data
-			if(context?.$toolUtil.storageGet("role")!="管理员" && !context?.$toolUtil.storageGet("isAdmin")) {
-				disabledForm.value.spot_status = true;
+			const role = String(context?.$toolUtil.storageGet("role")||'').trim()
+			if(role !== "管理员"){
+				disabledForm.value.hourly_price = true
+				disabledForm.value.spot_status = true
+			}else{
+				disabledForm.value.hourly_price = false
+				// 管理员新增也不允许修改状态
+				if(type.value === 'add'){
+					disabledForm.value.spot_status = true
+				}else{
+					disabledForm.value.spot_status = false
+				}
 			}
 		})
 		areaLists.value = "A,B,C,D,F".split(',')
@@ -266,6 +305,38 @@
 		if(form.value.spot_image!=null) {
 			form.value.spot_image = form.value.spot_image.replace(new RegExp(context?.$config.url,"g"),"");
 		}
+		if(form.value.hourly_price!==undefined && form.value.hourly_price!==null && form.value.hourly_price!==''){
+			const n = Number(form.value.hourly_price)
+			if(!Number.isNaN(n)) form.value.hourly_price = n
+		}
+		const payload = {
+			...form.value,
+			spotNumber: form.value.spot_number,
+			spotImage: form.value.spot_image,
+			spotLocation: form.value.spot_location,
+			hourlyPrice: form.value.hourly_price,
+			spotStatus: form.value.spot_status,
+		}
+		// 车位编号唯一性校验（新增或修改后编号与其他记录重复时阻止提交）
+		try {
+			const checkRes = await context?.$http({
+				url: `${tableName}/page`,
+				method: 'get',
+				params: {
+					page: 1,
+					limit: 1,
+					spotNumber: form.value.spot_number
+				}
+			})
+			const existsList = checkRes?.data?.data?.list || []
+			if (Array.isArray(existsList) && existsList.length) {
+				const dup = existsList.some(it => it && it.id !== form.value.id)
+				if (dup) {
+					context?.$toolUtil.message('车位编号已存在','error')
+					return
+				}
+			}
+		} catch (e) { console.error(e) }
 		var table = crossTable.value
 		var objcross = JSON.parse(JSON.stringify(crossRow.value))
 		let crossUserId = ''
@@ -311,7 +382,7 @@
 							context?.$http({
 								url: `${tableName}/${!form.value.id ? "save" : "update"}`,
 								method: 'post', 
-								data: form.value 
+								data: payload 
 							}).then(async res=>{
 								emit('formModelChange')
 								context?.$toolUtil.message(`操作成功`,'success')
@@ -323,7 +394,7 @@
 					context?.$http({
 						url: `${tableName}/${!form.value.id ? "save" : "update"}`,
 						method: 'post', 
-						data: form.value 
+						data: payload 
 					}).then(async (res)=>{
 						emit('formModelChange')
 						context?.$toolUtil.message(`操作成功`,'success')

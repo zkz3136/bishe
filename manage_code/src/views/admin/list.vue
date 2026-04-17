@@ -21,7 +21,7 @@
 					<el-button class="add_btn" type="success" @click="addClick" v-if="btnAuth('admin','新增')">
 						新增
 					</el-button>
-					<el-button class="del_btn" type="danger" :disabled="selRows.length?false:true" @click="delClick(null)"  v-if="btnAuth('admin','删除')">
+					<el-button class="del_btn" type="danger" :disabled="!hasDeletableSelection" @click="delClick(null)"  v-if="btnAuth('admin','删除')">
 						删除
 					</el-button>
 				</div>
@@ -80,9 +80,9 @@
 						<el-button class="view_btn" type="info" v-if=" btnAuth('admin','查看')" @click="infoClick(scope.row.id)">
 							详情
 						</el-button>
-						<el-button class="edit_btn" type="primary" @click="editClick(scope.row.id)" v-if=" btnAuth('admin','修改')">
+						<el-button class="edit_btn" type="primary" :disabled="!canEditRow(scope.row.id)" @click="editClick(scope.row.id)" v-if=" btnAuth('admin','修改')">
 							修改						</el-button>
-						<el-button class="del_btn" type="danger" @click="delClick(scope.row.id)"  v-if="btnAuth('admin','删除')">
+						<el-button class="del_btn" type="danger" :disabled="!canDeleteRow(scope.row.id)" @click="delClick(scope.row.id)"  v-if="btnAuth('admin','删除')">
 							删除						</el-button>
 					</template>
 				</el-table-column>
@@ -130,6 +130,7 @@
 	const user = computed(()=>store.getters['user/session'])
 	const avatar = ref(store.state.user.avatar)
 	const context = getCurrentInstance()?.appContext.config.globalProperties;
+	const currentAdminId = computed(()=>Number(context?.$toolUtil.storageGet('admin_userid')||0))
 	import formModel from './formModel.vue'
 	//基础信息
 
@@ -180,15 +181,31 @@
 	const delClick = (id) => {
 		let ids = ref([])
 		if (id) {
+			if(!canDeleteRow(id)){
+				context?.$toolUtil.message('不可删除当前登录的管理员账号','error')
+				return
+			}
 			ids.value = [id]
 		} else {
 			if (selRows.value.length) {
 				for (let x in selRows.value) {
-					ids.value.push(selRows.value[x].id)
+					const rid = selRows.value[x].id
+					if(canDeleteRow(rid)){
+						ids.value.push(rid)
+					}
 				}
 			} else {
 				return false
 			}
+			if(!ids.value.length){
+				context?.$toolUtil.message('不可删除当前登录的管理员账号','error')
+				return
+			}
+		}
+		// 非超级管理员不允许删除其他管理员
+		if(!isSuperAdmin.value){
+			context?.$toolUtil.message('仅超级管理员可删除其他管理员','error')
+			return
 		}
 		ElMessageBox.confirm(`是否删除选中${formName}`, '提示', {
 			confirmButtonText: '是',
@@ -206,6 +223,48 @@
 			})
 		}).catch(_ => {})
 	}
+	const canDeleteRow = (id)=>{
+		return Number(id) !== currentAdminId.value
+	}
+	const hasDeletableSelection = computed(()=>{
+		return isSuperAdmin.value && selRows.value.some(r=>Number(r.id)!==currentAdminId.value)
+	})
+	const canEditRow = (id)=>{
+		return isSuperAdmin.value || Number(id) === currentAdminId.value
+	}
+	// 计算是否为超级管理员：按最早创建的管理员判定（addtime 优先，缺失则按最小 id）
+	const isSuperAdmin = computed(()=>{
+		const arr = Array.isArray(list.value) ? list.value : []
+		if(arr.length === 0) return false
+		let minAddTs = null, earliestByAddtimeId = null
+		let minId = null
+		for(let i=0;i<arr.length;i++){
+			const row = arr[i]
+			if(!row) continue
+			const idNum = Number(row.id)
+			if(!isNaN(idNum)){
+				if(minId === null || idNum < minId){
+					minId = idNum
+				}
+			}
+			let ts = null
+			if (row.addtime) {
+				try {
+					const v = typeof row.addtime === 'string' ? row.addtime : String(row.addtime)
+					const t = new Date(v).getTime()
+					if(!isNaN(t)) ts = t
+				} catch(e){ ts = null }
+			}
+			if(ts!=null){
+				if(minAddTs==null || ts < minAddTs){
+					minAddTs = ts
+					earliestByAddtimeId = idNum
+				}
+			}
+		}
+		const earliestId = earliestByAddtimeId != null ? earliestByAddtimeId : minId
+		return earliestId != null && earliestId === currentAdminId.value
+	})
 	//多选
 	const handleSelectionChange = (e) => {
 		selRows.value = e
@@ -242,11 +301,20 @@
 	}
 	const editClick = (id=null)=>{
 		if(id){
+			if(!canEditRow(id)){
+				context?.$toolUtil.message('仅超级管理员可修改其他管理员','error')
+				return
+			}
 			formRef.value.init(id,'edit')
 			return
 		}
 		if(selRows.value.length){
-			formRef.value.init(selRows.value[0].id,'edit')
+			const rid = selRows.value[0].id
+			if(!canEditRow(rid)){
+				context?.$toolUtil.message('仅超级管理员可修改其他管理员','error')
+				return
+			}
+			formRef.value.init(rid,'edit')
 		}
 	}
 

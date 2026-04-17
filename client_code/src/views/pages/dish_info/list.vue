@@ -79,7 +79,8 @@
 								<span>{{item.dish_name}}</span>
 							</div>
 							<div class="data_price">
-								<span>￥{{item.price || item.jiage}}</span>
+								<span>￥{{getDisplayPrice(item)}}</span>
+								<span v-if="hasDiscount(item)" style="margin-left: 6px; text-decoration: line-through; color: #999;">￥{{getOriginalPrice(item)}}</span>
 							</div>
 							<div class="data_title2">
 								<span>菜品类型：{{item.dish_category || item.dishCategory}}</span>
@@ -136,7 +137,7 @@
 	const route = useRoute()
 	//基础信息
 	const tableName = 'dish_info'
-	const formName = '美食信息'
+	const formName = '菜品信息'
 	//基础信息
 	const breadList = ref([{
 		name: formName
@@ -206,6 +207,20 @@
             sortOrder.value = 'desc'
         }
         getList()
+    }
+    const getOriginalPrice = (item) => {
+        return Number(item?.price ?? item?.jiage ?? 0) || 0
+    }
+    const getDiscountPrice = (item) => {
+        return Number(item?.discountprice ?? item?.discount_price ?? item?.discountPrice ?? 0) || 0
+    }
+    const hasDiscount = (item) => {
+        const original = getOriginalPrice(item)
+        const discount = getDiscountPrice(item)
+        return discount > 0 && discount < original
+    }
+    const getDisplayPrice = (item) => {
+        return hasDiscount(item) ? getDiscountPrice(item) : getOriginalPrice(item)
     }
 	// 加入购物车
 	const addCart = (item) => {
@@ -281,6 +296,10 @@
 			params.dishCategory = dishCategory
 			params.dish_category = dishCategory
 		}
+		if (!centerType.value) {
+			params.dishStatus = '上架'
+			params.dish_status = '上架'
+		}
         if(sortType.value){
             params['sort'] = sortType.value
             params['order'] = sortOrder.value
@@ -355,7 +374,7 @@
 		margin: 10px auto;
 		background: none;
 		width: 100%;
-		text-align: right;
+		text-align: left;
 		// 返回按钮
 		.back_btn {
 			border: 1px solid var(--theme-color);

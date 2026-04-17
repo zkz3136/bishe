@@ -62,7 +62,7 @@ coze:
   workflow-id: 7551090810286358579
   app-id: 7551035132703604763
   workflow-query-key: input
-  token: pat_LxaLl3aHqmdIeSypPfuq4WbgM7ZaMRjEM241ItYKpCYi5PPN0eZi4b1CHAfTwuve
+  token: pat_CDDyNaoya4bIp5BMNo1Ck43WDebE55JmNtDR7HgxXp0G8PIhPdgxANMLbrZBQXIa
   timeout-ms: ${COZE_TIMEOUT_MS:150000}
 
 jwt:

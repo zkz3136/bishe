@@ -8,17 +8,17 @@
 							车位编号：
 						</div>
 						<div class="search_box">
-							<el-input class="search_inp" v-model="searchQuery.spot_number" placeholder="车位编号"
+							<el-input class="search_inp" v-model="searchQuery.spotNumber" placeholder="车位编号"
 								clearable>
 							</el-input>
 						</div>
 					</div>
 					<div class="search_view">
 						<div class="search_label">
-							车位位置：
+							车牌号：
 						</div>
 						<div class="search_box">
-							<el-input class="search_inp" v-model="searchQuery.spot_location" placeholder="车位位置"
+							<el-input class="search_inp" v-model="searchQuery.plateNumber" placeholder="车牌号"
 								clearable>
 							</el-input>
 						</div>
@@ -31,7 +31,7 @@
 							<el-select
 								class="search_sel"
 								clearable
-								v-model="searchQuery.spot_status"
+								v-model="searchQuery.spotStatus"
 								placeholder="车位状态"
 								>
 								<el-option v-for="item in spot_statusLists" :label="item" :value="item"></el-option>
@@ -43,7 +43,7 @@
 					</div>
 				</el-form>
 				<div class="btn_view">
-					<el-button class="add_btn" type="success" @click="addClick" v-if="btnAuth('parking_spot','新增')">
+					<el-button class="add_btn" type="success" @click="addClick" v-if="btnAuth('parking_spot','新增') && context?.$toolUtil.storageGet('role')==='管理员'">
 						新增
 					</el-button>
 				</div>
@@ -63,14 +63,16 @@
                     </template>
 					<div class="title">车位编号：{{item.spot_number}}</div>
 					<div class="title">车位状态：{{item.spot_status}}</div>
+					<div class="title" v-if="item.plate_number || item.plateNumber">车牌号：{{ item.plate_number || item.plateNumber }}</div>
+					<div class="title">小时价格：{{ Number(item.hourly_price)>0 ? Number(item.hourly_price) : 10 }} 元/小时</div>
 					<div class="btns">
 						<el-button class="view_btn" type="info" v-if=" btnAuth('parking_spot','查看')" @click="infoClick(item.id)">
 							详情
 						</el-button>
-						<el-button class="edit_btn" type="primary" @click="editClick(item.id)" v-if=" btnAuth('parking_spot','修改')">
+						<el-button class="edit_btn" type="primary" @click="editClick(item.id)" v-if=" btnAuth('parking_spot','修改') && context?.$toolUtil.storageGet('role')==='管理员'">
 							修改
 						</el-button>
-						<el-button class="del_btn" type="danger" @click="delClick(item.id)"  v-if="btnAuth('parking_spot','删除')">
+						<el-button class="del_btn" type="danger" @click="delClick(item.id)"  v-if="btnAuth('parking_spot','删除') && context?.$toolUtil.storageGet('role')==='管理员'">
 							删除
 						</el-button>
 						<el-button class="operate_btn" type="success" @click="entryClick(item.id)" v-if="item.spot_status=='空闲'">
@@ -160,14 +162,14 @@
 		let params = JSON.parse(JSON.stringify(listQuery.value))
 		params['sort'] = 'id'
 		params['order'] = 'desc'
-		if(searchQuery.value.spot_number&&searchQuery.value.spot_number!=''){
-			params['spot_number'] = '%' + searchQuery.value.spot_number + '%'
+		if(searchQuery.value.spotNumber&&searchQuery.value.spotNumber!=''){
+			params['spotNumber'] = '%' + searchQuery.value.spotNumber + '%'
 		}
-		if(searchQuery.value.spot_location&&searchQuery.value.spot_location!=''){
-			params['spot_location'] = '%' + searchQuery.value.spot_location + '%'
+		if(searchQuery.value.plateNumber&&searchQuery.value.plateNumber!=''){
+			params['plateNumber'] = '%' + searchQuery.value.plateNumber + '%'
 		}
-		if(searchQuery.value.spot_status&&searchQuery.value.spot_status!=''){
-			params['spot_status'] = searchQuery.value.spot_status
+		if(searchQuery.value.spotStatus&&searchQuery.value.spotStatus!=''){
+			params['spotStatus'] = searchQuery.value.spotStatus
 		}
 		context.$http({
 			url: `${tableName}/page`,
@@ -223,7 +225,8 @@
 				method: 'post',
 				data: {
 					id: id,
-					plate_number: value
+					plate_number: value,
+					plateNumber: value
 				}
 			}).then(res => {
 				context?.$toolUtil.message('入场成功', 'success', () => {

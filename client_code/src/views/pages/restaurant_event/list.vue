@@ -46,7 +46,7 @@
 								<span>开始时间：{{item.start_time}}</span>
 							</div>
 							<div class="data_title3">
-								<span>活动地点：{{item.event_location}}</span>
+								<span>结束时间：{{item.end_time}}</span>
 							</div>
 						</div>
 					</div>
@@ -146,7 +146,9 @@
 		listLoading.value = true
 		let params = JSON.parse(JSON.stringify(listQuery.value))
 		if(searchQuery.value.event_name&&searchQuery.value.event_name!=''){
-			params.event_name = '%' + searchQuery.value.event_name + '%'
+			const v = '%' + searchQuery.value.event_name + '%'
+			params.event_name = v
+			params.eventName = v
 		}
         params['sort'] = 'publish_time';
         params['order'] = 'desc';
@@ -203,7 +205,7 @@
 		margin: 10px auto;
 		background: none;
 		width: 100%;
-		text-align: right;
+		text-align: left;
 		// 返回按钮
 		.back_btn {
 			border: 1px solid var(--theme-color);
@@ -483,6 +485,19 @@
 				.is-focus {
 					box-shadow: none !important;
 				}
+			}
+		}
+	}
+	
+	// 搜索输入稳定宽度，避免 clearable 图标出现/隐藏导致抖动
+	.list_search {
+		.search_box {
+			:deep(.search_inp) {
+				width: 260px;
+				box-sizing: border-box;
+			}
+			:deep(.search_inp.el-input--suffix) {
+				padding-right: 32px;
 			}
 		}
 	}

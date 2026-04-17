@@ -32,6 +32,8 @@ import com.cl.utils.R;
 import com.cl.utils.MPUtil;
 import com.cl.utils.MapUtils;
 import com.cl.utils.CommonUtil;
+import com.cl.service.DishInfoService;
+import com.cl.entity.DishInfoEntity;
 
 /**
  * 订单
@@ -45,6 +47,8 @@ import com.cl.utils.CommonUtil;
 public class OrdersController {
     @Autowired
     private OrdersService ordersService;
+    @Autowired
+    private DishInfoService dishInfoService;
 
 
 
@@ -152,6 +156,34 @@ public class OrdersController {
     	//ValidatorUtils.validateEntity(orders);
         if (StringUtils.isBlank(orders.getSeatName())) {
             return R.error("请选择餐桌");
+        }
+        try {
+            String table = orders.getTablename();
+            Long goodId = orders.getGoodid();
+            Integer qty = orders.getBuynumber();
+            if (qty == null || qty <= 0) {
+                qty = 1;
+                orders.setBuynumber(qty);
+            }
+            if ("dish_info".equalsIgnoreCase(String.valueOf(table)) && goodId != null) {
+                DishInfoEntity goods = dishInfoService.selectById(goodId);
+                if (goods == null) {
+                    return R.error("菜品不存在或已删除");
+                }
+                if ("下架".equals(goods.getDishStatus())) {
+                    return R.error("菜品已下架");
+                }
+                double original = goods.getPrice() == null ? 0d : goods.getPrice();
+                double discount = goods.getDiscountprice() == null ? 0d : goods.getDiscountprice();
+                double real = (discount > 0 && discount < original) ? discount : original;
+                double total = original * qty;
+                double discountTotal = real * qty;
+                orders.setPrice(new BigDecimal(original).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                orders.setDiscountprice(new BigDecimal(real).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                orders.setTotal(new BigDecimal(total).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                orders.setDiscounttotal(new BigDecimal(discountTotal).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+            }
+        } catch (Exception e) {
         }
         ordersService.insert(orders);
         return R.ok();

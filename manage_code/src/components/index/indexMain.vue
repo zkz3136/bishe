@@ -30,17 +30,18 @@
 	const role = ref('')
 	const init = () => {
 		const menus = menu.list()
-		if (menus) {
-			menuList.value = menus
-		}
+		menuList.value = Array.isArray(menus) ? menus : []
 		role.value = context?.$toolUtil.storageGet('role')
+		if (!Array.isArray(menuList.value) || menuList.value.length === 0 || !role.value) {
+			return
+		}
 		for (let i = 0; i < menuList.value.length; i++) {
 			if (menuList.value[i].roleName == role.value) {
 				menuList.value = menuList.value[i].backMenu;
 				break;
 			}
 		}
-		let children = makeMenu(menuList.value)
+		let children = makeMenu(Array.isArray(menuList.value) ? menuList.value : [])
 		for (let i = 0; i < children.length; i++) {
 			if (!router.hasRoute(children[i].name)) {
 				router.addRoute('Index', children[i])
@@ -49,7 +50,9 @@
 	}
 	const makeMenu = (menu) => {
 		let children = []
+		if (!Array.isArray(menu)) return children
 		for (let x in menu) {
+			if (!menu[x] || !Array.isArray(menu[x].child)) continue
 			for (let i in menu[x].child) {
 				children.push({
 					path: '/' + menu[x].child[i].tableName,

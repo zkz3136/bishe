@@ -18,10 +18,10 @@
 					</div>
 					<div class="search_view">
 						<div class="search_label">
-							评论内容：
+							评价内容：
 						</div>
 						<div class="search_box">
-							<el-input class="search_inp" v-model="searchQuery.content" placeholder="评论内容"
+							<el-input class="search_inp" v-model="searchQuery.content" placeholder="评价内容"
 								clearable>
 							</el-input>
 						</div>
@@ -73,14 +73,14 @@
                         <el-rate v-model="scope.row.score" disabled></el-rate>
 					</template>
 				</el-table-column>
-				<el-table-column label="评论内容" min-width="140" :resizable='true' :sortable='true' align="left" header-align="left">
+				<el-table-column label="评价内容" min-width="140" :resizable='true' :sortable='true' align="left" header-align="left">
 					<template #default="scope">
 						<span v-html="scope.row.content"></span>
 					</template>
 				</el-table-column>
 				<el-table-column label="回复内容" min-width="140" :resizable='true' :sortable='true' align="left" header-align="left">
 					<template #default="scope">
-						<span v-html="scope.row.reply"></span>
+						<span v-html="stripReplyPrefix(scope.row.reply)"></span>
 					</template>
 				</el-table-column>
                 <el-table-column v-if="btnAuth('restaurant_review','修改')" label="禁用账号" :resizable='true' :sortable='false' align="left" header-align="left">
@@ -151,7 +151,7 @@
 	//基础信息
 
 	const tableName = 'restaurant_review'
-	const formName = '餐厅信息评论表'
+	const formName = '餐厅信息评价表'
 	const route = useRoute()
 	//基础信息
 	onMounted(()=>{
@@ -211,7 +211,7 @@
 				return false
 			}
 		}
-		ElMessageBox.confirm(`是否删除选中${formName}`, '提示', {
+		ElMessageBox.confirm('是否删除所选评价', '提示', {
 			confirmButtonText: '是',
 			cancelButtonText: '否',
 			type: 'warning',
@@ -305,6 +305,10 @@
 	}
 	const replyClick=(id=null)=>{
 		formRef.value.init(id,'reply')
+	}
+	const stripReplyPrefix = (h) => {
+		let s = String(h ?? '')
+		return s.replace(/^\s*(管理员：|员工：|餐厅回复：)\s*/, '')
 	}
     const updateItem = (row)=>{
         context.$http.post(`${tableName}/update`,row).then(res=>{

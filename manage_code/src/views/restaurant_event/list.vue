@@ -8,7 +8,7 @@
 							活动名称：
 						</div>
 						<div class="search_box">
-							<el-input class="search_inp" v-model="searchQuery.event_name" placeholder="活动名称"
+							<el-input class="search_inp" v-model="searchQuery.eventName" placeholder="活动名称"
 								clearable>
 							</el-input>
 						</div>
@@ -39,7 +39,7 @@
                     </template>
 					<div class="title">{{item.event_name}}</div>
 					<div class="title">开始时间：{{item.start_time}}</div>
-					<div class="title">活动地点：{{item.event_location}}</div>
+					<div class="title">结束时间：{{item.end_time}}</div>
 					<div class="btns">
 						<el-button class="view_btn" type="info" v-if=" btnAuth('restaurant_event','查看')" @click="infoClick(item.id)">
 							详情
@@ -129,8 +129,10 @@
 		let params = JSON.parse(JSON.stringify(listQuery.value))
 		params['sort'] = 'id'
 		params['order'] = 'desc'
-		if(searchQuery.value.event_name&&searchQuery.value.event_name!=''){
-			params['event_name'] = '%' + searchQuery.value.event_name + '%'
+		if(searchQuery.value.eventName&&searchQuery.value.eventName!=''){
+			const keyword = String(searchQuery.value.eventName).trim()
+			params['eventName'] = keyword
+			params['event_name'] = keyword
 		}
 		params['sort'] = 'publish_time';
 		params['order'] = 'desc';

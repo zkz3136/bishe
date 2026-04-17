@@ -137,10 +137,19 @@ public class ParkingSpotController {
      */
     @RequestMapping("/save")
     public R save(@RequestBody ParkingSpotEntity parkingSpot, HttpServletRequest request){
+        Object roleObj = request.getSession().getAttribute("role");
+        if (roleObj == null) {
+            return R.error(401, "登录状态失效，请重新登录！");
+        }
+        String roleStr = String.valueOf(roleObj);
+        if (!"管理员".equals(roleStr)) {
+            return R.error(403, "无权限操作");
+        }
         if(cheweixinxiService.selectCount(new EntityWrapper<ParkingSpotEntity>().eq("spot_number", parkingSpot.getSpotNumber()))>0) {
             return R.error("车位编号已存在");
         }
     	//ValidatorUtils.validateEntity(parkingSpot);
+        parkingSpot.setSpotStatus("空闲");
         cheweixinxiService.insert(parkingSpot);
         return R.ok();
     }
@@ -150,10 +159,19 @@ public class ParkingSpotController {
      */
     @RequestMapping("/add")
     public R add(@RequestBody ParkingSpotEntity parkingSpot, HttpServletRequest request){
+        Object roleObj = request.getSession().getAttribute("role");
+        if (roleObj == null) {
+            return R.error(401, "登录状态失效，请重新登录！");
+        }
+        String roleStr = String.valueOf(roleObj);
+        if (!"管理员".equals(roleStr)) {
+            return R.error(403, "无权限操作");
+        }
         if(cheweixinxiService.selectCount(new EntityWrapper<ParkingSpotEntity>().eq("spot_number", parkingSpot.getSpotNumber()))>0) {
             return R.error("车位编号已存在");
         }
     	//ValidatorUtils.validateEntity(parkingSpot);
+        parkingSpot.setSpotStatus("空闲");
         cheweixinxiService.insert(parkingSpot);
         return R.ok();
     }
@@ -166,6 +184,14 @@ public class ParkingSpotController {
     @RequestMapping("/update")
     @Transactional
     public R update(@RequestBody ParkingSpotEntity parkingSpot, HttpServletRequest request){
+        Object roleObj = request.getSession().getAttribute("role");
+        if (roleObj == null) {
+            return R.error(401, "登录状态失效，请重新登录！");
+        }
+        String roleStr = String.valueOf(roleObj);
+        if (!"管理员".equals(roleStr)) {
+            return R.error(403, "无权限操作");
+        }
         //ValidatorUtils.validateEntity(parkingSpot);
         cheweixinxiService.updateById(parkingSpot);//全部更新
         return R.ok();
@@ -179,7 +205,15 @@ public class ParkingSpotController {
      * 删除
      */
     @RequestMapping("/delete")
-    public R delete(@RequestBody Long[] ids){
+    public R delete(@RequestBody Long[] ids, HttpServletRequest request){
+        Object roleObj = request.getSession().getAttribute("role");
+        if (roleObj == null) {
+            return R.error(401, "登录状态失效，请重新登录！");
+        }
+        String roleStr = String.valueOf(roleObj);
+        if (!"管理员".equals(roleStr)) {
+            return R.error(403, "无权限操作");
+        }
         cheweixinxiService.deleteBatchIds(Arrays.asList(ids));
         return R.ok();
     }
@@ -218,13 +252,22 @@ public class ParkingSpotController {
         }
         
         Date now = new Date();
-        long diff = now.getTime() - entity.getEntryTime().getTime();
-        double minutes = diff / (1000 * 60.0);
-        int halfHours = (int) Math.ceil(minutes / 30.0);
-        if(halfHours < 1) halfHours = 1; // At least one unit if entered
-        if(minutes <= 0) halfHours = 0; // Just in case
+        int durationMinutes = 0;
+        int halfHours = 1;
+        if (entity.getEntryTime() != null) {
+            long diff = now.getTime() - entity.getEntryTime().getTime();
+            double minutesD = diff / (1000 * 60.0);
+            durationMinutes = (int)Math.max(0, Math.round(minutesD));
+            halfHours = (int) Math.ceil((durationMinutes) / 30.0);
+            if(halfHours < 1) halfHours = 1;
+        }
         
-        double price = halfHours * 5.0;
+        Double hourly = entity.getHourlyPrice();
+        if (hourly == null || hourly <= 0) {
+            hourly = 10.0;
+        }
+        double unitPrice = hourly / 2.0;
+        double price = new BigDecimal(halfHours * unitPrice).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
         
         // Reset status
         entity.setSpotStatus("空闲");
@@ -232,7 +275,7 @@ public class ParkingSpotController {
         entity.setEntryTime(null);
         cheweixinxiService.updateById(entity);
         
-        return R.ok().put("price", price).put("duration", (int)minutes);
+        return R.ok().put("price", price).put("duration", durationMinutes).put("unit", "半小时").put("unitPrice", unitPrice);
     }
     
     /**

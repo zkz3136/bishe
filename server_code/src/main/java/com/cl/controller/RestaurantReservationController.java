@@ -88,8 +88,18 @@ public class RestaurantReservationController {
         if("user".equals(tableName)) {
             restaurantReservation.setLoginName((String)request.getSession().getAttribute("username"));
         }
-            EntityWrapper<RestaurantReservationEntity> ew = new EntityWrapper<RestaurantReservationEntity>();
-        
+        EntityWrapper<RestaurantReservationEntity> ew = new EntityWrapper<RestaurantReservationEntity>();
+        Object seatNameObj = params.get("seatName");
+        if(seatNameObj == null) {
+            seatNameObj = params.get("seat_name");
+        }
+        if(seatNameObj != null && StringUtils.isNotBlank(String.valueOf(seatNameObj))) {
+            String keyword = String.valueOf(seatNameObj).trim();
+            if(StringUtils.isNotBlank(keyword)) {
+                ew.like("seat_name", keyword);
+                restaurantReservation.setSeatName(null);
+            }
+        }
         PageUtils page = restaurantReservationService.queryPage(params, MPUtil.sort(MPUtil.between(MPUtil.likeOrEq(ew, restaurantReservation), params), params));
         return R.ok().put("data", page);
     }
@@ -140,7 +150,7 @@ public class RestaurantReservationController {
     @RequestMapping("/info/{id}")
     public R info(@PathVariable("id") Long id){
         RestaurantReservationEntity restaurantReservation = restaurantReservationService.selectById(id);
-		restaurantReservation = restaurantReservationService.selectView(new EntityWrapper<RestaurantReservationEntity>().eq("id", id));
+		restaurantReservation = restaurantReservationService.selectView(new EntityWrapper<RestaurantReservationEntity>().eq("restaurantReservation.id", id));
         return R.ok().put("data", restaurantReservation);
     }
 
@@ -151,7 +161,7 @@ public class RestaurantReservationController {
     @RequestMapping("/detail/{id}")
     public R detail(@PathVariable("id") Long id){
         RestaurantReservationEntity restaurantReservation = restaurantReservationService.selectById(id);
-		restaurantReservation = restaurantReservationService.selectView(new EntityWrapper<RestaurantReservationEntity>().eq("id", id));
+		restaurantReservation = restaurantReservationService.selectView(new EntityWrapper<RestaurantReservationEntity>().eq("restaurantReservation.id", id));
         return R.ok().put("data", restaurantReservation);
     }
     
@@ -172,7 +182,11 @@ public class RestaurantReservationController {
         }
         String dateError = validateReservationDate(restaurantReservation.getReservationTime());
         if(dateError != null) {
-            return R.error(dateError);
+            Object roleObj = request.getSession().getAttribute("role");
+            String role = roleObj == null ? "" : String.valueOf(roleObj);
+            if (!(dateError.contains("预约日期只能预约未来") && ("管理员".equals(role) || "员工".equals(role)))) {
+                return R.error(dateError);
+            }
         }
         if(!isReservationTimeAllowed(restaurantReservation.getReservationTime())) {
             return R.error("该预约时段不可预约");
@@ -184,8 +198,24 @@ public class RestaurantReservationController {
                 return R.error("该餐桌已禁止预约");
             }
         }
-        // 设置定金为50元
-        restaurantReservation.setDeposit(50.0);
+        if(hasTimeSlotConflict(restaurantReservation.getSeatName(), restaurantReservation.getReservationTime(), null)) {
+            return R.error("该餐桌在此时间段已被预约，请选择其他时间段");
+        }
+        // 订金金额：优先取餐位设置，其次取传入值，最后默认50
+        Double depositVal = null;
+        try {
+            RestaurantInfoEntity info = restaurantInfoService.selectOne(new EntityWrapper<RestaurantInfoEntity>().eq("seat_name", restaurantReservation.getSeatName()));
+            if (info != null && info.getDeposit() != null) {
+                depositVal = info.getDeposit();
+            }
+        } catch (Exception ignore) {}
+        if (depositVal == null && restaurantReservation.getDeposit() != null) {
+            depositVal = restaurantReservation.getDeposit();
+        }
+        if (depositVal == null) {
+            depositVal = 50.0;
+        }
+        restaurantReservation.setDeposit(depositVal);
         if("已支付".equals(restaurantReservation.getPaymentStatus())) {
             restaurantReservation.setVerificationStatus("未核销");
         } else {
@@ -214,7 +244,11 @@ public class RestaurantReservationController {
         }
         String dateError = validateReservationDate(restaurantReservation.getReservationTime());
         if(dateError != null) {
-            return R.error(dateError);
+            Object roleObj = request.getSession().getAttribute("role");
+            String role = roleObj == null ? "" : String.valueOf(roleObj);
+            if (!(dateError.contains("预约日期只能预约未来") && ("管理员".equals(role) || "员工".equals(role)))) {
+                return R.error(dateError);
+            }
         }
         if(!isReservationTimeAllowed(restaurantReservation.getReservationTime())) {
             return R.error("该预约时段不可预约");
@@ -226,25 +260,25 @@ public class RestaurantReservationController {
                 return R.error("该餐桌已禁止预约");
             }
         }
-        
-        // 只有在支付成功后才检查冲突（避免未支付的预约占用时段）
-        if("已支付".equals(restaurantReservation.getPaymentStatus())) {
-            // 检查该餐桌在该时间段是否已被预约
-            EntityWrapper<RestaurantReservationEntity> wrapper = new EntityWrapper<RestaurantReservationEntity>();
-            wrapper.eq("seat_name", restaurantReservation.getSeatName());
-            wrapper.eq("reservation_time", restaurantReservation.getReservationTime());
-            wrapper.eq("payment_status", "已支付"); // 只检查已支付的预约
-            wrapper.eq("verification_status", "未核销"); // 只检查未核销的预约
-            
-            int count = restaurantReservationService.selectCount(wrapper);
-            
-            if(count > 0) {
-                return R.error("该餐桌在此时间段已被预约，请选择其他时间段");
-            }
+        if(hasTimeSlotConflict(restaurantReservation.getSeatName(), restaurantReservation.getReservationTime(), null)) {
+            return R.error("该餐桌在此时间段已被预约，请选择其他时间段");
         }
         
-        // 设置定金为50元
-        restaurantReservation.setDeposit(50.0);
+        // 订金金额：优先取餐位设置，其次取传入值，最后默认50
+        Double depositVal2 = null;
+        try {
+            RestaurantInfoEntity info2 = restaurantInfoService.selectOne(new EntityWrapper<RestaurantInfoEntity>().eq("seat_name", restaurantReservation.getSeatName()));
+            if (info2 != null && info2.getDeposit() != null) {
+                depositVal2 = info2.getDeposit();
+            }
+        } catch (Exception ignore) {}
+        if (depositVal2 == null && restaurantReservation.getDeposit() != null) {
+            depositVal2 = restaurantReservation.getDeposit();
+        }
+        if (depositVal2 == null) {
+            depositVal2 = 50.0;
+        }
+        restaurantReservation.setDeposit(depositVal2);
         // 如果支付状态为已支付，扣除用户余额
         if("已支付".equals(restaurantReservation.getPaymentStatus())) {
             // 查询用户信息
@@ -253,12 +287,12 @@ public class RestaurantReservationController {
                 return R.error("用户不存在");
             }
             // 检查余额是否足够
-            if(user.getBalance() == null || user.getBalance() < 50.0) {
+            if(user.getBalance() == null || user.getBalance() < depositVal2) {
                 return R.error("账户余额不足，请先充值");
             }
             // 扣除定金，使用 BigDecimal 确保精度
             double currentMoney = user.getBalance();
-            double newMoney = Math.round((currentMoney - 50.0) * 100.0) / 100.0; // 保留2位小数
+            double newMoney = Math.round((currentMoney - depositVal2) * 100.0) / 100.0; // 保留2位小数
             user.setBalance(newMoney);
             userService.updateById(user);
             restaurantReservation.setVerificationStatus("未核销");
@@ -285,13 +319,28 @@ public class RestaurantReservationController {
         if(restaurantReservation.getId() == null) {
             return R.error("id不能为空");
         }
+        RestaurantReservationEntity db = restaurantReservationService.selectById(restaurantReservation.getId());
+        if(db == null) {
+            return R.error("数据不存在");
+        }
         if(restaurantReservation.getReservationTime() != null) {
             String dateError = validateReservationDate(restaurantReservation.getReservationTime());
             if(dateError != null) {
-                return R.error(dateError);
+                Object roleObj = request.getSession().getAttribute("role");
+                String role = roleObj == null ? "" : String.valueOf(roleObj);
+                if (!(dateError.contains("预约日期只能预约未来") && ("管理员".equals(role) || "员工".equals(role)))) {
+                    return R.error(dateError);
+                }
             }
             if(!isReservationTimeAllowed(restaurantReservation.getReservationTime())) {
                 return R.error("该预约时段不可预约");
+            }
+        }
+        String seatName = StringUtils.isBlank(restaurantReservation.getSeatName()) ? db.getSeatName() : restaurantReservation.getSeatName();
+        Date reservationTime = restaurantReservation.getReservationTime() == null ? db.getReservationTime() : restaurantReservation.getReservationTime();
+        if(!StringUtils.isBlank(seatName) && reservationTime != null) {
+            if(hasTimeSlotConflict(seatName, reservationTime, restaurantReservation.getId())) {
+                return R.error("该餐桌在此时间段已被预约，请选择其他时间段");
             }
         }
         boolean ok = restaurantReservationService.updateById(restaurantReservation);//全部更新
@@ -305,12 +354,80 @@ public class RestaurantReservationController {
     @GetMapping("/time_slots")
     public R timeSlots(@RequestParam(required = false) String date) {
         List<Integer> hours = getAllowedSlotHours(date);
+        if(!StringUtils.isBlank(date)) {
+            Date now = new Date();
+            String today = formatYmd(now);
+            if(date.equals(today)) {
+                int currentHour = getHourOfDay(now);
+                List<Integer> filtered = new ArrayList<>();
+                for(Integer h : hours) {
+                    if(h == null) continue;
+                    if(h > currentHour) {
+                        filtered.add(h);
+                    }
+                }
+                hours = filtered;
+            }
+        }
         List<String> slots = new ArrayList<>();
         for(Integer h : hours) {
             if(h == null) continue;
             slots.add(formatHour(h));
         }
         return R.ok().put("data", slots);
+    }
+
+    @IgnoreAuth
+    @GetMapping("/booked_hours")
+    public R bookedHours(@RequestParam String date, @RequestParam(required = false) String seatName, @RequestParam(required = false) String seat_name) {
+        String seat = StringUtils.isBlank(seatName) ? seat_name : seatName;
+        if(StringUtils.isBlank(date) || !date.matches("^\\d{4}-\\d{2}-\\d{2}$")) {
+            return R.error("日期格式错误");
+        }
+        if(StringUtils.isBlank(seat)) {
+            return R.ok().put("data", new ArrayList<>());
+        }
+        Date dayStart;
+        Date dayEnd;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date base = sdf.parse(date);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(base);
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+            dayStart = cal.getTime();
+            cal.set(Calendar.HOUR_OF_DAY, 23);
+            cal.set(Calendar.MINUTE, 59);
+            cal.set(Calendar.SECOND, 59);
+            cal.set(Calendar.MILLISECOND, 999);
+            dayEnd = cal.getTime();
+        } catch (ParseException e) {
+            return R.error("日期格式错误");
+        }
+
+        EntityWrapper<RestaurantReservationEntity> wrapper = new EntityWrapper<>();
+        wrapper.eq("seat_name", seat);
+        wrapper.between("reservation_time", dayStart, dayEnd);
+        wrapper.andNew().isNull("payment_status").or().ne("payment_status", "已退款");
+        wrapper.andNew().isNull("verification_status").or().ne("verification_status", "已核销");
+        List<RestaurantReservationEntity> list = restaurantReservationService.selectList(wrapper);
+        Set<String> hours = new HashSet<>();
+        if(list != null) {
+            for(RestaurantReservationEntity e : list) {
+                Date rt = e == null ? null : e.getReservationTime();
+                if(rt == null) continue;
+                int h = getHourOfDay(rt);
+                if(h >= 0 && h <= 23) {
+                    hours.add(formatHour(h));
+                }
+            }
+        }
+        List<String> out = new ArrayList<>(hours);
+        Collections.sort(out);
+        return R.ok().put("data", out);
     }
 
     @PostMapping("/time_slots/update")
@@ -401,6 +518,12 @@ public class RestaurantReservationController {
         if(reservationDayStart.before(todayStart)) {
             return "预约日期不能早于今天";
         }
+        if(reservationDayStart.compareTo(todayStart) == 0) {
+            Date now = new Date();
+            if(reservationTime.before(now)) {
+                return "预约时间不能早于当前时间";
+            }
+        }
         Date maxDayStart = getStartOfMaxReservationDay();
         if(maxDayStart != null && reservationDayStart.after(maxDayStart)) {
             return "预约日期只能预约未来" + MAX_RESERVATION_DAYS_AHEAD + "天内";
@@ -441,7 +564,7 @@ public class RestaurantReservationController {
         }
 
         List<Integer> defaults = new ArrayList<>();
-        for(int i = 9; i <= 19; i++) {
+        for(int i = 0; i <= 23; i++) {
             defaults.add(i);
         }
         return defaults;
@@ -508,6 +631,19 @@ public class RestaurantReservationController {
         if(date == null) return "";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         return sdf.format(date);
+    }
+
+    private boolean hasTimeSlotConflict(String seatName, Date reservationTime, Long excludeId) {
+        if(StringUtils.isBlank(seatName) || reservationTime == null) return false;
+        EntityWrapper<RestaurantReservationEntity> wrapper = new EntityWrapper<RestaurantReservationEntity>();
+        wrapper.eq("seat_name", seatName);
+        wrapper.eq("reservation_time", reservationTime);
+        if(excludeId != null) {
+            wrapper.ne("id", excludeId);
+        }
+        wrapper.andNew().isNull("payment_status").or().ne("payment_status", "已退款");
+        wrapper.andNew().isNull("verification_status").or().ne("verification_status", "已核销");
+        return restaurantReservationService.selectCount(wrapper) > 0;
     }
 
     private Date getStartOfToday() {
@@ -584,6 +720,52 @@ public class RestaurantReservationController {
     
 
     /**
+     * 预约定金统计（按时间）
+     * type: month | year
+     * 统计规则：仅统计 payment_status='已支付' 且 verification_status!='已退款' 的记录
+     * 分组字段：addtime
+     */
+    @IgnoreAuth
+    @GetMapping("/stats/deposit/{type}")
+    public R depositStats(@PathVariable("type") String type) {
+        List<RestaurantReservationEntity> all = restaurantReservationService.selectList(new EntityWrapper<RestaurantReservationEntity>()
+                .eq("payment_status", "已支付")
+                .andNew().isNull("verification_status").or().ne("verification_status", "已退款"));
+        Map<String, Double> bucket = new LinkedHashMap<>();
+        SimpleDateFormat fmtMonth = new SimpleDateFormat("yyyy-MM");
+        SimpleDateFormat fmtYear = new SimpleDateFormat("yyyy");
+        for (RestaurantReservationEntity e : all) {
+            if (e == null) continue;
+            Date t = e.getAddtime();
+            if (t == null) {
+                t = e.getReservationTime();
+            }
+            if (t == null) continue;
+            Double dep = e.getDeposit();
+            double val = dep == null ? 50.0 : dep.doubleValue();
+            String key;
+            if ("year".equalsIgnoreCase(type) || "年".equals(type)) {
+                key = fmtYear.format(t);
+            } else {
+                key = fmtMonth.format(t);
+            }
+            bucket.put(key, (bucket.getOrDefault(key, 0.0)) + val);
+        }
+        List<Map<String, Object>> out = new ArrayList<>();
+        for (Map.Entry<String, Double> en : bucket.entrySet()) {
+            Map<String, Object> m = new HashMap<>();
+            m.put("addtime", en.getKey());
+            m.put("total", Math.round(en.getValue() * 100.0) / 100.0);
+            out.add(m);
+        }
+        Collections.sort(out, (a, b) -> {
+            String ka = String.valueOf(a.get("addtime"));
+            String kb = String.valueOf(b.get("addtime"));
+            return ka.compareTo(kb);
+        });
+        return R.ok().put("data", out);
+    }
+    /**
      * 删除
      */
     @RequestMapping("/delete")
@@ -597,24 +779,54 @@ public class RestaurantReservationController {
      */
     @RequestMapping("/hexiao")
     @Transactional
-    public R hexiao(@RequestBody Long[] ids){
+    public R hexiao(@RequestBody Long[] ids, HttpServletRequest request){
         List<RestaurantReservationEntity> list = new ArrayList<RestaurantReservationEntity>();
         double totalRefund = 0;
+        String todayYmd = formatYmd(new Date());
+        String role = String.valueOf(Optional.ofNullable(com.cl.utils.CommonUtil.getPropertyByFieldNames(request.getSession(), "role")).orElse(""));
+        String username = String.valueOf(Optional.ofNullable(request.getSession().getAttribute("username")).orElse(""));
+        String operatorText = "";
+        if (StringUtils.isNotBlank(username)) {
+            if ("管理员".equals(role)) {
+                operatorText = "（核销人：管理员 " + username + "）";
+            } else if ("员工".equals(role)) {
+                operatorText = "（核销人：员工 " + username + "）";
+            } else {
+                operatorText = "（核销人：" + username + "）";
+            }
+        }
         for(Long id : ids) {
             RestaurantReservationEntity restaurantReservation = restaurantReservationService.selectById(id);
-            if("已支付".equals(restaurantReservation.getPaymentStatus()) && "未核销".equals(restaurantReservation.getVerificationStatus())) {
+            if(restaurantReservation == null) {
+                continue;
+            }
+            String pay = restaurantReservation.getPaymentStatus();
+            String ver = restaurantReservation.getVerificationStatus();
+            if("已支付".equals(pay) && "未核销".equals(ver)) {
+                Date rt = restaurantReservation.getReservationTime();
+                if(rt == null) {
+                    return R.error("预约时间缺失，无法核销");
+                }
+                String rtYmd = formatYmd(rt);
+                if(rtYmd == null) {
+                    return R.error("预约时间缺失，无法核销");
+                }
+                if(todayYmd.compareTo(rtYmd) > 0) {
+                    return R.error("仅允许在预约当天或预约日前进行核销");
+                }
                 // 查询用户信息
                 UserEntity user = userService.selectOne(new EntityWrapper<UserEntity>().eq("login_name", restaurantReservation.getLoginName()));
+                Double depositVal = restaurantReservation.getDeposit() == null ? 50.0 : restaurantReservation.getDeposit();
                 if(user != null) {
-                    // 退还定金到用户账户，使用精确计算
                     double currentMoney = user.getBalance() == null ? 0 : user.getBalance();
-                    double newMoney = Math.round((currentMoney + 50.0) * 100.0) / 100.0; // 保留2位小数
+                    double newMoney = Math.round((currentMoney + depositVal) * 100.0) / 100.0;
                     user.setBalance(newMoney);
                     userService.updateById(user);
-                    totalRefund += 50.0;
+                    totalRefund += depositVal;
                 }
                 
-                restaurantReservation.setVerificationStatus("已核销");
+                String verNote = "已核销" + (StringUtils.isNotBlank(operatorText) ? operatorText : "");
+                restaurantReservation.setVerificationStatus(verNote);
                 restaurantReservation.setPaymentStatus("已退款");
                 list.add(restaurantReservation);
             }

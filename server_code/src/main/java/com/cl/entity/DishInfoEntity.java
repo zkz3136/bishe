@@ -19,6 +19,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.enums.FieldFill;
 import com.baomidou.mybatisplus.enums.IdType;
+import com.fasterxml.jackson.annotation.JsonAlias;
 
 
 /**
@@ -55,18 +56,21 @@ public class DishInfoEntity<T> implements Serializable {
 	 * 菜品名称
 	 */
 	@TableField("dish_name")
+	@JsonAlias({"dish_name","dishName"})
 	private String dishName;
 	
 	/**
 	 * 菜品图片
 	 */
 	@TableField("dish_image")
+	@JsonAlias({"dish_image","dishImage"})
 	private String dishImage;
 	
 	/**
 	 * 菜品类型
 	 */
 	@TableField("dish_category")
+	@JsonAlias({"dish_category","dishCategory"})
 	private String dishCategory;
 	
 	/**
@@ -100,12 +104,14 @@ public class DishInfoEntity<T> implements Serializable {
 	 * 单限
 	 */
 	@TableField("onelimittimes")
+	@JsonAlias({"purchase_limit","purchaseLimit","onelimittimes"})
 	private Integer purchaseLimit;
 	
 	/**
 	 * 库存
 	 */
 	@TableField("alllimittimes")
+	@JsonAlias({"stock","alllimittimes"})
 	private Integer stock;
 	
 	/**
@@ -125,11 +131,12 @@ public class DishInfoEntity<T> implements Serializable {
 	@TableField("storeup_number")
 	private Integer favoritesNumber;
 	
+
 	/**
-	 * 评论数
+	 * 上架状态
 	 */
-	@TableField("discuss_number")
-	private Integer discussNumber;
+	@TableField("dish_status")
+	private String dishStatus;
 	
 	
 
@@ -295,16 +302,16 @@ public class DishInfoEntity<T> implements Serializable {
 		return favoritesNumber;
 	}
 	/**
-	 * 设置：评论数
+	 * 设置：上架状态
 	 */
-	public void setDiscussNumber(Integer discussNumber) {
-		this.discussNumber = discussNumber;
+	public void setDishStatus(String dishStatus) {
+		this.dishStatus = dishStatus;
 	}
 	/**
-	 * 获取：评论数
+	 * 获取：上架状态
 	 */
-	public Integer getDiscussNumber() {
-		return discussNumber;
+	public String getDishStatus() {
+		return dishStatus;
 	}
 
 }

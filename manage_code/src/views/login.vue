@@ -150,10 +150,7 @@
                       hasBackLogin: '是', 
                       backMenu: [{
                           menu: '系统管理',
-                          child: [{
-                              menu: '菜单管理',
-                              tableName: 'menu'
-                          }]
+                          child: []
                       }] 
                   },
                   { roleName: '员工', tableName: 'staff', hasBackLogin: '是', backMenu: [] }
@@ -176,10 +173,7 @@
                       hasBackLogin: '是', 
                       backMenu: [{
                           menu: '系统管理',
-                          child: [{
-                              menu: '菜单管理',
-                              tableName: 'menu'
-                          }]
+                          child: []
                       }] 
                   },
                   { roleName: '员工', tableName: 'staff', hasBackLogin: '是', backMenu: [] }

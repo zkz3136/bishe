@@ -5,10 +5,10 @@
 				<el-form :model="searchQuery" class="search_form" >
 					<div class="search_view">
 						<div class="search_label">
-							餐桌名称：
+							餐位名称：
 						</div>
 						<div class="search_box">
-							<el-input class="search_inp" v-model="searchQuery.seat_name" placeholder="餐桌名称"
+							<el-input class="search_inp" v-model="searchQuery.seatName" placeholder="餐位名称"
 								clearable>
 							</el-input>
 						</div>
@@ -41,17 +41,14 @@
 				v-if="btnAuth('restaurant_reservation','查看')"
 				:data="list"
 				@row-click="listChange">
-				<el-table-column :resizable='true' align="left" header-align="left" type="selection" width="55" :selectable="checkSelectable" />
-				<el-table-column label="序号" width="70" :resizable='true' align="left" header-align="left">
-					<template #default="scope">{{ (listQuery.page-1)*listQuery.limit+scope.$index + 1}}</template>
-				</el-table-column>
+				<el-table-column :resizable='true' align="left" header-align="left" type="selection" width="55" />
 				<el-table-column min-width="140"
 					:resizable='true'
 					:sortable='true'
 					align="left"
 					header-align="left"
 					prop="seat_name"
-					label="餐桌名称">
+					label="餐位名称">
 					<template #default="scope">
 						{{scope.row.seat_name}}
 					</template>
@@ -76,7 +73,7 @@
 					align="left"
 					header-align="left"
 					prop="table_location"
-					label="餐桌位置">
+					label="餐位位置">
 					<template #default="scope">
 						{{scope.row.table_location}}
 					</template>
@@ -86,19 +83,8 @@
 				:sortable='true'
 				align="left"
 				header-align="left"
-				prop="capacity"
-				label="可坐人数">
-				<template #default="scope">
-					{{scope.row.capacity}}
-				</template>
-			</el-table-column>
-			<el-table-column min-width="140"
-				:resizable='true'
-				:sortable='true'
-				align="left"
-				header-align="left"
 				prop="deposit"
-				label="定金金额">
+				label="订金金额">
 				<template #default="scope">
 					{{scope.row.deposit}}元
 				</template>
@@ -111,7 +97,7 @@
 				prop="verification_status"
 				label="核销状态">
 				<template #default="scope">
-					<el-tag type="success" v-if="scope.row.verification_status=='已核销'">已核销</el-tag>
+					<el-tag type="success" v-if="String(scope.row.verification_status||'').includes('已核销')">已核销</el-tag>
 					<el-tag type="warning" v-else>未核销</el-tag>
 				</template>
 			</el-table-column>
@@ -123,7 +109,7 @@
 					prop="login_name"
 					label="账号">
 					<template #default="scope">
-						{{scope.row.login_name}}
+						{{scope.row.login_name || scope.row.loginName || scope.row.account || scope.row.username || '-'}}
 					</template>
 				</el-table-column>
 				<el-table-column min-width="140"
@@ -131,10 +117,10 @@
 					:sortable='true'
 					align="left"
 					header-align="left"
-					prop="name"
-					label="名称">
+					prop="mobile"
+					label="手机号码">
 					<template #default="scope">
-						{{scope.row.name}}
+						{{scope.row.mobile || scope.row.phone || '-'}}
 					</template>
 				</el-table-column>
 				<el-table-column min-width="140"
@@ -145,7 +131,7 @@
 					prop="reservation_time"
 					label="预约时间">
 					<template #default="scope">
-						{{scope.row.reservation_time}}
+						{{formatReservationTime(scope.row.reservation_time)}}
 					</template>
 				</el-table-column>
 				<el-table-column label="操作" width="320" :resizable='true' :sortable='true' align="left" header-align="left">
@@ -153,13 +139,10 @@
 						<el-button class="view_btn" type="info" size="small" v-if=" btnAuth('restaurant_reservation','查看')" @click="infoClick(scope.row.id)">
 							详情
 						</el-button>
-						<el-button class="edit_btn" type="primary" size="small" @click="editClick(scope.row.id)" v-if=" btnAuth('restaurant_reservation','修改') && role!='员工'">
-							修改
-						</el-button>
 						<el-button class="del_btn" type="danger" size="small" @click="delClick(scope.row.id)"  v-if="btnAuth('restaurant_reservation','删除')">
 							删除
 						</el-button>
-						<el-button class="hexiao_btn" type="success" size="small" v-if="btnAuth('restaurant_reservation','查看') && scope.row.payment_status=='已支付' && scope.row.verification_status=='未核销'" @click="hexiaoClick(scope.row.id)">
+						<el-button class="hexiao_btn" type="success" size="small" v-if="btnAuth('restaurant_reservation','查看') && scope.row.payment_status=='已支付' && scope.row.verification_status=='未核销' && isNotPastReservation(scope.row)" @click="hexiaoClick(scope.row.id)">
 							核销
 						</el-button>
 					</template>
@@ -256,13 +239,11 @@
 	const timeSlotDateDisabledDate = (date) => {
 		const today = new Date()
 		today.setHours(0, 0, 0, 0)
-		const maxDate = new Date(today)
-		maxDate.setDate(maxDate.getDate() + maxDaysAhead)
-		return date.getTime() < today.getTime() || date.getTime() > maxDate.getTime()
+		return date.getTime() < today.getTime()
 	}
 	const slotHourOptions = computed(() => {
 		const options = []
-		for (let i = 9; i <= 19; i++) {
+		for (let i = 0; i <= 23; i++) {
 			const start = String(i).padStart(2, '0')
 			options.push({
 				label: `${start}:00`,
@@ -289,7 +270,6 @@
 	const listLoading = ref(false)
 	const listChange = (row) =>{
 		nextTick(()=>{
-			//table.value.clearSelection()
 			table.value.toggleRowSelection(row)
 		})
 	}
@@ -299,8 +279,10 @@
 		let params = JSON.parse(JSON.stringify(listQuery.value))
 		params['sort'] = 'id'
 		params['order'] = 'desc'
-		if(searchQuery.value.seat_name&&searchQuery.value.seat_name!=''){
-			params['seat_name'] = '%' + searchQuery.value.seat_name + '%'
+		if(searchQuery.value.seatName&&searchQuery.value.seatName!=''){
+			const keyword = String(searchQuery.value.seatName).trim()
+			params['seatName'] = keyword
+			params['seat_name'] = keyword
 		}
         
 		context.$http({
@@ -325,9 +307,9 @@
 				selectedSlotHours.value = data.map(v => String(v)).filter(v => v !== '')
 				return
 			}
-			selectedSlotHours.value = ['09','10','11','12','13','14','15','16','17','18','19']
+			selectedSlotHours.value = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'))
 		}).catch(() => {
-			selectedSlotHours.value = ['09','10','11','12','13','14','15','16','17','18','19']
+			selectedSlotHours.value = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'))
 		})
 	}
 
@@ -421,7 +403,7 @@
 	}
 	//检查行是否可选择（只有已支付且未核销的记录才能被选择进行核销）
 	const checkSelectable = (row, index) => {
-		return row.payment_status === '已支付' && row.verification_status === '未核销'
+		return row.payment_status === '已支付' && row.verification_status === '未核销' && isNotPastReservation(row)
 	}
 	//列表数据
 	//分页
@@ -434,6 +416,62 @@
 	const currentChange = (page) => {
 		listQuery.value.page = page
 		getList()
+	}
+	const pad2 = (n) => String(n).padStart(2, '0')
+	const formatDateTime = (d) => {
+		return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`
+	}
+	const formatReservationTime = (value) => {
+		if (value === null || value === undefined || value === '') return ''
+		const raw = String(value).trim()
+		if (!raw) return ''
+		if (raw.includes('-') || raw.includes(':')) return raw
+		const num = Number(raw)
+		if (Number.isFinite(num)) {
+			const isSeconds = raw.length <= 10
+			const ts = isSeconds ? num * 1000 : num
+			const d = new Date(ts)
+			if (!Number.isNaN(d.getTime())) return formatDateTime(d)
+		}
+		const d = new Date(raw)
+		if (!Number.isNaN(d.getTime())) return formatDateTime(d)
+		return raw
+	}
+	// 是否为未过期的预约（当天及未来允许核销）
+	const isNotPastReservation = (row) => {
+		try {
+			const v = row?.reservation_time || row?.reservationTime
+			if (!v) return false
+			// 解析为日期对象（支持字符串/毫秒/秒时间戳）
+			let d
+			if (typeof v === 'number') {
+				// 秒或毫秒
+				d = new Date(v > 1e12 ? v : v * 1000)
+			} else {
+				const s = String(v).trim()
+				// "YYYY-MM-DD HH:mm:ss" 或 "YYYY-MM-DD"
+				if (/^\d{4}-\d{2}-\d{2}(?:\s+\d{2}:\d{2}:\d{2})?$/.test(s)) {
+					d = new Date(s.replace(/-/g, '/'))
+				} else if (/^\d{10,13}$/.test(s)) {
+					const num = Number(s)
+					d = new Date(s.length >= 13 ? num : num * 1000)
+				} else {
+					d = new Date(s)
+				}
+			}
+			if (!d || isNaN(d.getTime())) return false
+			const toYmd = (dt) => {
+				const yy = dt.getFullYear()
+				const mm = String(dt.getMonth() + 1).padStart(2, '0')
+				const dd = String(dt.getDate()).padStart(2, '0')
+				return `${yy}-${mm}-${dd}`
+			}
+			const todayStr = toYmd(new Date())
+			const resvStr = toYmd(d)
+			return todayStr <= resvStr
+		} catch (e) {
+			return false
+		}
 	}
 	//分页
 	//权限验证
@@ -498,18 +536,48 @@
 	//核销退费
 	const hexiaoClick = (id) => {
 		let ids = ref([])
+		let refundTotal = 0
+		let eligibleCount = 0
+		let ignoredCount = 0
+		const calcDeposit = (row) => {
+			const v = row && row.deposit
+			const n = parseFloat(v ?? '')
+			return Number.isFinite(n) ? n : 50
+		}
 		if (id) {
-			ids.value = [id]
+			const row = (list.value || []).find(r => r && r.id === id)
+			if (row && checkSelectable(row)) {
+				ids.value = [id]
+				refundTotal = calcDeposit(row)
+				eligibleCount = 1
+			} else {
+				context?.$toolUtil.message('该记录不可核销', 'warning')
+				return
+			}
 		} else {
 			if (selRows.value.length) {
 				for (let x in selRows.value) {
-					ids.value.push(selRows.value[x].id)
+					const r = selRows.value[x]
+					if (checkSelectable(r)) {
+						ids.value.push(r.id)
+						refundTotal += calcDeposit(r)
+						eligibleCount += 1
+					} else {
+						ignoredCount += 1
+					}
+				}
+				if (!eligibleCount) {
+					context?.$toolUtil.message('没有可核销的预约记录', 'error')
+					return
 				}
 			} else {
 				return false
 			}
 		}
-		ElMessageBox.confirm(`确认核销退费？将退还定金${ids.value.length * 50}元`, '提示', {
+		const tip = ignoredCount > 0
+			? `确认核销退费？将核销${eligibleCount}条，忽略${ignoredCount}条；合计退还${refundTotal}元`
+			: `确认核销退费？将退还定金${refundTotal}元`
+		ElMessageBox.confirm(tip, '提示', {
 			confirmButtonText: '确认核销',
 			cancelButtonText: '取消',
 			type: 'warning',

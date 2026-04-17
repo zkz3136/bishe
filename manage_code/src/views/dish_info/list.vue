@@ -8,7 +8,7 @@
 							菜品名称：
 						</div>
 						<div class="search_box">
-							<el-input class="search_inp" v-model="searchQuery.dish_name" placeholder="菜品名称"
+							<el-input class="search_inp" v-model="searchQuery.dishName" placeholder="菜品名称"
 								clearable>
 							</el-input>
 						</div>
@@ -21,10 +21,25 @@
 							<el-select
 								class="search_sel"
 								clearable
-								v-model="searchQuery.dish_category"
+								v-model="searchQuery.dishCategory"
 								placeholder="菜品类型"
 								>
 								<el-option v-for="item in dishCategoryLists" :label="item" :value="item"></el-option>
+							</el-select>
+						</div>
+					</div>
+					<div class="search_view">
+						<div class="search_label">
+							上架状态：
+						</div>
+						<div class="search_box">
+							<el-select
+								class="search_sel"
+								clearable
+								v-model="searchQuery.dishStatus"
+								placeholder="上架状态"
+								>
+								<el-option v-for="item in dishStatusLists" :label="item" :value="item"></el-option>
 							</el-select>
 						</div>
 					</div>
@@ -65,8 +80,14 @@
 						<el-button class="del_btn" type="danger" @click="delClick(item.id)"  v-if="btnAuth('dish_info','删除')">
 							删除
 						</el-button>
-						<el-button class="operate_btn" v-if="btnAuth('dish_info','查看评论')" type="warning" @click="commentClick(item.id)">
-							查看评论
+						<el-button class="shelf_btn" type="warning" v-if="btnAuth('dish_info','下架') && (item.dish_status || item.dishStatus) !== '下架'" @click="toggleShelf(item,'下架')">
+							下架
+						</el-button>
+						<el-button class="shelf_btn" type="success" v-if="btnAuth('dish_info','上架') && (item.dish_status || item.dishStatus) === '下架'" @click="toggleShelf(item,'上架')">
+							上架
+						</el-button>
+						<el-button class="shelf_btn" v-if="btnAuth('dish_info','查看评价')" type="warning" @click="commentClick(item.id)">
+							查看评价
 						</el-button>
 					</div>
 				</div>
@@ -157,11 +178,14 @@
 		let params = JSON.parse(JSON.stringify(listQuery.value))
 		params['sort'] = 'id'
 		params['order'] = 'desc'
-		if(searchQuery.value.dish_name&&searchQuery.value.dish_name!=''){
-			params['dish_name'] = '%' + searchQuery.value.dish_name + '%'
+		if(searchQuery.value.dishName&&searchQuery.value.dishName!=''){
+			params['dishName'] = '%' + searchQuery.value.dishName + '%'
 		}
-		if(searchQuery.value.dish_category&&searchQuery.value.dish_category!=''){
-			params['dish_category'] = searchQuery.value.dish_category
+		if(searchQuery.value.dishCategory&&searchQuery.value.dishCategory!=''){
+			params['dishCategory'] = searchQuery.value.dishCategory
+		}
+		if(searchQuery.value.dishStatus&&searchQuery.value.dishStatus!=''){
+			params['dishStatus'] = searchQuery.value.dishStatus
 		}
 		context.$http({
 			url: `${tableName}/page`,
@@ -226,6 +250,7 @@
 	}
 	//搜索
 	const dishCategoryLists = ref([])
+	const dishStatusLists = ref(['上架','下架'])
 	const getdishCategoryLists = () => {
 		context.$http({
 			url: 'option/dish_info/dish_category',
@@ -369,9 +394,30 @@
 			})
 		})
 	}
-    // 查看评论
-	const commentClick=(id)=>{
-		context?.$router.push('/discuss_dish_info?ref_id=' + id)
+			// 查看评价
+    const commentClick=(id)=>{
+        context?.$router.push('/dish_review?ref_id=' + id)
+	}
+	const toggleShelf = (item, nextStatus) => {
+		if (!item || !item.id) return
+		const actionText = nextStatus === '下架' ? '下架' : '上架'
+		ElMessageBox.confirm(`确认${actionText}该菜品？`, '提示', {
+			confirmButtonText: '是',
+			cancelButtonText: '否',
+			type: 'warning',
+		}).then(() => {
+			context.$http({
+				url: `${tableName}/status/${item.id}`,
+				method: 'post',
+				params: {
+					dish_status: nextStatus
+				}
+			}).then(() => {
+				context?.$toolUtil.message(`${actionText}成功`, 'success', () => {
+					getList()
+				})
+			})
+		}).catch(() => {})
 	}
 	//初始化
 	const init = () => {

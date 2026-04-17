@@ -50,6 +50,9 @@
 							<div class="data_title2">
 								<span>车位状态：{{item.spot_status}}</span>
 							</div>
+							<div class="data_title2">
+								<span>小时价格：{{ (item.hourly_price && Number(item.hourly_price)>0) ? item.hourly_price : 10 }} 元/小时</span>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -153,13 +156,19 @@
 		listLoading.value = true
 		let params = JSON.parse(JSON.stringify(listQuery.value))
 		if(searchQuery.value.spot_number&&searchQuery.value.spot_number!=''){
-			params.spot_number = '%' + searchQuery.value.spot_number + '%'
+			const v = '%' + searchQuery.value.spot_number + '%'
+			params.spot_number = v
+			params.spotNumber = v
 		}
 		if(searchQuery.value.spot_location&&searchQuery.value.spot_location!=''){
-			params.spot_location = '%' + searchQuery.value.spot_location + '%'
+			const v = '%' + searchQuery.value.spot_location + '%'
+			params.spot_location = v
+			params.spotLocation = v
 		}
 		if(searchQuery.value.spot_status&&searchQuery.value.spot_status!=''){
-			params.spot_status = searchQuery.value.spot_status
+			const v = searchQuery.value.spot_status
+			params.spot_status = v
+			params.spotStatus = v
 		}
 		context?.$http({
 			url: `${tableName}/${centerType.value?'page':'list'}`,
@@ -215,7 +224,7 @@
 		margin: 10px auto;
 		background: none;
 		width: 100%;
-		text-align: right;
+		text-align: left;
 		// 返回按钮
 		.back_btn {
 			border: 1px solid var(--theme-color);

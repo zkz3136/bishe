@@ -25,7 +25,6 @@
 				</template>
 				<div class="usersTab" @click="tabClick({tableName:'myReviews'})">我的评价</div>
                 <div class="usersTab" @click="tabClick({tableName:'favorites',type:1})">我的收藏</div>
-				<div class="usersTab" :class="tabIndex=='myTickets'?'usersTabActive':''" @click="tabClick({tableName:'myTickets'})">人工会话</div>
 			</div>
 			<div class="usersBox updateInfo" v-if="tabIndex=='center'">
 				<el-form class="usersForm" ref="userFormRef" :model="userForm" label-width="120px" :rules="rules">
@@ -85,7 +84,7 @@
 						<el-form-item prop="balance" label="余额">
 							<div class="vip_item">
 								<el-input class="vip_inp" :value="formatMoney(userForm.balance)" placeholder="余额" readonly></el-input>
-								<el-button class="vip_btn" @click="rechargeClick">点我充值</el-button>
+								<el-button class="vip_btn" @click="rechargeClick">点击充值</el-button>
 								</div>
 							</el-form-item>
 						</el-col>
@@ -203,6 +202,9 @@
 			</div>
 		</div>
 		<el-dialog v-model="rechargeVisible" :title="'用户充值'" width="50%" destroy-on-close class="rechargeDialog">
+			<div style="text-align:center;margin:10px 0;color:#666;" v-if="rechargeHint">
+				{{rechargeHint}}
+			</div>
 			<div class="centerPayInpView">
 				<el-input class="pay_inp" v-model.number="rechargeForm.balance" placeholder="充值金额" :min="1"></el-input>
 			</div>
@@ -616,33 +618,43 @@
 	const genderLists = ref([])
 	//初始化
 	const init = () => {
-		const menus = menu.list()
-		let arr = []
-		if (menus) {
-			menuList.value = menus
-		}
 		role.value = context?.$toolUtil.storageGet('frontRole')
-		for (let i = 0; i < menuList.value.length; i++) {
-			if (menuList.value[i].roleName == role.value) {
-				arr = menuList.value[i].backMenu
-				break;
-			}
+		// 余额不足从下单页跳转：自动打开充值弹窗并记录返回地址
+		const q = route?.query || {}
+		if (q.openRecharge === '1') {
+			rechargeVisible.value = true
 		}
-		menuList.value = arr
-		// 菜单数据处理，将订单管理菜单项下的子菜单简化为“订单管理”一项
-		menuList.value.forEach(item => {
-			if(item.menu == '订单管理') {
-				if(item.child && item.child.length > 0) {
-					let firstChild = item.child[0];
-					let orderChild = item.child.find(c => c.menu == '订单');
-					if(orderChild) {
-						firstChild = orderChild;
+		redirectAfterRecharge.value = decodeURIComponent(String(q.redirect || '')) || ''
+		needAmount.value = Number(q.needAmount || 0) || 0
+		payTotal.value = Number(q.payTotal || 0) || 0
+		prevBalance.value = Number(q.balance || 0) || 0
+		if (needAmount.value > 0) {
+			rechargeForm.value.balance = needAmount.value
+		}
+		menuList.value = [
+			{
+				menu: '我的订单',
+				child: [
+					{
+						menu: '我的订单',
+						tableName: 'orders',
+						classname: 'orders',
+						menuJump: ''
 					}
-					firstChild.menuJump = ''; 
-					item.child = [firstChild];
-				}
+				]
+			},
+			{
+				menu: '我的预约',
+				child: [
+					{
+						menu: '我的预约',
+						tableName: 'restaurant_reservation',
+						classname: 'restaurant_reservation',
+						menuJump: ''
+					}
+				]
 			}
-		})
+		]
 		genderLists.value = "男,女".split(',')
 		getSession()
 	}
@@ -670,6 +682,16 @@
 	const rechargeVisible = ref(false)
 	const rechargeForm = ref({
 		balance:''
+	})
+	const redirectAfterRecharge = ref('')
+	const needAmount = ref(0)
+	const payTotal = ref(0)
+	const prevBalance = ref(0)
+	const rechargeHint = computed(() => {
+		if (needAmount.value > 0) {
+			return `本次应付：￥${payTotal.value.toFixed(2)}，当前余额：￥${prevBalance.value.toFixed(2)}，建议充值：￥${needAmount.value.toFixed(2)}`
+		}
+		return ''
 	})
 	const rechargeClick = () => {
 		payType.value = ''
@@ -711,6 +733,9 @@
 				context?.$toolUtil.message('充值成功','success')
 				rechargeVisible.value = false
 				getSession()
+				if (redirectAfterRecharge.value) {
+					router.push(redirectAfterRecharge.value)
+				}
 			}
 		})
 	}

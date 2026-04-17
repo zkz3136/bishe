@@ -52,8 +52,8 @@
 					<div  class="info_text" >{{detail.start_time}}</div>
 				</div>
 				<div class="info_item">
-					<div class="info_label">活动地点</div>
-					<div  class="info_text" >{{detail.event_location}}</div>
+					<div class="info_label">结束时间</div>
+					<div  class="info_text" >{{detail.end_time}}</div>
 				</div>
 				<div class="info_item">
 					<div class="info_label">发布时间</div>
@@ -216,7 +216,7 @@
 		margin: 10px auto;
 		background: none;
 		width: 100%;
-		text-align: right;
+		text-align: left;
 		// 返回按钮
 		.back_btn {
 			border: 1px solid var(--theme-color);

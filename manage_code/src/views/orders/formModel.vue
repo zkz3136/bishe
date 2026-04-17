@@ -74,8 +74,8 @@
 					</el-col>
 
 					<el-col :span="24">
-						<el-form-item label="餐桌名称" prop="seat_name">
-							<el-input class="list_inp" v-model="form.seat_name" placeholder="餐桌名称"
+					<el-form-item label="餐位名称" prop="seat_name">
+						<el-input class="list_inp" v-model="form.seat_name" placeholder="餐位名称"
                                 type="text"
 								:readonly="!isAdd||disabledForm.seat_name?true:false" />
 						</el-form-item>

@@ -10,10 +10,14 @@ import com.cl.entity.DishInfoEntity;
 import com.cl.entity.ParkingSpotEntity;
 import com.cl.entity.SupportFaqEntity;
 import com.cl.entity.SupportTicketEntity;
+import com.cl.entity.UserEntity;
 import com.cl.service.DishInfoService;
 import com.cl.service.ParkingSpotService;
 import com.cl.service.SupportFaqService;
 import com.cl.service.SupportTicketService;
+import com.cl.service.UserService;
+import com.cl.service.ConfigService;
+import com.cl.entity.ConfigEntity;
 import com.cl.utils.CommonUtil;
 import com.cl.utils.MPUtil;
 import com.cl.utils.PageUtils;
@@ -54,6 +58,12 @@ public class SupportController {
 
     @Autowired
     private DishInfoService dishInfoService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private ConfigService configService;
 
     @Value("${coze.enabled:false}")
     private boolean cozeEnabled;
@@ -112,7 +122,7 @@ public class SupportController {
             return R.ok().put("data", data);
         }
 
-        String reply = tryRuleReply(message);
+        String reply = null;
         boolean suggestTicket = false;
         if (StringUtils.isBlank(reply)) {
             reply = tryFaqReply(message);
@@ -196,6 +206,37 @@ public class SupportController {
             return R.error(403, "无权限操作");
         }
         EntityWrapper<SupportTicketEntity> ew = new EntityWrapper<>();
+        Object accountObj = params == null ? null : params.get("login_name");
+        if (accountObj == null) {
+            accountObj = params == null ? null : params.get("loginName");
+        }
+        if (accountObj == null) {
+            accountObj = params == null ? null : params.get("username");
+        }
+        if (accountObj == null) {
+            accountObj = params == null ? null : params.get("account");
+        }
+        String account = accountObj == null ? null : String.valueOf(accountObj).trim();
+        if (StringUtils.isNotBlank(account)) {
+            EntityWrapper<UserEntity> userEw = new EntityWrapper<>();
+            userEw.like("login_name", account);
+            List<UserEntity> users = userService.selectList(userEw);
+            if (users == null || users.isEmpty()) {
+                ew.eq("user_id", -1);
+            } else {
+                List<Long> userIds = new java.util.ArrayList<>();
+                for (UserEntity u : users) {
+                    if (u != null && u.getId() != null) {
+                        userIds.add(u.getId());
+                    }
+                }
+                if (userIds.isEmpty()) {
+                    ew.eq("user_id", -1);
+                } else {
+                    ew.in("user_id", userIds);
+                }
+            }
+        }
         PageUtils page = supportTicketService.queryPage(params, MPUtil.sort(MPUtil.between(MPUtil.likeOrEq(ew, ticket), params), params));
         return R.ok().put("data", page);
     }
@@ -371,7 +412,7 @@ public class SupportController {
     @RequestMapping("/faq/save")
     public R saveFaq(@RequestBody SupportFaqEntity faq, HttpServletRequest request) {
         String role = getSessionRole(request);
-        if (!"管理员".equals(role)) {
+        if (!"管理员".equals(role) && !"员工".equals(role)) {
             return R.error(403, "无权限操作");
         }
         if (faq == null) {
@@ -394,7 +435,7 @@ public class SupportController {
     @RequestMapping("/faq/update")
     public R updateFaq(@RequestBody SupportFaqEntity faq, HttpServletRequest request) {
         String role = getSessionRole(request);
-        if (!"管理员".equals(role)) {
+        if (!"管理员".equals(role) && !"员工".equals(role)) {
             return R.error(403, "无权限操作");
         }
         if (faq == null || faq.getId() == null) {
@@ -407,7 +448,7 @@ public class SupportController {
     @RequestMapping("/faq/delete")
     public R deleteFaq(@RequestBody Long[] ids, HttpServletRequest request) {
         String role = getSessionRole(request);
-        if (!"管理员".equals(role)) {
+        if (!"管理员".equals(role) && !"员工".equals(role)) {
             return R.error(403, "无权限操作");
         }
         if (ids == null || ids.length == 0) {
@@ -469,7 +510,7 @@ public class SupportController {
         }
 
         if (msg.contains("定金") || msg.contains("预约")) {
-            return "餐桌预约提交后需支付定金，支付成功后预约生效；到店核销后按规则处理定金。你可以在“餐厅预约”中查看预约记录。";
+            return "餐桌预约提交后需支付订金，支付成功后预约生效；到店核销后按规则处理订金。你可以在“餐厅预约”中查看预约记录。";
         }
 
         if (msg.contains("计费") || msg.contains("收费") || msg.contains("多少钱")) {
@@ -541,8 +582,25 @@ public class SupportController {
         return null;
     }
 
+    private boolean isCozeEnabled() {
+        try {
+            ConfigEntity override = configService.selectOne(new EntityWrapper<ConfigEntity>().eq("name", "coze.enabled"));
+            if (override != null && StringUtils.isNotBlank(override.getValue())) {
+                String v = override.getValue().trim();
+                if ("true".equalsIgnoreCase(v) || "1".equals(v) || "yes".equalsIgnoreCase(v) || "on".equalsIgnoreCase(v)) {
+                    return true;
+                }
+                if ("false".equalsIgnoreCase(v) || "0".equals(v) || "no".equalsIgnoreCase(v) || "off".equalsIgnoreCase(v)) {
+                    return false;
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        return cozeEnabled;
+    }
+
     private String tryCozeReply(String message, HttpServletRequest request) {
-        if (!cozeEnabled) {
+        if (!isCozeEnabled()) {
             return null;
         }
         String token = resolveCozeToken();
@@ -683,7 +741,7 @@ public class SupportController {
     }
 
     private String tryCozeWorkflowReply(String message, Object parking, Object dish) {
-        if (!cozeEnabled) {
+        if (!isCozeEnabled()) {
             return null;
         }
         String token = resolveCozeToken();

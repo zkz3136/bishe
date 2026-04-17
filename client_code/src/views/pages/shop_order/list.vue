@@ -8,7 +8,7 @@
                 </el-breadcrumb>
             </div>
             </div>
-        <div class="back_view" style="width: 100%; margin-top: 10px; text-align: right;">
+        <div class="back_view" style="width: 100%; margin-top: 10px; text-align: left;">
             <el-button class="back_btn" @click="goToHome" type="primary">返回</el-button>
         </div>
 		<el-tabs v-model="orderStatus" type="card" class="demo-tabs" @tab-change="statusChange" style="width: 100%;">
@@ -81,7 +81,7 @@
 					{{scope.row.remark}}
 				</template>
 			</el-table-column>
-			<el-table-column label="餐桌名称" :resizable='true' align="left" header-align="left">
+			<el-table-column label="餐位名称" :resizable='true' align="left" header-align="left">
 				<template #default="scope">
 					{{scope.row.seat_name || '未选择'}}
 				</template>
@@ -106,9 +106,12 @@
 					<el-button class="confirm_btn" v-if="scope.row.status=='已发货'" type="success" @click="confirmGoodClick(scope.row)">
 						确认收货
 					</el-button>
-					<el-button class="toDetail_btn" v-if="scope.row.status=='已完成'" type="warning" @click="toDetailClick(scope.row)">
-						评论
+                    <el-button class="toDetail_btn" v-if="scope.row.status=='已完成' && !isReviewed(scope.row)" type="warning" @click="toDetailClick(scope.row)">
+						评价
 					</el-button>
+                    <el-button class="toDetail_btn" v-else-if="scope.row.status=='已完成' && isReviewed(scope.row)" type="info" disabled>
+                        已评价
+                    </el-button>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -124,13 +127,13 @@
 			:style='{}'
 			@size-change="sizeChange"
 			@current-change="currentChange" />
-		<el-dialog v-model="commentVisible" title="评论" width="50%">
+		<el-dialog v-model="commentVisible" title="评价" width="50%">
 			<el-form :model="commentForm" label-width="80px">
 				<el-form-item label="评分">
 					<el-rate v-model="commentForm.score" />
 				</el-form-item>
-				<el-form-item label="评论内容">
-					<el-input v-model="commentForm.content" type="textarea" :rows="5" placeholder="请输入评论内容"></el-input>
+				<el-form-item label="评价内容">
+					<el-input v-model="commentForm.content" type="textarea" :rows="5" placeholder="请输入评价内容"></el-input>
 				</el-form-item>
 			</el-form>
 			<template #footer>
@@ -221,6 +224,8 @@
 			listLoading.value = false
 			list.value = (res.data.data.list || []).map((raw) => {
 				const item = raw || {}
+                item.id = item.id
+				item.order_id = item.order_id ?? item.orderid ?? item.orderId ?? ''
 				item.source_table = item.source_table ?? item.tablename ?? ''
 				item.good_name = item.good_name ?? item.goodname ?? ''
 				item.good_id = item.good_id ?? item.goodid
@@ -229,7 +234,7 @@
 				item.seat_name = item.seat_name ?? item.seatName
 				return item
 			})
-			total.value = Number(res.data.data.total)
+            total.value = Number(res.data.data.total)
 		})
 	}
 	//分页
@@ -369,7 +374,7 @@
 			})
 		}).catch(_ => {})
 	}
-	//评论
+	//评价
 	const commentVisible = ref(false)
 	const commentForm = ref({
 		content: '',
@@ -382,6 +387,10 @@
     const currentOrder = ref({})
 
 	const toDetailClick = (row) => {
+        if (isReviewed(row)) {
+            context?.$toolUtil.message('该订单已评价','warning')
+            return
+        }
         currentOrder.value = row
 		commentForm.value = {
 			content: '',
@@ -396,7 +405,7 @@
 
 	const commentSave = () => {
         if(!commentForm.value.content){
-            context?.$toolUtil.message('请输入评论内容','error')
+            context?.$toolUtil.message('请输入评价内容','error')
             return
         }
 		if(!commentForm.value.score){
@@ -419,14 +428,9 @@
 			method: 'post',
 			data: commentForm.value
 		}).then(res => {
-            context.$http.get(`${currentOrder.value.source_table}/info/${currentOrder.value.good_id}`).then(res=>{
-                let detail = res.data.data
-                detail.discussNumber++
-                context.$http.post(`${currentOrder.value.source_table}/update`,detail)
-            })
-
-			context?.$toolUtil.message('评论成功', 'success')
+			context?.$toolUtil.message('评价成功', 'success')
 			commentVisible.value = false
+            markReviewed(currentOrder.value)
 		})
 	}
 	const userinfo = ref({})
@@ -438,9 +442,20 @@
 			userinfo.value = res.data.data
 		})
 	}
+    const reviewedOrders = ref({})
+    const isReviewed = (row) => {
+        const orderRowId = row?.id
+        if (!orderRowId) return false
+        return !!reviewedOrders.value[orderRowId]
+    }
+    const markReviewed = (row) => {
+        const orderRowId = row?.id
+        if (!orderRowId) return
+        reviewedOrders.value[orderRowId] = true
+    }
 	const init = () => {
 		getSession()
-		getList()
+        getList()
 	}
 	init()
 </script>
@@ -457,7 +472,7 @@
 		margin: 10px auto;
 		background: none;
 		width: 100%;
-		text-align: right;
+		text-align: left;
 		// 返回按钮
 		.back_btn {
 			border: 1px solid var(--theme-color);
@@ -715,7 +730,7 @@
 							.confirm_btn:hover {
 								background: rgba(65, 128, 230, .8);
 							}
-							// 评论
+							// 评价
 							.toDetail_btn {
 								border: 0;
 								cursor: pointer;
@@ -728,7 +743,7 @@
 								font-size: 14px;
 								height: 32px;
 							}
-							// 评论-悬浮
+							// 评价-悬浮
 							.toDetail_btn:hover {
 								background: rgba(85, 0, 255, 0.4);
 							}

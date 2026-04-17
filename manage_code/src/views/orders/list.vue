@@ -62,9 +62,6 @@
 				:data="list"
 				@row-click="listChange">
 				<el-table-column :resizable='true' align="left" header-align="left" type="selection" width="55" />
-				<el-table-column label="序号" width="70" :resizable='true' align="left" header-align="left">
-					<template #default="scope">{{ (listQuery.page-1)*listQuery.limit+scope.$index + 1}}</template>
-				</el-table-column>
 				<el-table-column min-width="140"
 					:resizable='true'
 					:sortable='true'
@@ -82,7 +79,7 @@
 					align="left"
 					header-align="left"
 					prop="good_name"
-					label="商品名称">
+					label="菜品">
 					<template #default="scope">
 						{{ scope.row.good_name ?? scope.row.goodname ?? scope.row.goodName }}
 					</template>
@@ -117,19 +114,8 @@
 					:sortable='true'
 					align="left"
 					header-align="left"
-					prop="price"
-					label="单价">
-					<template #default="scope">
-						{{scope.row.price}}
-					</template>
-				</el-table-column>
-				<el-table-column min-width="140"
-					:resizable='true'
-					:sortable='true'
-					align="left"
-					header-align="left"
 					prop="discount_price"
-					label="折扣价">
+					label="单价">
 					<template #default="scope">
 						{{ scope.row.discount_price ?? scope.row.discountprice ?? scope.row.discountPrice }}
 					</template>
@@ -139,19 +125,8 @@
 					:sortable='true'
 					align="left"
 					header-align="left"
-					prop="total"
-					label="总价">
-					<template #default="scope">
-						{{scope.row.total}}
-					</template>
-				</el-table-column>
-				<el-table-column min-width="140"
-					:resizable='true'
-					:sortable='true'
-					align="left"
-					header-align="left"
 					prop="discount_total"
-					label="折扣总价">
+					label="总价">
 					<template #default="scope">
 						{{ scope.row.discount_total ?? scope.row.discounttotal ?? scope.row.discountTotal }}
 					</template>
@@ -162,7 +137,7 @@
 					align="left"
 					header-align="left"
 					prop="seat_name"
-					label="餐桌名称">
+					label="餐位名称">
 					<template #default="scope">
 						{{ (scope.row.seat_name ?? scope.row.seatName) || '未选择' }}
 					</template>
@@ -189,17 +164,6 @@
 						{{scope.row.remark}}
 					</template>
 				</el-table-column>
-				<el-table-column min-width="140"
-					:resizable='true'
-					:sortable='true'
-					align="left"
-					header-align="left"
-					prop="good_type"
-					label="商品类型">
-					<template #default="scope">
-						{{ scope.row.good_type ?? scope.row.goodtype ?? scope.row.goodType }}
-					</template>
-				</el-table-column>
 				<el-table-column prop="addtime" label="下单时间" min-width="140" :resizable='true' :sortable='true' align="left" header-align="left">
 					<template #default="scope">
 						{{scope.row.addtime}}
@@ -210,15 +174,16 @@
 						<el-button class="view_btn" type="info" v-if=" btnAuth('orders'+(orderStatus?'/'+orderStatus:''),'查看')" @click="infoClick(scope.row.id)">
 							详情
 						</el-button>
-						<el-button class="edit_btn" type="primary" @click="editClick(scope.row.id)" v-if=" btnAuth('orders'+(orderStatus?'/'+orderStatus:''),'修改')">
-							修改						</el-button>
 						<el-button class="del_btn" type="danger" @click="delClick(scope.row.id)"  v-if="btnAuth('orders'+(orderStatus?'/'+orderStatus:''),'删除')">
 							删除						</el-button>
 					<el-button class="operate_btn" v-if="scope.row.status=='已支付'||scope.row.status=='申请退款'" type="success" @click="completeOrderClick(scope.row)">
-						完成订单
+						完成
 						</el-button>
 					<el-button class="operate_btn" v-if="scope.row.status=='申请退款'" type="danger" @click="refundClick(scope.row)">
 						同意退款
+						</el-button>
+						<el-button class="operate_btn" v-if="scope.row.status=='已完成' && btnAuth('dish_review','新增')" type="warning" @click="reviewClick(scope.row)">
+							评价
 						</el-button>
 					</template>
 				</el-table-column>
@@ -265,6 +230,7 @@
 		getCurrentInstance,
 		nextTick,
 		onMounted,
+		onBeforeUnmount,
 		watch,
 		computed,
 		inject
@@ -307,6 +273,23 @@
 	const searchQuery = ref({})
 	const selRows = ref([])
 	const listLoading = ref(false)
+	const networkDown = ref(false)
+	const orderPollingTimer = ref(null)
+	const startOrderPolling = () => {
+		if (orderPollingTimer.value) return
+		orderPollingTimer.value = setInterval(() => {
+			// 避免重复并发
+			if (!listLoading.value) {
+				getList()
+			}
+		}, 5000)
+	}
+	const stopOrderPolling = () => {
+		if (orderPollingTimer.value) {
+			clearInterval(orderPollingTimer.value)
+			orderPollingTimer.value = null
+		}
+	}
 	const listChange = (row) =>{
 		nextTick(()=>{
 			//table.value.clearSelection()
@@ -334,6 +317,14 @@
 			listLoading.value = false
 			list.value = res.data.data.list
 			total.value = Number(res.data.data.total)
+			networkDown.value = false
+		}).catch(err => {
+			listLoading.value = false
+			const msg = String(err?.message || err || '')
+			if (msg.includes('Network Error') || msg.includes('NetworkError')) {
+				networkDown.value = true
+				stopOrderPolling()
+			}
 		})
 	}
 	//删
@@ -452,7 +443,7 @@
 		nextTick(()=>{
 			var totalEchart1 = echarts.init(document.getElementById("totalEchart1"),'theme');
 			context.$http({
-				url: `${tableName}/value/addtime/total/月`,
+				url: `${tableName}/value/addtime/discounttotal/月`,
 				method: 'get'
 			}).then(res=>{
 				let obj = res.data.data
@@ -461,9 +452,10 @@
 				let dataList = []
 				for(let i=0;i<obj.length;i++){
 				    xAxis.push(obj[i].addtime);
-				    yAxis.push(parseFloat((obj[i].total)));
+				    const val = Number(parseFloat(obj[i].total).toFixed(2));
+				    yAxis.push(val);
                     dataList.push({
-				        value: parseFloat((obj[i].total)),
+				        value: val,
 				        name: obj[i].addtime
 				    })
 				}
@@ -522,7 +514,7 @@
 		nextTick(()=>{
 			var totalEchart2 = echarts.init(document.getElementById("totalEchart2"),'theme');
 			context.$http({
-				url: `${tableName}/value/addtime/total/年`,
+				url: `${tableName}/value/addtime/discounttotal/年`,
 				method: 'get'
 			}).then(res=>{
 				let obj = res.data.data
@@ -531,9 +523,10 @@
 				let dataList = []
 				for(let i=0;i<obj.length;i++){
 				    xAxis.push(obj[i].addtime);
-				    yAxis.push(parseFloat((obj[i].total)));
+				    const val = Number(parseFloat(obj[i].total).toFixed(2));
+				    yAxis.push(val);
                     dataList.push({
-				        value: parseFloat((obj[i].total)),
+				        value: val,
 				        name: obj[i].addtime
 				    })
 				}
@@ -586,7 +579,7 @@
 		nextTick(()=>{
 			var buynumberEchart3 = echarts.init(document.getElementById("buynumberEchart3"),'theme');
 			context.$http({
-				url: `${tableName}/value/good_name/buy_number?order=desc`,
+				url: `${tableName}/value/goodname/buynumber?order=desc`,
 				method: 'get'
 			}).then(res=>{
 				let obj = res.data.data
@@ -594,11 +587,11 @@
 				let yAxis = [];
 				let dataList = []
 				for(let i=0;i<obj.length;i++){
-				    xAxis.push(obj[i].good_name);
+				    xAxis.push(obj[i].goodname);
 				    yAxis.push(parseFloat((obj[i].total)));
                     dataList.push({
 				        value: parseFloat((obj[i].total)),
-				        name: obj[i].good_name
+				        name: obj[i].goodname
 				    })
 				}
 				var option = {};
@@ -648,15 +641,13 @@
 				"订单编号",
 				"商品表名",
 				"商品id",
-				"商品名称",
+				"菜品",
 				"图片",
 				"购买数量",
-				"单价",
 				"折扣价",
-				"总价",
 				"折扣总价",
 				"支付类型",
-				"餐桌名称",
+				"餐位名称",
 				"订单状态",
 				"备注",
 				"下单时间",
@@ -671,9 +662,7 @@
 				"good_name",
 				"picture",
 				"buy_number",
-				"price",
 				"discount_price",
-				"total",
 				"discount_total",
 				"type",
 				"seat_name",
@@ -690,9 +679,7 @@
 				good_name: r.good_name ?? r.goodname ?? r.goodName,
 				picture: r.picture,
 				buy_number: r.buy_number ?? r.buynumber ?? r.buyNumber,
-				price: r.price,
 				discount_price: r.discount_price ?? r.discountprice ?? r.discountPrice,
-				total: r.total,
 				discount_total: r.discount_total ?? r.discounttotal ?? r.discountTotal,
 				type: r.type,
 				seat_name: r.seat_name ?? r.seatName,
@@ -729,7 +716,7 @@
     }
 	//完成订单
 	const completeOrderClick = (row)=>{
-		ElMessageBox.confirm(`确认菜品已送达餐桌，完成该订单？`, '提示', {
+		ElMessageBox.confirm(`确认菜品已送达餐位，完成该订单？`, '提示', {
 			confirmButtonText: '确认',
 			cancelButtonText: '取消',
 			type: 'warning',
@@ -748,6 +735,14 @@
 				})
 			})
 		}).catch(_ => {})
+	}
+    const reviewClick = (row) => {
+		const goodId = row.good_id ?? row.goodid ?? row.goodId
+		if (!goodId) {
+			context?.$toolUtil.message('缺少菜品信息','error')
+			return
+		}
+        context?.$router.push(`/dish_review?ref_id=${goodId}&from=orders`)
 	}
     //返回商品对象，如果商品存在库存,则返还库存
     const returnLimit = async (order)=>{
@@ -801,6 +796,21 @@
 		getList()
 	}
 	init()
+	onMounted(() => {
+		startOrderPolling()
+		document.addEventListener('visibilitychange', () => {
+			if (document.hidden) {
+				stopOrderPolling()
+			} else {
+				startOrderPolling()
+				getList()
+			}
+		})
+	})
+	onBeforeUnmount(() => {
+		stopOrderPolling()
+		document.removeEventListener('visibilitychange', () => {})
+	})
 </script>
 <style lang="scss" scoped>
 	// 切换栏
@@ -983,4 +993,3 @@
 		}
 	}
 </style>
-

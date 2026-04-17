@@ -32,6 +32,12 @@
                            <div v-html="scope.row.content"></div>
                         </template>
                    </el-table-column>
+					<el-table-column prop="reply" label="餐厅回复" width="240">
+						<template #default="scope">
+							<div v-if="scope.row.reply">{{ sanitizeReply(scope.row.reply) }}</div>
+							<div v-else>—</div>
+						</template>
+					</el-table-column>
 					<el-table-column prop="score" label="评分" width="100"></el-table-column>
 					<el-table-column prop="addtime" label="评价时间" width="180"></el-table-column>
 					<el-table-column label="操作" width="180">
@@ -121,6 +127,14 @@
             listLoading.value = false
 		})
 	}
+	const sanitizeReply = (h) => {
+		let s = String(h ?? '').trim()
+		s = s.replace(/^(管理员：|员工：|餐厅回复：)\s*/, '')
+		s = s.replace(/<br\s*\/?>/gi, '\n')
+		s = s.replace(/<\/p>/gi, '\n')
+		s = s.replace(/<[^>]+>/g, '')
+		return s.trim()
+	}
     
     const toDetail = (row) => {
         router.push(`/index/${activeName.value}Detail?id=${row.ref_id}`)
@@ -138,7 +152,7 @@
                 data: [row.id]
             }).then(res => {
                 context?.$toolUtil.message('删除成功', 'success')
-                // 更新对应商品的评论数
+                // 更新对应商品的评价数
                 context.$http.get(`${activeName.value}/info/${row.ref_id}`).then(res=>{
                     let detail = res.data.data
                     detail.discussNumber--
@@ -171,7 +185,7 @@
 		margin: 10px auto;
 		background: none;
 		width: 100%;
-		text-align: right;
+		text-align: left;
 		// 返回按钮
 		.back_btn {
 			border: 1px solid var(--theme-color);

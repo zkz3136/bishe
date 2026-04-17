@@ -72,12 +72,6 @@ public class RestaurantEventEntity<T> implements Serializable {
 	private Date start_time;
 	
 	/**
-	 * 活动地点
-	 */
-					
-	private String event_location;
-	
-	/**
 	 * 活动内容
 	 */
 					
@@ -129,6 +123,9 @@ public class RestaurantEventEntity<T> implements Serializable {
 	public String getEventName() {
 		return event_name;
 	}
+	public String getEvent_name() {
+		return event_name;
+	}
 	/**
 	 * 设置：活动图片
 	 */
@@ -139,6 +136,12 @@ public class RestaurantEventEntity<T> implements Serializable {
 	 * 获取：活动图片
 	 */
 	public String getEventImage() {
+		return event_image;
+	}
+	public void setEvent_image(String event_image) {
+		this.event_image = event_image;
+	}
+	public String getEvent_image() {
 		return event_image;
 	}
 	/**
@@ -153,17 +156,11 @@ public class RestaurantEventEntity<T> implements Serializable {
 	public Date getStartTime() {
 		return start_time;
 	}
-	/**
-	 * 设置：活动地点
-	 */
-	public void setEventLocation(String event_location) {
-		this.event_location = event_location;
+	public void setStart_time(Date start_time) {
+		this.start_time = start_time;
 	}
-	/**
-	 * 获取：活动地点
-	 */
-	public String getEventLocation() {
-		return event_location;
+	public Date getStart_time() {
+		return start_time;
 	}
 	/**
 	 * 设置：活动内容
@@ -175,6 +172,12 @@ public class RestaurantEventEntity<T> implements Serializable {
 	 * 获取：活动内容
 	 */
 	public String getEventContent() {
+		return event_content;
+	}
+	public void setEvent_content(String event_content) {
+		this.event_content = event_content;
+	}
+	public String getEvent_content() {
 		return event_content;
 	}
 	/**
@@ -189,6 +192,12 @@ public class RestaurantEventEntity<T> implements Serializable {
 	public Date getPublishTime() {
 		return publish_time;
 	}
+	public void setPublish_time(Date publish_time) {
+		this.publish_time = publish_time;
+	}
+	public Date getPublish_time() {
+		return publish_time;
+	}
 	/**
 	 * 设置：结束时间
 	 */
@@ -199,6 +208,12 @@ public class RestaurantEventEntity<T> implements Serializable {
 	 * 获取：结束时间
 	 */
 	public Date getEndTime() {
+		return end_time;
+	}
+	public void setEnd_time(Date end_time) {
+		this.end_time = end_time;
+	}
+	public Date getEnd_time() {
 		return end_time;
 	}
 

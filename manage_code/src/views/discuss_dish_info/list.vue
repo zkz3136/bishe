@@ -1,37 +1,31 @@
 <template>
 	<div>
 		<div class="center_view">
-            <div style="margin:10px 0;">
-                <el-button @click="back()">返回</el-button>
-            </div>
 			<div class="list_search_view">
 				<el-form :model="searchQuery" class="search_form" >
 					<div class="search_view">
 						<div class="search_label">
-							用户名：
+							评分：
 						</div>
 						<div class="search_box">
-							<el-input class="search_inp" v-model="searchQuery.nickname" placeholder="用户名"
-								clearable>
-							</el-input>
+							<el-rate v-model="searchQuery.score" :max="5" :allow-half="false" :clearable="true" @change="searchClick" />
 						</div>
 					</div>
-					<div class="search_view">
+					<div class="search_view" v-if="hasRefContext">
 						<div class="search_label">
-							评论内容：
+							仅当前菜品：
 						</div>
 						<div class="search_box">
-							<el-input class="search_inp" v-model="searchQuery.content" placeholder="评论内容"
-								clearable>
-							</el-input>
+							<el-switch v-model="filterByCurrentDish" @change="searchClick" />
 						</div>
 					</div>
 					<div class="search_btn_view">
-						<el-button class="search_btn" type="primary" @click="searchClick()" size="small">搜索</el-button>
+						<el-button class="search_btn" type="primary" @click="refreshClick()" size="small">刷新</el-button>
+						<el-button class="search_btn" type="default" @click="resetClick()" size="small">重置</el-button>
 					</div>
 				</el-form>
 				<div class="btn_view">
-					<el-button class="add_btn" type="success" @click="addClick" v-if="btnAuth('dish_review','新增')">
+					<el-button class="add_btn" type="success" @click="addClick" v-if="btnAuth('dish_review','新增') && canAdd">
 						新增
 					</el-button>
 					<el-button class="del_btn" type="danger" :disabled="selRows.length?false:true" @click="delClick(null)" >
@@ -48,8 +42,24 @@
 				:data="list"
 				@row-click="listChange">
 				<el-table-column :resizable='true' align="left" header-align="left" type="selection" width="55" />
-				<el-table-column label="序号" width="70" :resizable='true' align="left" header-align="left">
-					<template #default="scope">{{ (listQuery.page-1)*listQuery.limit+scope.$index + 1}}</template>
+				<el-table-column label="菜品" min-width="140" :resizable='true' :sortable='false' align="left" header-align="left">
+					<template #default="scope">
+						{{ getDishName(scope.row.ref_id) }}
+					</template>
+				</el-table-column>
+				<el-table-column label="图片" min-width="120" width="120" :resizable='true' :sortable='false' align="left" header-align="left">
+					<template #default="scope">
+						<div v-if="dishMap[Array.isArray(scope.row.ref_id)?scope.row.ref_id[0]:scope.row.ref_id]?.dish_image">
+							<el-image v-if="dishMap[Array.isArray(scope.row.ref_id)?scope.row.ref_id[0]:scope.row.ref_id].dish_image.substring(0,4)=='http'" preview-teleported
+								:preview-src-list="[dishMap[Array.isArray(scope.row.ref_id)?scope.row.ref_id[0]:scope.row.ref_id].dish_image.split(',')[0]]"
+								:src="dishMap[Array.isArray(scope.row.ref_id)?scope.row.ref_id[0]:scope.row.ref_id].dish_image.split(',')[0]" style="width:100px;height:100px"></el-image>
+							<el-image v-else preview-teleported
+								:preview-src-list="[$config.url+dishMap[Array.isArray(scope.row.ref_id)?scope.row.ref_id[0]:scope.row.ref_id].dish_image.split(',')[0]]"
+								:src="$config.url+dishMap[Array.isArray(scope.row.ref_id)?scope.row.ref_id[0]:scope.row.ref_id].dish_image.split(',')[0]" style="width:100px;height:100px">
+							</el-image>
+						</div>
+						<div v-else>无图片</div>
+					</template>
 				</el-table-column>
 				<el-table-column min-width="140"
 					:resizable='true'
@@ -62,7 +72,7 @@
 						{{scope.row.nickname}}
 					</template>
 				</el-table-column>
-				<el-table-column label="评论内容" min-width="140" :resizable='true' :sortable='true' align="left" header-align="left">
+				<el-table-column label="评价内容" min-width="140" :resizable='true' :sortable='true' align="left" header-align="left">
 					<template #default="scope">
 						<span v-html="scope.row.content"></span>
 					</template>
@@ -72,27 +82,23 @@
 						<el-rate :model-value="Number(scope.row.score||0)" disabled />
 					</template>
 				</el-table-column>
-				<el-table-column label="回复内容" min-width="140" :resizable='true' :sortable='true' align="left" header-align="left">
+				<el-table-column label="评价时间" min-width="140" :resizable='true' :sortable='true' align="left" header-align="left" prop="addtime">
 					<template #default="scope">
-						<span v-html="scope.row.reply"></span>
+						{{scope.row.addtime}}
 					</template>
 				</el-table-column>
-                <el-table-column v-if="btnAuth('dish_review','修改')" label="禁用账号" :resizable='true' :sortable='false' align="left" header-align="left">
-                    <template #default="scope">
-                        <el-switch v-model="scope.row.isLocked"
-                                   :active-value="1"
-                                   :inactive-value="0"
-                                   active-color="red"
-                                   @change="updateItem(scope.row)"></el-switch>
-                    </template>
-                </el-table-column>
+				<el-table-column label="回复内容" min-width="140" :resizable='true' :sortable='true' align="left" header-align="left">
+					<template #default="scope">
+						<span v-html="stripReplyPrefix(scope.row.reply)"></span>
+					</template>
+				</el-table-column>
 				<el-table-column label="操作" width="300" :resizable='true' :sortable='true' align="left" header-align="left">
 					<template #default="scope">
 						<el-button class="edit_btn" type="primary" @click="editClick(scope.row.id)" v-if=" btnAuth('dish_review','修改')">
 							修改						</el-button>
 						<el-button class="del_btn" type="danger" @click="delClick(scope.row.id)" >
 							删除						</el-button>
-						<el-button class="operate_btn" type="warning" @click="replyClick(scope.row.id)">
+						<el-button class="operate_btn" v-if="btnAuth('dish_review','查看')" type="warning" @click="replyClick(scope.row.id)">
 							回复
 						</el-button>
 					</template>
@@ -145,8 +151,9 @@
 	//基础信息
 
 	const tableName = 'dish_review'
-	const formName = '美食信息评论表'
+	const formName = '美食信息评价表'
 	const route = useRoute()
+	const canAdd = computed(() => route.query.from === 'orders')
 	//基础信息
 	onMounted(()=>{
 	})
@@ -159,7 +166,14 @@
 		sort: 'id',
 		order: 'desc'
 	})
-	const searchQuery = ref({})
+	const searchQuery = ref({ score: '' })
+	const getRawRefId = () => {
+		const raw = Array.isArray(route.query.ref_id) ? route.query.ref_id[0] : route.query.ref_id
+		if (raw !== undefined && raw !== null && raw !== '' && raw !== 'undefined' && raw !== 'null') return raw
+		return ''
+	}
+	const hasRefContext = computed(() => !!getRawRefId())
+	const filterByCurrentDish = ref(false)
 	const selRows = ref([])
 	const listLoading = ref(false)
 	const listChange = (row) =>{
@@ -174,12 +188,12 @@
 		let params = JSON.parse(JSON.stringify(listQuery.value))
 		params['sort'] = 'id'
 		params['order'] = 'desc'
-		params['ref_id'] = route.query.ref_id
-		if(searchQuery.value.nickname&&searchQuery.value.nickname!=''){
-			params['nickname'] = '%' + searchQuery.value.nickname + '%'
+		const rawRefId = getRawRefId()
+		if (filterByCurrentDish.value && rawRefId) {
+			params['ref_id'] = rawRefId
 		}
-		if(searchQuery.value.content&&searchQuery.value.content!=''){
-			params['content'] = '%' + searchQuery.value.content + '%'
+		if (searchQuery.value.score) {
+			params['score'] = searchQuery.value.score
 		}
 		context.$http({
 			url: `${tableName}/page`,
@@ -187,8 +201,19 @@
 			params: params
 		}).then(res => {
 			listLoading.value = false
-			list.value = res.data.data.list
+			const rows = res.data.data.list || []
+			list.value = rows
 			total.value = Number(res.data.data.total)
+			const ids = Array.from(new Set(rows.map(r => {
+				const v = Array.isArray(r.ref_id) ? r.ref_id[0] : r.ref_id
+				return v
+			}).filter(v => !(v === undefined || v === null || v === '' || v === 'undefined' || v === 'null'))))
+			const reqs = ids.filter(id => !dishMap.value[id]).map(id => {
+				return context.$http.get(`dish_info/info/${id}`).then(resp => {
+					dishMap.value[id] = resp.data.data || {}
+				})
+			})
+			Promise.all(reqs)
 		})
 	}
 	//删
@@ -205,7 +230,7 @@
 				return false
 			}
 		}
-		ElMessageBox.confirm(`是否删除选中${formName}`, '提示', {
+		ElMessageBox.confirm('是否删除所选评价', '提示', {
 			confirmButtonText: '是',
 			cancelButtonText: '否',
 			type: 'warning',
@@ -242,10 +267,24 @@
 	const btnAuth = (e,a)=>{
 		return context?.$toolUtil.isAuth(e,a)
 	}
+	const dishMap = ref({})
+	const getDishName = (id) => {
+		const rid = Array.isArray(id) ? id[0] : id
+		if (rid === undefined || rid === null || rid === '' || rid === 'undefined' || rid === 'null') return ''
+		return (dishMap.value[rid] && (dishMap.value[rid].dish_name || dishMap.value[rid].dishName)) || ''
+	}
 	//搜索
 	const searchClick = () => {
 		listQuery.value.page = 1
 		getList()
+	}
+	const refreshClick = () => {
+		getList()
+	}
+	const resetClick = () => {
+		searchQuery.value.score = ''
+		filterByCurrentDish.value = false
+		searchClick()
 	}
 	//表单
 	const formRef = ref(null)
@@ -300,19 +339,13 @@
 	const replyClick=(id=null)=>{
 		formRef.value.init(id,'reply')
 	}
-    const updateItem = (row)=>{
-        context.$http.post(`${tableName}/update`,row).then(res=>{
-            if(res.data.code==0){
-                context.$message.success("更新成功")
-            }
-        })
-    }
-    const back = ()=>{
-        store.dispatch('delThisView',route.path)
-        context.$router.go(-1)
-    }
+	const stripReplyPrefix = (h) => {
+		let s = String(h ?? '')
+		return s.replace(/^\s*(管理员：|员工：|餐厅回复：)\s*/, '')
+	}
 	//初始化
 	const init = () => {
+		filterByCurrentDish.value = !!getRawRefId()
 		getList()
 	}
 	init()

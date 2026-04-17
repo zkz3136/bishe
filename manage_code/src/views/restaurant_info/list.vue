@@ -5,10 +5,10 @@
 				<el-form :model="searchQuery" class="search_form" >
 					<div class="search_view">
 						<div class="search_label">
-							餐桌名称：
+							餐位名称：
 						</div>
 						<div class="search_box">
-							<el-input class="search_inp" v-model="searchQuery.seat_name" placeholder="餐桌名称"
+							<el-input class="search_inp" v-model="searchQuery.seatName" placeholder="餐位名称"
 								clearable>
 							</el-input>
 						</div>
@@ -131,8 +131,8 @@
 		let params = JSON.parse(JSON.stringify(listQuery.value))
 		params['sort'] = 'id'
 		params['order'] = 'desc'
-		if(searchQuery.value.seat_name&&searchQuery.value.seat_name!=''){
-			params['seat_name'] = '%' + searchQuery.value.seat_name + '%'
+		if(searchQuery.value.seatName&&searchQuery.value.seatName!=''){
+			params['seatName'] = '%' + searchQuery.value.seatName + '%'
 		}
 		context.$http({
 			url: `${tableName}/page`,
@@ -254,7 +254,7 @@
 	const restaurantReservationFormModelRef = ref(null)
     const restaurantReservationCrossAddOrUpdateHandler = (row) => {
 		if(row?.table_status === '禁止预约' || row?.table_status === '已预约'){
-			context?.$toolUtil.message('该餐桌已禁止预约','error')
+			context?.$toolUtil.message('该餐位已禁止预约','error')
 			return
 		}
 		nextTick(()=>{

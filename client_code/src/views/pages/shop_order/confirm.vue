@@ -1,10 +1,17 @@
 <template>
 	<div class="list-page" :style='{"border":"0px solid #888","padding":"40px 16% 20px","margin":"20px auto 40px","borderRadius":"6px","background":"#fff","width":"100%","fontSize":"16px","position":"relative"}'>
-		<div class="section_title">
-            <span>{{formName}}</span>
-		</div>
+        <div class="breadcrumb-wrapper" style="width: 100%;">
+            <div class="bread_view">
+                <el-breadcrumb separator="Ξ" class="breadcrumb">
+                    <el-breadcrumb-item class="first_breadcrumb" :to="{ path: '/' }">首页</el-breadcrumb-item>
+                    <el-breadcrumb-item class="second_breadcrumb">{{formName}}</el-breadcrumb-item>
+                </el-breadcrumb>
+            </div>
+            <div class="back_view">
+                <el-button class="back_btn" @click="backClick" type="primary">返回</el-button>
+            </div>
+        </div>
 		<el-card style="width: 100%">
-            <el-button @click="backClick">返回</el-button>
 			<el-divider content-position="center">商品清单</el-divider>
 			<el-table :data="list" :stripe='true'>
 				<el-table-column label="商品名称" :resizable='true' align="left" header-align="left">
@@ -42,9 +49,9 @@
 			
 			<el-input v-model="remark" placeholder="请输入备注" type="textarea"></el-input>
 			
-			<el-divider content-position="center">选择餐桌</el-divider>
+			<el-divider content-position="center">选择餐位</el-divider>
 			
-			<el-select v-model="selectedCanzhuo" placeholder="请选择您所在的餐桌" style="width: 100%;" size="large">
+			<el-select v-model="selectedCanzhuo" placeholder="请选择您所在的餐位" style="width: 100%;" size="large">
 				<el-option
 					v-for="item in canzhuoList"
 					:key="item.id"
@@ -70,6 +77,7 @@
 		getCurrentInstance,
 		nextTick,
 		computed,
+		watch,
 	} from 'vue';
 	import {
 		useRoute,
@@ -93,10 +101,11 @@
     }
 	const list = ref([])
 	const remark = ref('')
-	//餐桌列表
+	//餐位列表
 	const canzhuoList = ref([])
-	//选中的餐桌
+	//选中的餐位
 	const selectedCanzhuo = ref('')
+	const orderDraftKey = 'order_confirm_draft'
     //付款类型
     const payType = ref(1)
 	const normalizeOrderGood = (raw) => {
@@ -119,6 +128,37 @@
 		item.userid = item.userid ?? item.user_id
 		return item
 	}
+    const getDisplayPriceByGoods = (goods) => {
+        const original = Number(goods?.price ?? 0) || 0
+        const discount = Number(goods?.discountprice ?? goods?.discount_price ?? goods?.discountPrice ?? 0) || 0
+        if (discount > 0 && discount < original) return Number(discount.toFixed(2))
+        return Number(original.toFixed(2))
+    }
+    const refreshOrderPrices = async () => {
+        let changed = false
+        const rows = Array.isArray(list.value) ? list.value : []
+        for (let i = 0; i < rows.length; i++) {
+            const row = rows[i] || {}
+            const sourceTable = row?.source_table ?? 'dish_info'
+            const goodId = row?.good_id ?? row?.goodid ?? row?.goodId ?? row?.ref_id ?? row?.refid ?? row?.refId
+            if (!sourceTable || !goodId) continue
+            try {
+                const res = await context.$http.get(`${sourceTable}/detail/${goodId}`)
+                const goods = res?.data?.data || {}
+                const latestOriginal = Number(goods?.price ?? row.price ?? 0)
+                const latestReal = getDisplayPriceByGoods(goods)
+                if (Number(row.realPrice) !== latestReal || Number(row.price || 0) !== Number(latestOriginal.toFixed(2))) {
+                    changed = true
+                }
+                row.price = Number(latestOriginal.toFixed(2))
+                row.realPrice = latestReal
+            } catch (e) {
+            }
+        }
+        if (changed) {
+            context.$toolUtil.message('检测到价格更新，已为您同步最新价格', 'success')
+        }
+    }
 	//统计总价
 	const allPrice = computed(() => {
 		let price = 0
@@ -141,9 +181,9 @@
 	}
 	//正常支付
 	const payClick = async () => {
-		//验证是否选择了餐桌
+		//验证是否选择了餐位
 		if (!selectedCanzhuo.value) {
-			context.$toolUtil.message('请选择您所在的餐桌', 'error')
+			context.$toolUtil.message('请选择您所在的餐位', 'error')
 			return false
 		}
 		const orderGoods = (list.value || []).map(normalizeOrderGood)
@@ -192,8 +232,16 @@
 			total += Number(order.discounttotal ?? order.total) || 0
 		})
 		if (Number(user.value.balance) < Number(total.toFixed(2))) {
-			context.$toolUtil.message(`余额不足，请先充值`, 'error', () => {
-				router.push(`/index/${context.$toolUtil.storageGet('frontSessionTable')}Center`)
+			const redirect = encodeURIComponent('/index/order_confirm?fromRecharge=1')
+			const frontSession = context.$toolUtil.storageGet('frontSessionTable')
+			const payTotal = Number(total.toFixed(2))
+			const balance = Number(user.value.balance || 0)
+			const needAmount = Number((payTotal - balance).toFixed(2))
+			context.$toolUtil.message(`余额不足，还需充值 ${needAmount.toFixed(2)} 元`, 'error', () => {
+				try {
+					context.$toolUtil.storageSet(orderDraftKey, JSON.stringify({ remark: remark.value || '', seat_name: selectedCanzhuo.value || '' }))
+				} catch (e) {}
+				router.push(`/index/${frontSession}Center?openRecharge=1&redirect=${redirect}&needAmount=${needAmount.toFixed(2)}&balance=${balance.toFixed(2)}&payTotal=${payTotal.toFixed(2)}`)
 			})
 			return false
 		}
@@ -218,26 +266,29 @@
 		})
 
 		context.$toolUtil.message('购买成功', 'success', () => {
+			try {
+				context.$toolUtil.storageRemove(orderDraftKey)
+			} catch (e) {}
 			router.push('/index/ordersList')
 		})
 	}
 
-	//获取餐桌列表
+	//获取餐位列表
 	const getCanzhuoList = () => {
 		context.$http.get('restaurant_info/list', {
 			params: {
 				page: 1,
 				limit: 100
-				// 显示所有餐桌，不过滤状态
+				// 显示所有餐位，不过滤状态
 			}
 		}).then(res => {
 			if (res.data.code === 0) {
 				canzhuoList.value = res.data.data.list
-				console.log('获取到的餐桌列表：', canzhuoList.value)
+				console.log('获取到的餐位列表：', canzhuoList.value)
 			}
 		}).catch(err => {
-			console.error('获取餐桌列表失败：', err)
-			context.$toolUtil.message('获取餐桌列表失败', 'error')
+			console.error('获取餐位列表失败：', err)
+			context.$toolUtil.message('获取餐位列表失败', 'error')
 		})
 	}
 	//获取个人信息
@@ -252,18 +303,78 @@
 			const raw = context.$toolUtil.storageGet('orders_good')
 			const parsed = raw ? JSON.parse(raw) : []
 			list.value = (Array.isArray(parsed) ? parsed : []).map(normalizeOrderGood)
+            refreshOrderPrices()
         })
-		//获取餐桌列表
+		//获取餐位列表
 		getCanzhuoList()
+		const shouldRestore = String(route?.query?.fromRecharge || '') === '1'
+		const draftRaw = context.$toolUtil.storageGet(orderDraftKey)
+		if (shouldRestore && draftRaw) {
+			try {
+				const draft = JSON.parse(draftRaw)
+				if (draft && typeof draft === 'object') {
+					if (draft.remark != null) remark.value = String(draft.remark || '')
+					if (draft.seat_name != null) selectedCanzhuo.value = String(draft.seat_name || '')
+				}
+			} catch (e) {}
+		} else if (!shouldRestore && draftRaw) {
+			try {
+				context.$toolUtil.storageRemove(orderDraftKey)
+			} catch (e) {}
+		}
 	}
 	init()
+	watch([remark, selectedCanzhuo], ([r, s]) => {
+		try {
+			context.$toolUtil.storageSet(orderDraftKey, JSON.stringify({ remark: r || '', seat_name: s || '' }))
+		} catch (e) {}
+	})
 </script>
 
 <style lang="scss" scoped>
     .section_title{
+        margin: 0 0 10px;
         span{
+            font-size: 22px;
+            font-weight: 600;
+            color: #333;
         }
     }
+	.bread_view {
+		:deep(.breadcrumb) {
+			.el-breadcrumb__separator {
+			}
+			.first_breadcrumb {
+				.el-breadcrumb__inner {
+				}
+			}
+			.second_breadcrumb {
+				.el-breadcrumb__inner {
+				}
+			}
+		}
+	}
+	.back_view {
+		border-radius: 4px;
+		padding: 10px 0px;
+		margin: 10px auto;
+		background: none;
+		width: 100%;
+		text-align: left;
+		.back_btn {
+			border: 1px solid var(--theme-color);
+			cursor: pointer;
+			border-radius: 0px;
+			padding: 0 24px;
+			color: #fff;
+			background: var(--theme-color);
+			width: auto;
+			font-size: 14px;
+			height: 34px;
+		}
+		.back_btn:hover {
+		}
+	}
 	// 表格样式
 	.el-table {
 		padding: 0;

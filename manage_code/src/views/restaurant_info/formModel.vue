@@ -4,8 +4,8 @@
 			<el-form class="formModel_form" ref="formRef" :model="form" :rules="rules">
 				<el-row >
 					<el-col :span="24">
-						<el-form-item label="餐桌名称" prop="seat_name">
-							<el-input class="list_inp" v-model="form.seat_name" placeholder="餐桌名称"
+						<el-form-item label="餐位名称" prop="seat_name">
+							<el-input class="list_inp" v-model="form.seat_name" placeholder="餐位名称"
                                 type="text"
 								:readonly="!isAdd||disabledForm.seat_name?true:false" />
 						</el-form-item>
@@ -26,8 +26,8 @@
 						</el-form-item>
 					</el-col>
 					<el-col :span="24">
-						<el-form-item label="餐桌位置" prop="table_location">
-							<el-input class="list_inp" v-model="form.table_location" placeholder="餐桌位置"
+						<el-form-item label="餐位位置" prop="table_location">
+							<el-input class="list_inp" v-model="form.table_location" placeholder="餐位位置"
                                 type="text"
 								:readonly="!isAdd||disabledForm.table_location?true:false" />
 						</el-form-item>
@@ -42,12 +42,20 @@
 					</el-col>
 
 				<el-col :span="24">
-					<el-form-item label="餐桌状态" prop="table_status">
+					<el-form-item label="订金金额" prop="deposit">
+						<el-input class="list_inp" v-model.number="form.deposit" placeholder="订金金额"
+                                type="number"
+							:readonly="!isAdd||disabledForm.deposit?true:false" />
+					</el-form-item>
+				</el-col>
+
+				<el-col :span="24">
+					<el-form-item label="餐位状态" prop="table_status">
 						<el-select
 							class="list_sel"
 							:disabled="!isAdd||disabledForm.table_status?true:false"
 							v-model="form.table_status" 
-							placeholder="请选择餐桌状态"
+							placeholder="请选择餐位状态"
 							>
 							<el-option v-for="(item,index) in table_statusLists" :label="item"
 								:value="item"
@@ -97,6 +105,7 @@
         cover_image : false,
         table_location : false,
         capacity : false,
+        deposit : false,
         table_status : false,
         staff_account : false,
         storeupNumber : false,
@@ -115,6 +124,9 @@
 		],
 		capacity: [
 			{ validator: context.$toolUtil.validator.intNumber, trigger: 'blur' },
+		],
+		deposit: [
+			{ validator: context.$toolUtil.validator.number, trigger: 'blur' },
 		],
 		table_status: [
 		],
@@ -136,7 +148,7 @@
 	const cover_imageUploadSuccess=(e)=>{
 		form.value.cover_image = e
 	}
-	//餐桌状态列表
+	//餐位状态列表
 	const table_statusLists = ref([])
 	const normalizeTableStatus = (value)=>{
 		if(value === '允许预约' || value === '禁止预约') return value
@@ -156,6 +168,7 @@
 			cover_image: '',
 			table_location: '',
 			capacity: '',
+			deposit: '',
 			table_status: '允许预约',
             staff_account: '',
 		}
@@ -168,6 +181,10 @@
 		}).then(res => {
 			let reg=new RegExp('../../../file','g')
 			form.value = res.data.data
+			// 保留原值或默认值
+			if (form.value.deposit === undefined || form.value.deposit === null || form.value.deposit === '') {
+				form.value.deposit = 50
+			}
 			form.value.table_status = normalizeTableStatus(form.value.table_status)
 			formVisible.value = true
 		})

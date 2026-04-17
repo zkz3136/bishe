@@ -23,7 +23,7 @@ import com.baomidou.mybatisplus.enums.IdType;
 
 
 /**
- * 美食信息评论表
+ * 美食信息评价表
  * 数据库通用操作实体类（普通增删改查）
  * @author 
  * @email 
@@ -80,7 +80,7 @@ public class DishReviewEntity<T> implements Serializable {
 	private String nickname;
 	
 	/**
-	 * 评论内容
+	 * 评价内容
 	 */
 					
 	private String content;
@@ -165,13 +165,13 @@ public class DishReviewEntity<T> implements Serializable {
 		return nickname;
 	}
 	/**
-	 * 设置：评论内容
+	 * 设置：评价内容
 	 */
 	public void setContent(String content) {
 		this.content = content;
 	}
 	/**
-	 * 获取：评论内容
+	 * 获取：评价内容
 	 */
 	public String getContent() {
 		return content;

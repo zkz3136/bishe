@@ -54,13 +54,13 @@ public class ParkingSpotEntity<T> implements Serializable {
 	/**
 	 * 车位编号
 	 */
-					
+	@TableField("spot_number")
 	private String spotNumber;
 	
 	/**
 	 * 车位图片
 	 */
-					
+	@TableField("spot_image")
 	private String spotImage;
 	
 	/**
@@ -72,24 +72,25 @@ public class ParkingSpotEntity<T> implements Serializable {
 	/**
 	 * 车位位置
 	 */
-					
+	@TableField("spot_location")
 	private String spotLocation;
 	
 	/**
 	 * 小时价格
 	 */
-					
+	@TableField("hourly_price")
 	private Double hourlyPrice;
 	
 	/**
 	 * 车位状态
 	 */
-					
+	@TableField("spot_status")
 	private String spotStatus;
 
 	/**
 	 * 车牌号
 	 */
+	@TableField("plate_number")
 	private String plateNumber;
 
 	/**
@@ -97,6 +98,7 @@ public class ParkingSpotEntity<T> implements Serializable {
 	 */
 	@JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
 	@DateTimeFormat
+	@TableField("entry_time")
 	private Date entryTime;
 
 	public String getPlateNumber() {
@@ -116,6 +118,7 @@ public class ParkingSpotEntity<T> implements Serializable {
 
 	@JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
 	@DateTimeFormat
+	@TableField("addtime")
 	private Date addtime;
 
 	public Date getAddtime() {

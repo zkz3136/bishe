@@ -8,7 +8,6 @@
         <result property="event_name" column="event_name"/>
         <result property="event_image" column="event_image"/>
         <result property="start_time" column="start_time"/>
-        <result property="event_location" column="event_location"/>
         <result property="event_content" column="event_content"/>
         <result property="publish_time" column="publish_time"/>
         <result property="end_time" column="end_time"/>

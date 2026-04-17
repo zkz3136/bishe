@@ -98,6 +98,11 @@ public class RestaurantReservationEntity<T> implements Serializable {
 	@TableField("account")
 	private String login_name;
 	
+	@TableField(exist = false)
+	@JsonProperty("mobile")
+	@JsonAlias({"mobile"})
+	private String mobile;
+
 	/**
 	 * 名称
 	 */
@@ -166,6 +171,9 @@ public class RestaurantReservationEntity<T> implements Serializable {
 	public String getSeatName() {
 		return seat_name;
 	}
+	// 兼容更新时的下划线属性访问
+	public void setSeat_name(String v) { this.seat_name = v; }
+	public String getSeat_name() { return this.seat_name; }
 	/**
 	 * 设置：封面
 	 */
@@ -178,6 +186,8 @@ public class RestaurantReservationEntity<T> implements Serializable {
 	public String getCoverImage() {
 		return cover_image;
 	}
+	public void setCover_image(String v) { this.cover_image = v; }
+	public String getCover_image() { return this.cover_image; }
 	/**
 	 * 设置：餐桌位置
 	 */
@@ -190,6 +200,8 @@ public class RestaurantReservationEntity<T> implements Serializable {
 	public String getTableLocation() {
 		return table_location;
 	}
+	public void setTable_location(String v) { this.table_location = v; }
+	public String getTable_location() { return this.table_location; }
 	/**
 	 * 设置：可坐人数
 	 */
@@ -208,12 +220,14 @@ public class RestaurantReservationEntity<T> implements Serializable {
 	public void setFavoritesNumber(Integer storeupNumber) {
 		this.storeupNumber = storeupNumber;
 	}
+	public void setStoreupNumber(Integer storeupNumber) { this.storeupNumber = storeupNumber; }
 	/**
 	 * 获取：收藏数
 	 */
 	public Integer getFavoritesNumber() {
 		return storeupNumber;
 	}
+	public Integer getStoreupNumber() { return storeupNumber; }
 	/**
 	 * 设置：账号
 	 */
@@ -225,6 +239,14 @@ public class RestaurantReservationEntity<T> implements Serializable {
 	 */
 	public String getLoginName() {
 		return login_name;
+	}
+	public void setLogin_name(String v) { this.login_name = v; }
+	public String getLogin_name() { return this.login_name; }
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+	public String getMobile() {
+		return mobile;
 	}
 	/**
 	 * 设置：名称
@@ -250,6 +272,9 @@ public class RestaurantReservationEntity<T> implements Serializable {
 	public Date getReservationTime() {
 		return reservation_time;
 	}
+	// 兼容更新时的下划线属性访问
+	public void setReservation_time(Date v) { this.reservation_time = v; }
+	public Date getReservation_time() { return this.reservation_time; }
 	/**
 	 * 设置：定金金额
 	 */
@@ -274,6 +299,8 @@ public class RestaurantReservationEntity<T> implements Serializable {
 	public String getPaymentStatus() {
 		return payment_status;
 	}
+	public void setPayment_status(String v) { this.payment_status = v; }
+	public String getPayment_status() { return this.payment_status; }
 	/**
 	 * 设置：核销状态
 	 */
@@ -286,5 +313,7 @@ public class RestaurantReservationEntity<T> implements Serializable {
 	public String getVerificationStatus() {
 		return verification_status;
 	}
+	public void setVerification_status(String v) { this.verification_status = v; }
+	public String getVerification_status() { return this.verification_status; }
 
 }

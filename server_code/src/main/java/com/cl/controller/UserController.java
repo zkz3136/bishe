@@ -98,6 +98,16 @@ public class UserController {
         if(u!=null) {
 			return R.error("注册用户已存在");
 		}
+		if (user == null || org.apache.commons.lang3.StringUtils.isBlank(user.getName())) {
+			return R.error("姓名不能为空");
+		}
+		if (user == null || org.apache.commons.lang3.StringUtils.isBlank(user.getMobile())) {
+			return R.error("手机号不能为空");
+		}
+		String mobile = user.getMobile().trim();
+		if (!mobile.matches("^(0|86|17951)?(13[0-9]|15[012356789]|16[6]|19[89]|17[01345678]|18[0-9]|14[579]|19[0-35-9])[0-9]{8}$")) {
+			return R.error("手机号格式不正确");
+		}
 		Long uId = new Date().getTime();
 		user.setId(uId);
 		user.setRole("用户");
@@ -261,6 +271,16 @@ public class UserController {
         if(userService.selectCount(new EntityWrapper<UserEntity>().eq("login_name", user.getLoginName()))>0) {
             return R.error("账号已存在");
         }
+		if (user == null || org.apache.commons.lang3.StringUtils.isBlank(user.getName())) {
+			return R.error("姓名不能为空");
+		}
+		if (user == null || org.apache.commons.lang3.StringUtils.isBlank(user.getMobile())) {
+			return R.error("手机号不能为空");
+		}
+		String mobile = user.getMobile().trim();
+		if (!mobile.matches("^(0|86|17951)?(13[0-9]|15[012356789]|16[6]|19[89]|17[01345678]|18[0-9]|14[579]|19[0-35-9])[0-9]{8}$")) {
+			return R.error("手机号格式不正确");
+		}
     	user.setId(new Date().getTime()+new Double(Math.floor(Math.random()*1000)).longValue());
     	//ValidatorUtils.validateEntity(user);
         UserEntity u = userService.selectOne(new EntityWrapper<UserEntity>().eq("login_name", user.getLoginName()));

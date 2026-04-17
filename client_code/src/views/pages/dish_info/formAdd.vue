@@ -52,6 +52,9 @@
 							:disabled="!isAdd||disabledForm.flavor?true:false"
 							v-model="form.flavor" 
 							placeholder="请选择口味"
+							filterable
+							allow-create
+							default-first-option
 							style="width:100%;"
 							>
 							<el-option v-for="(item,index) in flavorLists" :label="item"
@@ -137,7 +140,7 @@
 	const router = useRouter()
 	//基础信息
 	const tableName = 'dish_info'
-	const formName = '美食信息'
+	const formName = '菜品信息'
 	//基础信息
 	const breadList = ref([{
 		name: formName
@@ -152,7 +155,7 @@
 		dish_image: '',
 		dish_category: '',
 		dish_description: '',
-		flavor: '不辣',
+		flavor: '',
 		rating: '',
 		click_time: '',
 	})
@@ -171,7 +174,6 @@
 		stock : false,
 		price : false,
 		storeupNumber : false,
-		discussNumber : false,
 	})
 	const isAdd = ref(false)
 	//表单验证
@@ -194,18 +196,18 @@
 		click_time: [
 		],
 		purchase_limit: [
+            { required: true, message: '请输入', trigger: 'blur' },
 			{ validator: context.$toolUtil.validator.intNumber, trigger: 'blur' },
 		],
 		stock: [
+            { required: true, message: '请输入', trigger: 'blur' },
 			{ validator: context.$toolUtil.validator.intNumber, trigger: 'blur' },
 		],
 		price: [
+            { required: true, message: '请输入', trigger: 'blur' },
 			{ validator: context.$toolUtil.validator.number, trigger: 'blur' },
 		],
 		storeupNumber: [
-			{ validator: context.$toolUtil.validator.intNumber, trigger: 'blur' },
-		],
-		discussNumber: [
 			{ validator: context.$toolUtil.validator.intNumber, trigger: 'blur' },
 		],
 	})
@@ -312,11 +314,6 @@
 					disabledForm.value.storeupNumber = true;
 					continue;
 				}
-				if(x=='discussNumber'){
-					form.value.discussNumber = row[x];
-					disabledForm.value.discussNumber = true;
-					continue;
-				}
 			}
 			if(row){
 				crossRow.value = row
@@ -333,7 +330,7 @@
 			if(statusColumnValue){
 				crossColumnValue.value = statusColumnValue
 			}
-			form.value.flavor='不辣'
+			// 不设置默认口味，保持由用户选择
 		}
 		context?.$http({
 			url: `${context?.$toolUtil.storageGet('frontSessionTable')}/session`,
@@ -415,9 +412,13 @@
 								method: 'post', 
 								data: form.value 
 							}).then(res=>{
+                                const code = res && res.data ? res.data.code : null
+                                if (code !== 0) {
+                                    return
+                                }
                                 context?.$toolUtil.message(`操作成功`,'success')
                                 history.back()
-							})
+                            }).catch(()=>{})
 						}
 					})
 				}else{
@@ -426,9 +427,13 @@
 						method: 'post', 
 						data: form.value 
 					}).then(res=>{
+                        const code = res && res.data ? res.data.code : null
+                        if (code !== 0) {
+                            return
+                        }
                         context?.$toolUtil.message(`操作成功`,'success')
                         history.back()
-					})
+                    }).catch(()=>{})
 				}
 			}
 		})

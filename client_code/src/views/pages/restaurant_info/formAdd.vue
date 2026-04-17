@@ -11,8 +11,8 @@
 		<el-form ref="formRef" :model="form" class="add_form" label-width="120px" :rules="rules">
 			<el-row>
 				<el-col :span="12">
-					<el-form-item label="餐桌名称" prop="seat_name">
-						<el-input class="list_inp" v-model="form.seat_name" placeholder="餐桌名称"
+					<el-form-item label="餐位名称" prop="seat_name">
+						<el-input class="list_inp" v-model="form.seat_name" placeholder="餐位名称"
 							 type="text" 							:readonly="!isAdd||disabledForm.seat_name?true:false" />
 					</el-form-item>
 				</el-col>
@@ -30,8 +30,8 @@
 					</el-form-item>
 				</el-col>
 				<el-col :span="12">
-					<el-form-item label="餐桌位置" prop="table_location">
-						<el-input class="list_inp" v-model="form.table_location" placeholder="餐桌位置"
+					<el-form-item label="餐位位置" prop="table_location">
+						<el-input class="list_inp" v-model="form.table_location" placeholder="餐位位置"
 							 type="text" 							:readonly="!isAdd||disabledForm.table_location?true:false" />
 					</el-form-item>
 				</el-col>
@@ -44,12 +44,12 @@
 				</el-col>
 
 			<el-col :span="12">
-				<el-form-item label="餐桌状态" prop="table_status">
+				<el-form-item label="餐位状态" prop="table_status">
 					<el-select
 						class="list_sel"
 						:disabled="!isAdd||disabledForm.table_status?true:false"
 						v-model="form.table_status" 
-						placeholder="请选择餐桌状态"
+						placeholder="请选择餐位状态"
 						style="width:100%;"
 						>
 						<el-option v-for="(item,index) in table_statusLists" :label="item"
@@ -143,7 +143,7 @@
 	const cover_imageUploadSuccess=(e)=>{
 		form.value.cover_image = e
 	}
-	//餐桌状态列表
+	//餐位状态列表
 	const table_statusLists = ref([])
 	const normalizeTableStatus = (value)=>{
 		if(value === '允许预约' || value === '禁止预约') return value

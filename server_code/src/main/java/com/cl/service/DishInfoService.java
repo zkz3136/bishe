@@ -36,5 +36,9 @@ public interface DishInfoService extends IService<DishInfoEntity> {
 
     int renameDishCategory(String oldCategory, String newCategory);
 
+    int renameFlavor(String oldFlavor, String newFlavor);
+
+    int deleteFlavor(String oldFlavor);
+
 
 }

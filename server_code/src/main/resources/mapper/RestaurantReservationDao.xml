@@ -4,30 +4,36 @@
 <mapper namespace="com.cl.dao.RestaurantReservationDao">
 
 	<!-- 可根据自己的需求，是否要使用 -->
-    <resultMap type="com.cl.entity.RestaurantReservationEntity" id="cantingyuyueMap">
-        <result property="seat_name" column="seat_name"/>
-        <result property="cover_image" column="cover_image"/>
-        <result property="table_location" column="table_location"/>
+    <resultMap type="com.cl.entity.view.RestaurantReservationView" id="restaurantReservationViewMap">
+        <result property="seatName" column="seat_name"/>
+        <result property="coverImage" column="cover_image"/>
+        <result property="tableLocation" column="table_location"/>
         <result property="capacity" column="capacity"/>
         <result property="storeupNumber" column="storeup_number"/>
-        <result property="account" column="account"/>
+        <result property="loginName" column="account"/>
         <result property="name" column="name"/>
-        <result property="reservation_time" column="reservation_time"/>
+        <result property="reservationTime" column="reservation_time"/>
         <result property="deposit" column="deposit"/>
-        <result property="payment_status" column="payment_status"/>
-        <result property="verification_status" column="verification_status"/>
+        <result property="paymentStatus" column="payment_status"/>
+        <result property="verificationStatus" column="verification_status"/>
+        <result property="mobile" column="mobile"/>
     </resultMap>
 
-    <select id="selectListView"
-		resultType="com.cl.entity.view.RestaurantReservationView" >
+	<select id="selectListView"
+		resultMap="restaurantReservationViewMap" >
 
-		SELECT  restaurantReservation.* FROM restaurant_reservation  restaurantReservation 	        
+		SELECT  restaurantReservation.*, u.mobile AS mobile
+		FROM restaurant_reservation  restaurantReservation
+		LEFT JOIN users u ON u.login_name = restaurantReservation.account
         <where> 1=1 ${ew.sqlSegment}</where>
 	</select>
 	
 	<select id="selectView"
-		resultType="com.cl.entity.view.RestaurantReservationView" >
-		SELECT * FROM restaurant_reservation  restaurantReservation <where> 1=1 ${ew.sqlSegment}</where>
+		resultMap="restaurantReservationViewMap" >
+		SELECT restaurantReservation.*, u.mobile AS mobile
+		FROM restaurant_reservation  restaurantReservation
+		LEFT JOIN users u ON u.login_name = restaurantReservation.account
+		<where> 1=1 ${ew.sqlSegment}</where>
 	</select>
 
 

@@ -87,7 +87,7 @@
 				return false
 			}
 		}
-		// 余额校验：需满足定金金额
+		// 余额校验：需满足订金金额
 		try {
 			const deposit = Number(form.value?.deposit ?? 50)
 			const res = await context?.$http({
@@ -96,7 +96,7 @@
 			})
 			const userBalance = parseFloat(res?.data?.data?.balance ?? res?.data?.data?.money ?? 0)
 			if (!Number.isFinite(userBalance) || userBalance < deposit) {
-				context?.$toolUtil.message(`余额不足，请先充值（需${deposit}元定金）`, 'error')
+				context?.$toolUtil.message(`余额不足，请先充值（需${deposit}元订金）`, 'error')
 				return false
 			}
 		} catch (e) {
@@ -105,7 +105,8 @@
 		// 设置支付状态
 		form.value.payment_status = '已支付'
 		// 模拟支付成功，关闭弹窗并通知父组件
-		context?.$toolUtil.message('支付成功，已扣除50元定金', 'success', () => {
+		const dep = Number(form.value?.deposit ?? 50)
+		context?.$toolUtil.message(`支付成功，已扣除${dep}元订金`, 'success', () => {
 			payVisible.value = false
 			emit('payChange')
 		})

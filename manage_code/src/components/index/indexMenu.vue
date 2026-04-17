@@ -1,6 +1,6 @@
 <template>
 	<div class="menu_wrapper">
-		<el-scrollbar wrap-class="scrollbar-wrapper" class="menu_scrollbar">
+		<div class="menu_scrollbar">
 			<el-menu :default-openeds="[]" :unique-opened="true" default-active="0" class="menu_view"
 				:collapse="collapse">
 				<el-menu-item class="first-item" :index="0" @click="menuHandler('')">
@@ -32,7 +32,7 @@
                     </el-menu-item>
                 </template>
 			</el-menu>
-		</el-scrollbar>
+		</div>
 	</div>
 </template>
 
@@ -72,10 +72,11 @@
 	}
 	const init = () => {
 		const menus = menu.list()
-		if (menus) {
-			menuList.value = menus
-		}
+		menuList.value = Array.isArray(menus) ? menus : []
 		role.value = context?.$toolUtil.storageGet('role')
+		if (!Array.isArray(menuList.value) || menuList.value.length === 0 || !role.value) {
+			return
+		}
 		const isBlankValue = (v) => {
 			if (v === null || v === undefined) return true
 			const s = String(v).trim()
@@ -106,8 +107,6 @@
             context.$router.push(`/${role.value}Center`)
         }else if(name == 'favorites'){
             context.$router.push(`/storeup?type=${menuJump}`)
-        }else if(name == 'menu'){
-            context.$router.push(`/menu_manage`)
         }else if(name == 'dish_info'){
             context.$router.push(`/dish_info${menuJump?'?menuJump='+menuJump:''}`)
         }else if(name == 'restaurant_info'){
@@ -117,7 +116,7 @@
         }else if(name == 'parking_spot'){
             context.$router.push(`/parking_spot${menuJump?'?menuJump='+menuJump:''}`)
         }else if(name == 'dish_review'){
-            context.$router.push(`/discuss_dish_info${menuJump?'?menuJump='+menuJump:''}`)
+            context.$router.push(`/dish_review${menuJump?'?menuJump='+menuJump:''}`)
         }else if(name == 'user'){
             context.$router.push(`/user${menuJump?'?menuJump='+menuJump:''}`)
         }else if(name == 'staff'){
@@ -141,6 +140,10 @@
 
 		// 菜单盒子-展开样式
 		.menu_view {
+      > .el-menu-item span,
+      > .el-sub-menu > .el-sub-menu__title span {
+        font-size: 14px;
+      }
 
 			// 无二级菜单
 			.el-menu-item {
@@ -393,6 +396,20 @@
     transition: all 0.3s ease-in-out 0s;
     box-shadow: 0px 0 0px 0 rgba(69, 90, 100, 0.2);
     z-index:9;
+}
+/* 滚动容器 */
+.menu_wrapper .menu_scrollbar{
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding-right: 6px;
+    scrollbar-width: none; /* Firefox 隐藏滚动条 */
+    -ms-overflow-style: none; /* IE/Edge 隐藏滚动条 */
+}
+.menu_wrapper .menu_scrollbar::-webkit-scrollbar{
+    width: 0;
+    height: 0; /* WebKit 隐藏滚动条 */
 }
 /* 一级ul */
 .menu_wrapper .menu_view{

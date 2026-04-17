@@ -127,8 +127,32 @@
 				item.discount_price = item.discount_price ?? item.discountprice
 				return item
 			})
+            refreshListPrices()
 		})
 	}
+    const getDisplayPriceByGoods = (goods) => {
+        const original = Number(goods?.price ?? 0) || 0
+        const discount = Number(goods?.discountprice ?? goods?.discount_price ?? goods?.discountPrice ?? 0) || 0
+        if (discount > 0 && discount < original) return Number(discount.toFixed(2))
+        return Number(original.toFixed(2))
+    }
+    const refreshListPrices = async () => {
+        const rows = Array.isArray(list.value) ? list.value : []
+        for (let i = 0; i < rows.length; i++) {
+            const row = rows[i] || {}
+            const sourceTable = row?.source_table ?? 'dish_info'
+            const goodId = row?.good_id ?? row?.goodid ?? row?.goodId ?? row?.ref_id ?? row?.refid ?? row?.refId
+            if (!sourceTable || !goodId) continue
+            try {
+                const res = await context?.$http({ url: `${sourceTable}/detail/${goodId}`, method: 'get' })
+                const goods = res?.data?.data || {}
+                const real = getDisplayPriceByGoods(goods)
+                row.realPrice = real
+                row.price = Number((Number(goods?.price ?? row.price ?? 0)).toFixed(2))
+            } catch (e) {
+            }
+        }
+    }
 	//跳转商品详情
 	const detailClick = (row) => {
         const sourceTable = row?.source_table ?? 'dish_info'
@@ -146,7 +170,6 @@
 	//单击选中某行
 	const listChange = (row) =>{
 		nextTick(()=>{
-			table.value.clearSelection()
 			table.value.toggleRowSelection(row)
 		})
 	}
@@ -212,7 +235,6 @@
 				const row = selRows.value[x] || {}
 				row.buy_number = Number(row.buy_number ?? row.buynumber ?? 1)
 				row.buynumber = row.buy_number
-				row.realPrice = Number(row.realPrice ?? row.discount_price ?? row.discountprice ?? row.price ?? 0)
 				row.good_name = row.good_name ?? row.goodname ?? ''
 				row.good_id = row.good_id ?? row.goodid
                 row.source_table = row.source_table ?? 'dish_info'
@@ -227,7 +249,9 @@
 					url: `${sourceTable}/detail/${goodId}`,
 					method:'get'
 				})
-                if(selRows.value[x].buy_number>res.data.data.stock){
+                const goods = res?.data?.data || {}
+                row.realPrice = getDisplayPriceByGoods(goods)
+                if(selRows.value[x].buy_number>goods.stock){
                     context?.$toolUtil.message(`${selRows.value[x].good_name}库存不足`,'error')
                     return false
                 }
@@ -263,6 +287,27 @@
         span{
         }
     }
+	.back_view {
+		border-radius: 4px;
+		padding: 10px 0px;
+		margin: 10px auto;
+		background: none;
+		width: 100%;
+		text-align: left;
+		.back_btn {
+			border: 1px solid var(--theme-color);
+			cursor: pointer;
+			border-radius: 0px;
+			padding: 0 24px;
+			color: #fff;
+			background: var(--theme-color);
+			width: auto;
+			font-size: 14px;
+			height: 34px;
+		}
+		.back_btn:hover {
+		}
+	}
 	// 表格样式
 	.el-table {
 		padding: 0;

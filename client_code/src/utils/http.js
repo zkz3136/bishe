@@ -50,6 +50,13 @@ http.interceptors.request.use(config => {
         })
         return Promise.reject(new Error('Invalid request url'))
     }
+    try{
+        const u = config?.url
+        const isAbs = typeof u === 'string' && (/^https?:\/\//i.test(u) || u.startsWith('/'))
+        if (typeof u === 'string' && !isAbs) {
+            config.url = `/${u}`
+        }
+    }catch(e){}
     config.headers['Token'] = toolUtil.storageGet('frontToken') // 请求头带上token
     return config
 }, error => {
@@ -99,11 +106,11 @@ http.interceptors.response.use(response => {
 		return response
 	}else{
 		ElMessage.error({
-            message:response.data.msg,
+            message:response.data?.msg || '请求失败',
             grouping:true,
             repeatNum:-99,
         })
-		return Promise.reject(response)
+		return Promise.reject(new Error(response.data?.msg || '请求失败'))
 	}
     
 }, error => {

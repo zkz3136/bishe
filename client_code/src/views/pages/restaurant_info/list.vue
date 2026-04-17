@@ -14,42 +14,43 @@
 		<el-form :inline="true" :model="searchQuery" class="list_search">
 			<div class="search_view">
 				<div class="search_label">
-					餐桌名称：
+					餐位名称：
 				</div>
 				<div class="search_box">
-					<el-input class="search_inp" v-model="searchQuery.seat_name" placeholder="餐桌名称"
+					<el-input class="search_inp" v-model="searchQuery.seat_name" placeholder="餐位名称"
 						clearable>
 					</el-input>
 				</div>
 			</div>
             <div class="search_view">
                 <div class="search_label">
-                    预约开始时间：
+                    预约时间：
                 </div>
                 <div class="search_box">
-                    <el-date-picker
-                        v-model="searchQuery.reservation_time_start"
-                        type="datetime"
-                        value-format="YYYY-MM-DD HH:mm:ss"
-                        placeholder="选择开始时间"
-                        class="search_inp"
-                        clearable
-                    />
-                </div>
-            </div>
-            <div class="search_view">
-                <div class="search_label">
-                    预约结束时间：
-                </div>
-                <div class="search_box">
-                    <el-date-picker
-                        v-model="searchQuery.reservation_time_end"
-                        type="datetime"
-                        value-format="YYYY-MM-DD HH:mm:ss"
-                        placeholder="选择结束时间"
-                        class="search_inp"
-                        clearable
-                    />
+                    <div style="display:flex;gap:8px;align-items:center;">
+                        <el-date-picker
+                            v-model="searchQuery.reservation_date"
+                            type="date"
+                            value-format="YYYY-MM-DD"
+                            placeholder="选择日期"
+                            class="search_inp"
+                            :disabled-date="reservationDateDisabledDate"
+                            :editable="false"
+                            clearable
+                        />
+                        <el-select
+                            v-model="searchQuery.reservation_hour"
+                            class="search_inp"
+                            placeholder="选择时段"
+                            :disabled="!searchQuery.reservation_date || !slotHourOptions.length"
+                            clearable>
+                            <el-option
+                                v-for="opt in slotHourOptions"
+                                :key="opt.value"
+                                :label="opt.label"
+                                :value="opt.value" />
+                        </el-select>
+                    </div>
                 </div>
             </div>
 			<div class="search_btn_view">
@@ -114,6 +115,7 @@
 		getCurrentInstance,
 		nextTick,
         computed,
+        watch,
 	} from 'vue';
 	import {
 		useRoute,
@@ -160,6 +162,52 @@
 	}
 	//搜索
 	const searchQuery = ref({})
+    const allowedSlotHours = ref([])
+    const MAX_RESERVATION_DAYS_AHEAD = 30
+    const reservationDateDisabledDate = (time) => {
+        if(!time) return false
+        const t = new Date(time)
+        const today = new Date()
+        today.setHours(0, 0, 0, 0)
+        const maxDay = new Date(today)
+        maxDay.setDate(maxDay.getDate() + MAX_RESERVATION_DAYS_AHEAD)
+        return t.getTime() < today.getTime() || t.getTime() > maxDay.getTime()
+    }
+    const slotHourOptions = computed(() => {
+        return (allowedSlotHours.value || []).map(h => {
+            const hour = String(h).padStart(2, '0')
+            return {
+                label: `${hour}:00`,
+                value: hour
+            }
+        })
+    })
+
+    const fetchAllowedSlotHours = (dateStr) => {
+        if(!dateStr) {
+            allowedSlotHours.value = []
+            return Promise.resolve()
+        }
+        return context?.$http({
+            url: `restaurant_reservation/time_slots`,
+            method: 'get',
+            params: { date: dateStr }
+        }).then(res => {
+            const data = res?.data?.data
+            if (Array.isArray(data)) {
+                allowedSlotHours.value = data.map(v => String(v).padStart(2, '0')).filter(v => v !== '')
+                return
+            }
+            allowedSlotHours.value = []
+        }).catch(() => {
+            allowedSlotHours.value = []
+        })
+    }
+
+    watch(() => searchQuery.value.reservation_date, (newDate) => {
+        searchQuery.value.reservation_hour = ''
+        fetchAllowedSlotHours(newDate)
+    })
 	//下拉列表
 	const searchClick = () => {
 		listQuery.value.page = 1
@@ -195,7 +243,9 @@
 		listLoading.value = true
 		let params = JSON.parse(JSON.stringify(listQuery.value))
 		if(searchQuery.value.seat_name&&searchQuery.value.seat_name!=''){
-			params.seat_name = '%' + searchQuery.value.seat_name + '%'
+			const v = '%' + searchQuery.value.seat_name + '%'
+			params.seat_name = v
+			params.seatName = v
 		}
         if(sortType.value){
             params['sort'] = sortType.value
@@ -207,17 +257,18 @@
 			params: params
 		}).then(res => {
 			let rawList = res.data.data.list || []
-            const start = searchQuery.value.reservation_time_start
-            const end = searchQuery.value.reservation_time_end
-            if (start && end) {
+            const date = searchQuery.value.reservation_date
+            const hour = searchQuery.value.reservation_hour
+            const time = date && hour ? `${date} ${String(hour).padStart(2, '0')}:00:00` : ''
+            if (time) {
                 context?.$http({
                     url: `restaurant_reservation/list`,
                     method: 'get',
                     params: {
                         page: 1,
                         limit: 10000,
-                        reservation_time_start: start,
-                        reservation_time_end: end
+                        reservation_time_start: time,
+                        reservation_time_end: time
                     }
                 }).then(r2=>{
                     const reservedSeats = new Set((r2.data?.data?.list || []).map(i=>i.seat_name))
@@ -280,7 +331,7 @@
 		margin: 10px auto;
 		background: none;
 		width: 100%;
-		text-align: right;
+		text-align: left;
 		// 返回按钮
 		.back_btn {
 			border: 1px solid var(--theme-color);
@@ -332,9 +383,14 @@
 			.search_box {
 				// 输入框
 				:deep(.search_inp) {
+					width: 260px;
+					box-sizing: border-box;
 					.is-focus {
 						box-shadow: none !important;
 					}
+				}
+				:deep(.search_inp.el-input--suffix) {
+					padding-right: 32px;
 				}
 			}
 		}

@@ -32,9 +32,11 @@ import com.cl.utils.R;
 import com.cl.utils.MPUtil;
 import com.cl.utils.MapUtils;
 import com.cl.utils.CommonUtil;
+import com.cl.entity.OrdersEntity;
+import com.cl.service.OrdersService;
 
 /**
- * 美食信息评论表
+ * 美食信息评价表
  * 后端接口
  * @author 
  * @email 
@@ -45,6 +47,8 @@ import com.cl.utils.CommonUtil;
 public class DishReviewController {
     @Autowired
     private DishReviewService dishReviewService;
+    @Autowired
+    private OrdersService ordersService;
 
 
 
@@ -121,7 +125,7 @@ public class DishReviewController {
         EntityWrapper< DishReviewEntity> ew = new EntityWrapper< DishReviewEntity>();
  		ew.allEq(MPUtil.allEQMapPre( dishReview, "dish_review")); 
 		DishReviewView dishReviewView =  dishReviewService.selectView(ew);
-		return R.ok("查询美食信息评论表成功").put("data", dishReviewView);
+		return R.ok("查询美食信息评价表成功").put("data", dishReviewView);
     }
 	
     /**
@@ -150,7 +154,25 @@ public class DishReviewController {
      */
     @RequestMapping("/save")
     public R save(@RequestBody DishReviewEntity dishReview, HttpServletRequest request){
-    	//ValidatorUtils.validateEntity(dishReview);
+        Object userIdObj = request.getSession().getAttribute("userId");
+        if(userIdObj == null){
+            return R.error(401, "未登录或登录过期");
+        }
+        Long userId = Long.valueOf(String.valueOf(userIdObj));
+        if (dishReview.getRefid() == null) {
+            return R.error("缺少关联菜品");
+        }
+        int count = ordersService.selectCount(
+                new EntityWrapper<OrdersEntity>()
+                        .eq("userid", userId)
+                        .eq("tablename", "dish_info")
+                        .eq("goodid", dishReview.getRefid())
+                        .eq("status", "已完成")
+        );
+        if (count <= 0) {
+            return R.error("请在个人中心的已完成订单中进行评价");
+        }
+        dishReview.setUserid(userId);
         dishReviewService.insert(dishReview);
         return R.ok();
     }
@@ -160,7 +182,25 @@ public class DishReviewController {
      */
     @RequestMapping("/add")
     public R add(@RequestBody DishReviewEntity dishReview, HttpServletRequest request){
-    	//ValidatorUtils.validateEntity(dishReview);
+        Object userIdObj = request.getSession().getAttribute("userId");
+        if(userIdObj == null){
+            return R.error(401, "未登录或登录过期");
+        }
+        Long userId = Long.valueOf(String.valueOf(userIdObj));
+        if (dishReview.getRefid() == null) {
+            return R.error("缺少关联菜品");
+        }
+        int count = ordersService.selectCount(
+                new EntityWrapper<OrdersEntity>()
+                        .eq("userid", userId)
+                        .eq("tablename", "dish_info")
+                        .eq("goodid", dishReview.getRefid())
+                        .eq("status", "已完成")
+        );
+        if (count <= 0) {
+            return R.error("请在个人中心的已完成订单中进行评价");
+        }
+        dishReview.setUserid(userId);
         dishReviewService.insert(dishReview);
         return R.ok();
     }
@@ -171,8 +211,35 @@ public class DishReviewController {
     @RequestMapping("/update")
     @Transactional
     public R update(@RequestBody DishReviewEntity dishReview, HttpServletRequest request){
-        //ValidatorUtils.validateEntity(dishReview);
-        dishReviewService.updateById(dishReview);//全部更新
+        Object roleObj = request.getSession().getAttribute("role");
+        String role = roleObj == null ? "" : String.valueOf(roleObj);
+        Object userIdObj = request.getSession().getAttribute("userId");
+        Long userId = userIdObj == null ? null : Long.valueOf(String.valueOf(userIdObj));
+        if (dishReview.getId() == null) {
+            return R.error("缺少评价ID");
+        }
+        DishReviewEntity existing = dishReviewService.selectById(dishReview.getId());
+        if (existing == null) {
+            return R.error("评价不存在");
+        }
+        if (dishReview.getReply() != null && !"".equals(dishReview.getReply())) {
+            if (!"管理员".equals(role) && !"员工".equals(role)) {
+                return R.error("仅管理员或员工可回复评价");
+            }
+            String reply = String.valueOf(dishReview.getReply()).trim();
+            String prefix = "餐厅回复：";
+            if (!reply.startsWith("餐厅回复：")) {
+                dishReview.setReply(prefix + reply.replaceFirst("^(管理员：|员工：)\\s*", ""));
+            }
+        } else {
+            if (userId == null) {
+                return R.error(401, "未登录或登录过期");
+            }
+            if (!existing.getUserid().equals(userId)) {
+                return R.error("不能修改他人的评价");
+            }
+        }
+        dishReviewService.updateById(dishReview);
         return R.ok();
     }
 

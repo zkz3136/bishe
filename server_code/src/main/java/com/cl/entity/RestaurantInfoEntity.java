@@ -84,6 +84,14 @@ public class RestaurantInfoEntity<T> implements Serializable {
 	private Integer capacity;
 	
 	/**
+	 * 定金金额
+	 */
+	@TableField("deposit")
+	@JsonProperty("deposit")
+	@JsonAlias({"deposit"})
+	private Double deposit;
+	
+	/**
 	 * 餐桌状态
 	 */
 	@TableField("table_status")
@@ -167,6 +175,18 @@ public class RestaurantInfoEntity<T> implements Serializable {
 	 */
 	public Integer getCapacity() {
 		return capacity;
+	}
+	/**
+	 * 设置：定金金额
+	 */
+	public void setDeposit(Double deposit) {
+		this.deposit = deposit;
+	}
+	/**
+	 * 获取：定金金额
+	 */
+	public Double getDeposit() {
+		return deposit;
 	}
 	/**
 	 * 设置：餐桌状态

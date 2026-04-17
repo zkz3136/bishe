@@ -38,11 +38,6 @@
 						</el-form-item>
 					</el-col>
 					<el-col :span="24">
-						<el-form-item label="活动地点" prop="event_location">
-							<el-input class="list_inp" v-model="form.event_location" placeholder="活动地点"
-                                type="text"
-								:readonly="!isAdd||disabledForm.event_location?true:false" />
-						</el-form-item>
 					</el-col>
 
 					<el-col :span="24">
@@ -114,7 +109,6 @@
         event_name : false,
         event_image : false,
         start_time : false,
-        event_location : false,
         event_content : false,
         publish_time : false,
         end_time : false,
@@ -130,8 +124,6 @@
 		event_image: [
 		],
 		start_time: [
-		],
-		event_location: [
 		],
 		event_content: [
 		],
@@ -160,7 +152,6 @@
 			event_name: '',
 			event_image: '',
 			start_time: '',
-			event_location: '',
 			event_content: '',
 			publish_time: '',
 			end_time: '',
@@ -222,11 +213,6 @@
 				if(x=='start_time'){
 					form.value.start_time = row[x];
 					disabledForm.value.start_time = true;
-					continue;
-				}
-				if(x=='event_location'){
-					form.value.event_location = row[x];
-					disabledForm.value.event_location = true;
 					continue;
 				}
 				if(x=='event_content'){

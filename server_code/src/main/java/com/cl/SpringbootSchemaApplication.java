@@ -1,12 +1,14 @@
 package com.cl;
 
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 @SpringBootApplication
+@EnableScheduling
 @MapperScan(basePackages = {"com.cl.dao"})
 public class SpringbootSchemaApplication extends SpringBootServletInitializer{
 

@@ -44,9 +44,10 @@
 									<div style="display:flex;justify-content:flex-end;gap:8px;padding:8px 10px;">
 										<el-button size="small" @click.stop="addDishCategoryClick" :disabled="!canManageDishCategory">添加</el-button>
 										<el-button size="small" type="primary" @click.stop="renameDishCategoryClick" :disabled="!canManageDishCategory || !form.dish_category">修改</el-button>
+										<el-button size="small" type="danger" @click.stop="deleteDishCategoryClick" :disabled="!canManageDishCategory || !form.dish_category">删除</el-button>
 									</div>
 								</template>
-							</el-select>
+						</el-select>
 						</el-form-item>
 					</el-col>
 					<el-col :span="24">
@@ -56,11 +57,21 @@
 								:disabled="!isAdd||disabledForm.flavor?true:false"
 								v-model="form.flavor" 
 								placeholder="请选择口味"
+								filterable
+								allow-create
+								default-first-option
 								>
 								<el-option v-for="(item,index) in flavorLists" :label="item"
 									:value="item"
 									>
 								</el-option>
+								<template #footer>
+									<div style="display:flex;justify-content:flex-end;gap:8px;padding:8px 10px;">
+										<el-button size="small" @click.stop="addFlavorClick" :disabled="!canManageFlavor">添加</el-button>
+										<el-button size="small" type="primary" @click.stop="renameFlavorClick" :disabled="!canManageFlavor || !form.flavor">修改</el-button>
+										<el-button size="small" type="danger" @click.stop="deleteFlavorClick" :disabled="!canManageFlavor || !form.flavor">删除</el-button>
+									</div>
+								</template>
 							</el-select>
 						</el-form-item>
 					</el-col>
@@ -166,7 +177,6 @@
         price : false,
         discountprice : false,
         storeupNumber : false,
-        discussNumber : false,
         staff_account : false,
 	})
 	const formVisible = ref(false)
@@ -192,23 +202,23 @@
 		click_time: [
 		],
 		purchase_limit: [
+            { required: true, message: '请输入', trigger: 'blur' },
 			{ validator: context.$toolUtil.validator.intNumber, trigger: 'blur' },
 		],
 		stock: [
+            { required: true, message: '请输入', trigger: 'blur' },
 			{ validator: context.$toolUtil.validator.intNumber, trigger: 'blur' },
 		],
 		price: [
+            { required: true, message: '请输入', trigger: 'blur' },
 			{ validator: context.$toolUtil.validator.number, trigger: 'blur' },
 		],
 		discountprice: [
 			{ validator: context.$toolUtil.validator.number, trigger: 'blur' },
 		],
-		storeupNumber: [
-			{ validator: context.$toolUtil.validator.intNumber, trigger: 'blur' },
-		],
-		discussNumber: [
-			{ validator: context.$toolUtil.validator.intNumber, trigger: 'blur' },
-		],
+        storeupNumber: [
+            { validator: context.$toolUtil.validator.intNumber, trigger: 'blur' },
+        ],
         staff_account: [
         ],
 	})
@@ -217,6 +227,39 @@
 	const formRef = ref(null)
 	const id = ref(0)
 	const type = ref('')
+	const isStaff = computed(() => {
+		return context?.$toolUtil.storageGet('sessionTable') === 'staff'
+	})
+	const resetDisabledForm = () => {
+		disabledForm.value = {
+			dish_name : false,
+			dish_image : false,
+			dish_category : false,
+			dish_description : false,
+			flavor : false,
+			rating : false,
+			click_time : false,
+			purchase_limit : false,
+			stock : false,
+			price : false,
+			discountprice : false,
+            storeupNumber : false,
+			staff_account : false,
+		}
+        const canAdd = context?.$toolUtil.isAuth('dish_info','新增')
+        const canEdit = context?.$toolUtil.isAuth('dish_info','修改')
+        if (isStaff.value && !(canAdd || canEdit)) {
+            disabledForm.value.dish_name = true
+            disabledForm.value.dish_image = true
+            disabledForm.value.dish_category = true
+            disabledForm.value.dish_description = true
+            disabledForm.value.flavor = true
+            disabledForm.value.rating = true
+            disabledForm.value.purchase_limit = true
+            disabledForm.value.price = true
+            disabledForm.value.discountprice = true
+        }
+	}
 	//菜品图片上传回调
 	const dish_imageUploadSuccess=(e)=>{
 		form.value.dish_image = e
@@ -289,8 +332,128 @@
 			})
 		}).catch(() => {})
 	}
+	const deleteDishCategoryClick = () => {
+		if (!canManageDishCategory.value) return
+		const oldCategory = (form.value.dish_category || '').trim()
+		if (!oldCategory) {
+			context?.$toolUtil.message('请先选择菜品类型', 'warning')
+			return
+		}
+		ElMessageBox.confirm(`是否删除菜品类型“${oldCategory}”？将把该类型下的菜品移入“未分类”`, '提示', {
+			confirmButtonText: '是',
+			cancelButtonText: '否',
+			type: 'warning',
+		}).then(() => {
+			context?.$http({
+				url: `${tableName}/dish_category/delete`,
+				method: 'post',
+				data: { oldCategory }
+			}).then(res => {
+				if (res.data && res.data.code === 0) {
+					form.value.dish_category = '未分类'
+					return refreshDishCategoryLists().then(() => {
+						context?.$toolUtil.message('删除成功', 'success')
+					})
+				}
+				context?.$toolUtil.message(res.data?.msg || '删除失败', 'error')
+			})
+		}).catch(() => {})
+	}
 	//口味列表
 	const flavorLists = ref([])
+	const canManageFlavor = computed(() => {
+		return isAdd.value && !(disabledForm.value && disabledForm.value.flavor)
+	})
+	const refreshFlavorLists = () => {
+		return context?.$http({
+			url: `option/dish_info/flavor`,
+			method: 'get'
+		}).then(res => {
+			flavorLists.value = res.data.data || []
+		})
+	}
+	const addFlavorClick = () => {
+		if (!canManageFlavor.value) return
+		ElMessageBox.prompt('请输入口味', '添加口味', {
+			confirmButtonText: '确定',
+			cancelButtonText: '取消',
+			inputValidator: (value) => {
+				const v = (value || '').trim()
+				if (!v) return '请输入口味'
+				if (flavorLists.value.includes(v)) return '该口味已存在'
+			},
+		}).then(({ value }) => {
+			const v = (value || '').trim()
+			if (!v) return
+			if (!flavorLists.value.includes(v)) {
+				flavorLists.value = flavorLists.value.concat([v])
+			}
+			form.value.flavor = v
+			context?.$toolUtil.message('已添加到下拉选项，提交保存后生效', 'success')
+		}).catch(() => {})
+	}
+	const renameFlavorClick = () => {
+		if (!canManageFlavor.value) return
+		const oldFlavor = (form.value.flavor || '').trim()
+		if (!oldFlavor) {
+			context?.$toolUtil.message('请先选择口味', 'warning')
+			return
+		}
+		ElMessageBox.prompt('请输入新的口味', '修改口味', {
+			confirmButtonText: '确定',
+			cancelButtonText: '取消',
+			inputValue: oldFlavor,
+			inputValidator: (value) => {
+				const v = (value || '').trim()
+				if (!v) return '请输入口味'
+				if (v === oldFlavor) return '新旧口味相同'
+				if (flavorLists.value.includes(v)) return '该口味已存在'
+			},
+		}).then(({ value }) => {
+			const newFlavor = (value || '').trim()
+			if (!newFlavor || newFlavor === oldFlavor) return
+			context?.$http({
+				url: `${tableName}/flavor/rename`,
+				method: 'post',
+				data: { oldFlavor, newFlavor }
+			}).then(res => {
+				if (res.data && res.data.code === 0) {
+					form.value.flavor = newFlavor
+					return refreshFlavorLists().then(() => {
+						context?.$toolUtil.message('修改成功', 'success')
+					})
+				}
+				context?.$toolUtil.message(res.data?.msg || '修改失败', 'error')
+			})
+		}).catch(() => {})
+	}
+	const deleteFlavorClick = () => {
+		if (!canManageFlavor.value) return
+		const oldFlavor = (form.value.flavor || '').trim()
+		if (!oldFlavor) {
+			context?.$toolUtil.message('请先选择口味', 'warning')
+			return
+		}
+		ElMessageBox.confirm(`是否删除口味“${oldFlavor}”？将清空所有菜品的该口味`, '提示', {
+			confirmButtonText: '是',
+			cancelButtonText: '否',
+			type: 'warning',
+		}).then(() => {
+			context?.$http({
+				url: `${tableName}/flavor/delete`,
+				method: 'post',
+				data: { oldFlavor }
+			}).then(res => {
+				if (res.data && res.data.code === 0) {
+					if (form.value.flavor === oldFlavor) form.value.flavor = ''
+					return refreshFlavorLists().then(() => {
+						context?.$toolUtil.message('删除成功', 'success')
+					})
+				}
+				context?.$toolUtil.message(res.data?.msg || '删除失败', 'error')
+			})
+		}).catch(() => {})
+	}
 	//推荐指数列表
 	const ratingLists = ref([])
 
@@ -300,12 +463,13 @@
     }
 	//重置
 	const resetForm = () => {
+		resetDisabledForm()
 		form.value = {
 			dish_name: '',
 			dish_image: '',
 			dish_category: '',
 			dish_description: '',
-			flavor: '不辣',
+			flavor: '',
 			rating: '',
 			click_time: '',
 			purchase_limit: '',
@@ -417,11 +581,6 @@
 					disabledForm.value.storeupNumber = true;
 					continue;
 				}
-				if(x=='discussNumber'){
-					form.value.discussNumber = row[x];
-					disabledForm.value.discussNumber = true;
-					continue;
-				}
 				if(x=='staff_account'){
 					form.value.staff_account = row[x];
 					disabledForm.value.staff_account = true;
@@ -443,7 +602,7 @@
 			if(statusColumnValue){
 				crossColumnValue.value = statusColumnValue
 			}
-			form.value.flavor='不辣'
+			// 不强制默认口味，保持为空由用户选择
 			formVisible.value = true
 		}
 
@@ -455,7 +614,7 @@
 		// 商家字段已废弃，改为单一餐厅系统
 	})
 		refreshDishCategoryLists()
-		flavorLists.value = "微辣,超辣,不辣".split(',')
+		refreshFlavorLists()
 		ratingLists.value = "★,★★,★★★,★★★★,★★★★★".split(',')
 	}
 	//初始化
@@ -524,10 +683,14 @@
 								method: 'post', 
 								data: form.value 
 							}).then(async res=>{
-								emit('formModelChange')
-								context?.$toolUtil.message(`操作成功`,'success')
+                                const code = res && res.data ? res.data.code : null
+                                if (code !== 0) {
+                                    return
+                                }
+                                emit('formModelChange')
+                                context?.$toolUtil.message(`操作成功`,'success')
                                 formVisible.value = false
-							})
+                            }).catch(()=>{})
 						}
 					})
 				}else{
@@ -536,10 +699,14 @@
 						method: 'post', 
 						data: form.value 
 					}).then(async (res)=>{
-						emit('formModelChange')
-						context?.$toolUtil.message(`操作成功`,'success')
+                        const code = res && res.data ? res.data.code : null
+                        if (code !== 0) {
+                            return
+                        }
+                        emit('formModelChange')
+                        context?.$toolUtil.message(`操作成功`,'success')
                         formVisible.value = false
-					})
+                    }).catch(()=>{})
 				}
 			}else{
                 context.$message.error('请完善信息')
